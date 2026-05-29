@@ -387,8 +387,8 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
 
         const rec = result.recommended;
         
-        // Update recommended model display
-        recBlowerModel.textContent = rec.model.name;
+        // Update recommended model display (split name to keep primary title clean, e.g. "2RB 730")
+        recBlowerModel.textContent = rec.model.name.split(" (")[0];
         recBlowerPower.textContent = rec.model.power + " kW";
         
         // Capacity utilization %
@@ -417,7 +417,7 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
             const tag = document.createElement("span");
             tag.className = "alt-tag";
             const isRec = (alt.model.name === rec.model.name);
-            tag.textContent = (isRec ? "⭐ " : "") + `${alt.model.name} (${alt.model.power} kW)`;
+            tag.textContent = alt.model.name; // Keep name as is since it already contains kW (e.g. "2RB 730 (4.00 kW)")
             tag.title = `${requiredPressure.toFixed(0)} mbar vakumda maks debisi: ${alt.availFlow.toFixed(1)} m³/sa`;
             
             if (isRec) {
@@ -427,7 +427,7 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
             
             // Allow interactive preview of alternative specs upon clicking tag
             tag.addEventListener("click", () => {
-                recBlowerModel.textContent = alt.model.name;
+                recBlowerModel.textContent = alt.model.name.split(" (")[0];
                 recBlowerPower.textContent = alt.model.power + " kW";
                 const altUsage = Math.round((requiredFlow / alt.availFlow) * 100.0);
                 recBlowerUsage.textContent = altUsage + "%";
