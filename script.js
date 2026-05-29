@@ -365,6 +365,35 @@ function calculate() {
 }
 
 // Update DOM elements with recommended blower details
+// Update dynamic engineering safety notes and warnings based on selected blower and usage
+function updateBlowerNotes(model, usagePercent) {
+    const notesList = document.getElementById("recBlowerNotesList");
+    if (!notesList) return;
+    
+    let html = "";
+    
+    // 1. Safety Valve
+    html += `<li><strong>Vakum Emniyet Ventili:</strong> Sürekli işletimde pompa limit değeri olan <strong>${model.maxVacuum} mbar</strong> basıncının aşılmaması ve motorun aşırı yüklenmemesi için hatta emniyet ventili takılması kritik önemdedir.</li>`;
+    
+    // 2. Filter Koruması
+    html += `<li><strong>Vakum Kartuş Filtre:</strong> Taşınan malzemenin toz ve partiküllerinin blower rotorları arasına kaçıp sıkışmaya veya aşınmaya sebep olmaması için hatta mutlaka hassas bir emiş filtresi eklenmelidir.</li>`;
+    
+    // 3. Margin note based on usage
+    if (usagePercent > 85) {
+        html += `<li><strong>Kritik Yüksek Yük Marjı (<span style="color:#ef4444; font-weight:600;">%${usagePercent} Kullanım</span>):</strong> Pompa limitlerine çok yakın çalışmaktadır. Termik röle akım ayarları hassas yapılmalı ve sürekli çalışma süreleri izlenmelidir.</li>`;
+    } else if (usagePercent > 70) {
+        html += `<li><strong>Orta Yüksek Yük Marjı (<span style="color:#f59e0b; font-weight:600;">%${usagePercent} Kullanım</span>):</strong> Pompa ısınma eğiliminde olabilir. Körük ünitesinin iyi havalandırılan bir ortamda konuşlandırılması ve filtre bakımlarının sıklaştırılması önerilir.</li>`;
+    } else {
+        html += `<li><strong>Güvenli Bölge (<span style="color:#10b981; font-weight:600;">%${usagePercent} Kullanım</span>):</strong> Pompa en yüksek verim aralığında çalışmakta olup, ısınma ve mekanik aşınma riskleri minimum seviyededir.</li>`;
+    }
+    
+    // 4. Frequency note
+    html += `<li><strong>Çalışma Frekansı (50 Hz):</strong> Seçim katalogdaki <strong>50 Hz</strong> nominal çalışma verilerine göre yapılmıştır. Frekans konvertörü (invertör) ile hız ayarı yapılacaksa izin verilen limit frekanslara dikkat edilmelidir.</li>`;
+    
+    notesList.innerHTML = html;
+}
+
+// Update DOM elements with recommended blower details
 function updateBlowerSelection(requiredFlow, requiredPressure) {
     const matchContainer = document.getElementById("blowerMatchContainer");
     const noMatchContainer = document.getElementById("blowerNoMatchContainer");
@@ -372,6 +401,8 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
     const recBlowerPower = document.getElementById("recBlowerPower");
     const recBlowerUsage = document.getElementById("recBlowerUsage");
     const recBlowerCapacity = document.getElementById("recBlowerCapacity");
+    const recBlowerMaxFlow = document.getElementById("recBlowerMaxFlow");
+    const recBlowerMaxVacuum = document.getElementById("recBlowerMaxVacuum");
     const recBlowerProgressBar = document.getElementById("recBlowerProgressBar");
     const recBlowerAlternatives = document.getElementById("recBlowerAlternatives");
     const recBlowerDesc = document.getElementById("recBlowerDesc");
@@ -395,6 +426,10 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
         const usagePercent = Math.round((requiredFlow / rec.availFlow) * 100.0);
         recBlowerUsage.textContent = usagePercent + "%";
         recBlowerCapacity.textContent = rec.availFlow.toFixed(1) + " m³/sa";
+        
+        // Technical Limits
+        if (recBlowerMaxFlow) recBlowerMaxFlow.textContent = rec.model.maxFlow + " m³/sa";
+        if (recBlowerMaxVacuum) recBlowerMaxVacuum.textContent = rec.model.maxVacuum + " mbar";
 
         // Update progress bar width and color
         recBlowerProgressBar.style.width = Math.min(usagePercent, 100) + "%";
@@ -408,6 +443,9 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
 
         // Custom descriptive text
         recBlowerDesc.innerHTML = `Hesaplanan çalışma noktasına (<strong>${requiredFlow.toFixed(1)} m³/sa @ ${requiredPressure.toFixed(0)} mbar</strong>) en uygun Doğuşsan 2RB yan kanal blower modelidir.`;
+
+        // Update warnings & safety points
+        updateBlowerNotes(rec.model, usagePercent);
 
         // Load alternative compatible models (including the recommended model so the user can easily toggle back to it)
         const allMatches = [rec, ...result.alternatives];
@@ -427,11 +465,24 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
             
             // Allow interactive preview of alternative specs upon clicking tag
             tag.addEventListener("click", () => {
+                // Reset styling for all tags
+                Array.from(recBlowerAlternatives.children).forEach(child => {
+                    child.style.borderColor = "";
+                    child.style.background = "";
+                });
+                // Style the active tag
+                tag.style.borderColor = "var(--accent-violet)";
+                tag.style.background = "rgba(139, 92, 246, 0.12)";
+
                 recBlowerModel.textContent = alt.model.name.split(" (")[0];
                 recBlowerPower.textContent = alt.model.power + " kW";
                 const altUsage = Math.round((requiredFlow / alt.availFlow) * 100.0);
                 recBlowerUsage.textContent = altUsage + "%";
                 recBlowerCapacity.textContent = alt.availFlow.toFixed(1) + " m³/sa";
+                
+                if (recBlowerMaxFlow) recBlowerMaxFlow.textContent = alt.model.maxFlow + " m³/sa";
+                if (recBlowerMaxVacuum) recBlowerMaxVacuum.textContent = alt.model.maxVacuum + " mbar";
+                
                 recBlowerProgressBar.style.width = Math.min(altUsage, 100) + "%";
                 
                 // Toggle progress bar colors dynamically for preview
@@ -442,6 +493,9 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
                 } else {
                     recBlowerProgressBar.style.background = "linear-gradient(90deg, var(--accent-violet), #a78bfa)";
                 }
+
+                // Update dynamic warnings when this alternative is selected
+                updateBlowerNotes(alt.model, altUsage);
             });
 
             recBlowerAlternatives.appendChild(tag);
