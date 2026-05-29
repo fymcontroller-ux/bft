@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pnömatik Taşıma Hesaplayıcı</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="theme-color" content="#14b8a6">
+    
+    <!-- iOS support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pnömatik Hesap">
+    <link rel="apple-touch-icon" href="favicon.svg">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-section">
+                <h1>
+                    <i class="fa-solid fa-wind logo-icon"></i>
+                    Pnömatik Taşıma Hesaplayıcı
+                </h1>
+                <p>Bulk Malzemeler & Blower Kapasitesi Mühendislik Analiz Paneli</p>
+            </div>
+            <button class="export-btn" id="exportBtn">
+                <i class="fa-solid fa-file-pdf"></i>
+                Rapor Yazdır / PDF
+            </button>
+        </header>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard-grid">
+            <!-- Left Panel: Inputs -->
+            <div class="panel-card">
+                <div class="panel-title">
+                    <i class="fa-solid fa-sliders"></i>
+                    Tasarım Parametreleri ve Girdiler
+                </div>
+
+                <!-- Product Selection -->
+                <div class="form-section">
+                    <h3>1. Taşınacak Bulk Malzeme</h3>
+                    <div class="form-group">
+                        <label for="productSelect">Malzeme Seçimi</label>
+                        <div class="input-container">
+                            <select id="productSelect"></select>
+                            <span class="unit"><i class="fa-solid fa-box"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- Material specs quick preview -->
+                    <div class="spec-preview-card">
+                        <div class="spec-item">
+                            <span class="spec-lbl">Tane Çapı</span>
+                            <span class="spec-val" id="specSize">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-lbl">Özgül Ağırlık</span>
+                            <span class="spec-val" id="specDensity">-</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-lbl">Yığın Yoğunluğu</span>
+                            <span class="spec-val" id="specBulk">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pipeline Parameters -->
+                <div class="form-section">
+                    <h3>2. Boru Hattı Geometrisi</h3>
+                    
+                    <div class="form-group">
+                        <label for="pipeDiameter">Taşıma Borusu İç Çapı</label>
+                        <div class="input-container">
+                            <input type="number" id="pipeDiameter" value="56" min="20" max="250">
+                            <span class="unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="verticalLength">Dikey Boru Uzunluğu</label>
+                        <div class="input-container">
+                            <input type="number" id="verticalLength" value="4" min="0" max="50">
+                            <span class="unit">m</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="totalLength">Toplam Boru Uzunluğu (Yatay + Dikey)</label>
+                        <div class="input-container">
+                            <input type="number" id="totalLength" value="6" min="2" max="200">
+                            <span class="unit">m</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="elbows">Kıvrımlı Dirsek Sayısı</label>
+                        <div class="input-container">
+                            <input type="number" id="elbows" value="3" min="0" max="15">
+                            <span class="unit">Adet</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Process conditions -->
+                <div class="form-section">
+                    <h3>3. Taşıma Kapasitesi ve Hava Şartları</h3>
+
+                    <div class="form-group">
+                        <label for="capacity">İstenilen Tonaj (Kapasite)</label>
+                        <div class="input-container">
+                            <input type="number" id="capacity" value="2" min="0.1" max="50" step="0.1">
+                            <span class="unit">t/h</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="airDensity">Hava Yoğunluğu (İletim Başlangıcı)</label>
+                        <div class="input-container">
+                            <input type="number" id="airDensity" value="0.8" min="0.6" max="2.5" step="0.05">
+                            <span class="unit">kg/m³</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="velocityRatio">İletim Hava Hızı Oranı (c/V)</label>
+                        <div class="input-container">
+                            <input type="number" id="velocityRatio" value="0.7" min="0.4" max="0.9" step="0.05">
+                            <span class="unit">c/V</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Outputs -->
+            <div class="panel-card">
+                <div class="panel-title">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    Blower Kapasitesi ve Hesaplama Çıktıları
+                </div>
+
+                <!-- Warnings -->
+                <div class="warning-bar" id="warningBar">
+                    <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+                    <span id="warningMsg"></span>
+                </div>
+
+                <div class="results-container">
+                    <!-- Flow Rate Result -->
+                    <div class="result-card glow-teal">
+                        <div class="result-header">
+                            <span class="result-title">Gerekli Minimum Körük/Blower Debisi</span>
+                            <i class="fa-solid fa-gauge-high teal-text"></i>
+                        </div>
+                        <div class="primary-value-container">
+                            <span class="primary-value teal-text" id="flowRateM3Min">-</span>
+                            <span class="primary-unit">m³/dk</span>
+                        </div>
+                        <p class="result-desc">Taşıma havası hızını minimum değerde tutmak ve çökmeyi önlemek için blowerın sağlaması gereken asgari debidir.</p>
+                        
+                        <div class="sub-values-grid">
+                            <div class="sub-value-item">
+                                <span class="sub-lbl">Debi (Saatlik)</span>
+                                <span class="sub-val"><span id="flowRateM3Hour">-</span> m³/sa</span>
+                            </div>
+                            <div class="sub-value-item">
+                                <span class="sub-lbl">Debi (Litre)</span>
+                                <span class="sub-val"><span id="flowRateLMin">-</span> lt/dk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pressure Loss Result -->
+                    <div class="result-card glow-indigo">
+                        <div class="result-header">
+                            <span class="result-title">Gerekli Minimum Körük/Blower Basıncı</span>
+                            <i class="fa-solid fa-compress indigo-text"></i>
+                        </div>
+                        <div class="primary-value-container">
+                            <span class="primary-value indigo-text" id="pressureMbar">-</span>
+                            <span class="primary-unit">mbar</span>
+                        </div>
+                        <p class="result-desc">Boru sürtünmesi, dirsekler ve dikey yerçekimi direncini aşmak için sistemin yenmesi gereken toplam basınç kaybıdır.</p>
+                        
+                        <div class="sub-values-grid">
+                            <div class="sub-value-item">
+                                <span class="sub-lbl">Basınç (Pascal)</span>
+                                <span class="sub-val"><span id="pressurePa">-</span> Pa</span>
+                            </div>
+                            <div class="sub-value-item">
+                                <span class="sub-lbl">Basınç (PSI)</span>
+                                <span class="sub-val"><span id="pressurePsi">-</span> psi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pipeline Schematic -->
+                    <div class="diagram-container">
+                        <svg class="conveying-svg" viewBox="0 0 400 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Grid background -->
+                            <defs>
+                                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.02)" stroke-width="1"/>
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#grid)" />
+
+                            <!-- Blower -->
+                            <rect x="30" y="160" width="40" height="40" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+                            <circle cx="50" cy="180" r="12" fill="none" stroke="#14b8a6" stroke-width="2" stroke-dasharray="4 2"/>
+                            <text x="50" y="215" fill="#6b7280" font-size="9" text-anchor="middle" font-weight="600">BLOWER</text>
+
+                            <!-- Pipeline path -->
+                            <path d="M 70 180 L 140 180 Q 160 180 160 160 L 160 80 Q 160 60 180 60 L 320 60" fill="none" stroke="rgba(99, 102, 241, 0.3)" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M 70 180 L 140 180 Q 160 180 160 160 L 160 80 Q 160 60 180 60 L 320 60" fill="none" stroke="#14b8a6" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 15" stroke-dashoffset="0">
+                                <animate attributeName="stroke-dashoffset" values="300;0" dur="4s" repeatCount="indefinite" />
+                            </path>
+
+                            <!-- Feeding Hopper -->
+                            <path d="M 100 110 L 120 150 L 90 150 Z" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+                            <rect x="98" y="150" width="14" height="15" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
+                            <text x="105" y="100" fill="#6b7280" font-size="9" text-anchor="middle" font-weight="600">BESLEYİCİ</text>
+
+                            <!-- Receiving Cyclone -->
+                            <rect x="320" y="40" width="30" height="40" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+                            <path d="M 320 80 L 335 110 L 350 80 Z" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+                            <text x="335" y="125" fill="#6b7280" font-size="9" text-anchor="middle" font-weight="600">SİLO / SİKLON</text>
+
+                            <!-- Schematic specs overlays -->
+                            <g font-size="9" font-weight="bold">
+                                <rect x="180" y="170" width="190" height="50" rx="6" fill="rgba(9, 10, 15, 0.85)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                                <text x="190" y="185" fill="#9ca3af">Ürün: <tspan id="diagMaterial" fill="#14b8a6">P.Propilen granül</tspan></text>
+                                <text x="190" y="200" fill="#9ca3af">Çap: <tspan id="diagDiameter" fill="#6366f1">56 mm</tspan></text>
+                                <text x="190" y="215" fill="#9ca3af">Uzunluk: <tspan id="diagLength" fill="#f3f4f6">6 m</tspan> | Dirsek: <tspan id="diagElbows" fill="#f3f4f6">3 Adet</tspan></text>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2026 Pnömatik Taşıma Hesaplayıcı Uygulaması. D:\FY\Android Studio\Hesaplamalar veritabanına bağlıdır.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
