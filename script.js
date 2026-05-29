@@ -204,7 +204,7 @@ function findRecommendedBlower(requiredFlow, requiredPressure, phase) {
     
     return {
         recommended: candidates[0],
-        alternatives: candidates.slice(1, 5) // Up to 4 alternatives
+        alternatives: candidates.slice(1, 10) // Up to 9 alternatives (total 10 models)
     };
 }
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "pnomatik-hesap-v9";
+const CACHE_NAME = "pnomatik-hesap-v10";
 const ASSETS = [
     "index.html",
     "styles.css",
