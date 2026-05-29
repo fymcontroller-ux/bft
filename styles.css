@@ -603,6 +603,18 @@ footer {
     animation: flash 1s infinite alternate;
 }
 
+/* Input Help Guide Text */
+.input-help {
+    grid-column: span 2;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: -0.5rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+    border-left: 2px solid rgba(255, 255, 255, 0.05);
+    padding-left: 0.5rem;
+}
+
 /* Print Optimization for PDF Report */
 @media print {
     body {

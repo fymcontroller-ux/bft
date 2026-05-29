@@ -297,8 +297,6 @@ function calculate() {
 
     // Dynamic Blower recommendation matching
     updateBlowerSelection(Q_m3hour, deltaP_mbar);
-
-    updateConveyingDiagram(pipeDiameter, totalLength, elbows, pName);
 }
 
 // Update DOM elements with recommended blower details
@@ -346,47 +344,48 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
         // Custom descriptive text
         recBlowerDesc.innerHTML = `Hesaplanan çalışma noktasına (<strong>${requiredFlow.toFixed(1)} m³/sa @ ${requiredPressure.toFixed(0)} mbar</strong>) en uygun Doğuşsan 2RB yan kanal blower modelidir.`;
 
-        // Load alternative compatible models
+        // Load alternative compatible models (including the recommended model so the user can easily toggle back to it)
+        const allMatches = [rec, ...result.alternatives];
         recBlowerAlternatives.innerHTML = "";
-        if (result.alternatives && result.alternatives.length > 0) {
-            result.alternatives.forEach(alt => {
-                const tag = document.createElement("span");
-                tag.className = "alt-tag";
-                tag.textContent = `${alt.model.name} (${alt.model.power} kW)`;
-                tag.title = `${requiredPressure.toFixed(0)} mbar vakumda maks debisi: ${alt.availFlow.toFixed(1)} m³/sa`;
+        
+        allMatches.forEach(alt => {
+            const tag = document.createElement("span");
+            tag.className = "alt-tag";
+            const isRec = (alt.model.name === rec.model.name);
+            tag.textContent = (isRec ? "⭐ " : "") + `${alt.model.name} (${alt.model.power} kW)`;
+            tag.title = `${requiredPressure.toFixed(0)} mbar vakumda maks debisi: ${alt.availFlow.toFixed(1)} m³/sa`;
+            
+            if (isRec) {
+                tag.style.borderColor = "var(--accent-violet)";
+                tag.style.background = "rgba(139, 92, 246, 0.12)";
+            }
+            
+            // Allow interactive preview of alternative specs upon clicking tag
+            tag.addEventListener("click", () => {
+                recBlowerModel.textContent = alt.model.name;
+                recBlowerPower.textContent = alt.model.power + " kW";
+                const altUsage = Math.round((requiredFlow / alt.availFlow) * 100.0);
+                recBlowerUsage.textContent = altUsage + "%";
+                recBlowerCapacity.textContent = alt.availFlow.toFixed(1) + " m³/sa";
+                recBlowerProgressBar.style.width = Math.min(altUsage, 100) + "%";
                 
-                // Allow interactive preview of alternative specs upon clicking tag
-                tag.addEventListener("click", () => {
-                    recBlowerModel.textContent = alt.model.name;
-                    recBlowerPower.textContent = alt.model.power + " kW";
-                    const altUsage = Math.round((requiredFlow / alt.availFlow) * 100.0);
-                    recBlowerUsage.textContent = altUsage + "%";
-                    recBlowerCapacity.textContent = alt.availFlow.toFixed(1) + " m³/sa";
-                    recBlowerProgressBar.style.width = Math.min(altUsage, 100) + "%";
-                });
-
-                recBlowerAlternatives.appendChild(tag);
+                // Toggle progress bar colors dynamically for preview
+                if (altUsage > 85) {
+                    recBlowerProgressBar.style.background = "linear-gradient(90deg, #ef4444, #f87171)";
+                } else if (altUsage > 70) {
+                    recBlowerProgressBar.style.background = "linear-gradient(90deg, #f59e0b, #fbbf24)";
+                } else {
+                    recBlowerProgressBar.style.background = "linear-gradient(90deg, var(--accent-violet), #a78bfa)";
+                }
             });
-        } else {
-            recBlowerAlternatives.innerHTML = `<span class="no-alt">Uyumlu alternatif model bulunmamaktadır.</span>`;
-        }
+
+            recBlowerAlternatives.appendChild(tag);
+        });
     } else {
         // No match found
         matchContainer.style.display = "none";
         noMatchContainer.style.display = "block";
     }
-}
-
-function updateConveyingDiagram(diameter, length, elbows, pName) {
-    const diameterText = document.getElementById("diagDiameter");
-    const lengthText = document.getElementById("diagLength");
-    const elbowsText = document.getElementById("diagElbows");
-    const materialText = document.getElementById("diagMaterial");
-
-    if (diameterText) diameterText.textContent = diameter + " mm";
-    if (lengthText) lengthText.textContent = length + " m";
-    if (elbowsText) elbowsText.textContent = elbows + " Adet";
-    if (materialText) materialText.textContent = pName;
 }
 
 function exportToPDF() {
