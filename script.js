@@ -344,6 +344,13 @@ function calculate() {
 
     // Update Pressure displays
     document.getElementById("pressureMbar").textContent = deltaP_mbar.toFixed(2);
+    
+    const safetyPressureMbar = deltaP_mbar * 1.25;
+    const safetyPressureMbarEl = document.getElementById("pressureSafetyMbar");
+    if (safetyPressureMbarEl) {
+        safetyPressureMbarEl.textContent = safetyPressureMbar.toFixed(2);
+    }
+    
     document.getElementById("pressurePa").textContent = Math.round(deltaP_Pa).toLocaleString("tr-TR");
     document.getElementById("pressurePsi").textContent = deltaP_psi.toFixed(4);
 

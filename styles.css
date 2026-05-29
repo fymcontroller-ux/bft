@@ -583,6 +583,45 @@ footer {
     font-style: italic;
 }
 
+/* Dual pressure values display styling */
+.pressure-values {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem !important;
+    flex-wrap: wrap;
+}
+
+.value-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.val-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.value-lbl {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.15rem;
+}
+
+.value-divider {
+    font-size: 2.2rem;
+    color: rgba(255, 255, 255, 0.08);
+    font-weight: 300;
+}
+
+.amber-text {
+    color: var(--warning);
+    text-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
 /* Blower dynamic notes styling */
 .blower-notes-section {
     display: flex;
@@ -691,9 +730,15 @@ footer {
         box-shadow: none !important;
         page-break-inside: avoid;
     }
-    .teal-text, .indigo-text, .violet-text {
+    .teal-text, .indigo-text, .violet-text, .amber-text {
         color: #000 !important;
         text-shadow: none !important;
+    }
+    .value-divider {
+        color: #ccc !important;
+    }
+    .value-lbl {
+        color: #666 !important;
     }
     .progress-container {
         border: 1px solid #000 !important;
