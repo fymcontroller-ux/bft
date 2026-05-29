@@ -201,6 +201,58 @@
                         </div>
                     </div>
 
+                    <!-- Blower Selection Result -->
+                    <div class="result-card glow-violet" id="blowerSelectionCard">
+                        <div class="result-header">
+                            <span class="result-title">Doğuşsan Blower Önerisi (Vakum Eğrisi)</span>
+                            <div class="phase-selector">
+                                <button type="button" class="phase-btn active" id="btn3AC" data-phase="3AC">Trifaze (3AC)</button>
+                                <button type="button" class="phase-btn" id="btn1AC" data-phase="1AC">Monofaze (1AC)</button>
+                            </div>
+                        </div>
+                        
+                        <div class="blower-recommendation-content" id="blowerMatchContainer">
+                            <div class="primary-value-container">
+                                <span class="primary-value violet-text" id="recBlowerModel">-</span>
+                                <span class="primary-unit" id="recBlowerPower">- kW</span>
+                            </div>
+                            <p class="result-desc" id="recBlowerDesc">Hesaplanan çalışma noktasına (debi & vakum) en uygun Doğuşsan 2RB yan kanal blower modelidir.</p>
+                            
+                            <div class="sub-values-grid">
+                                <div class="sub-value-item">
+                                    <span class="sub-lbl">Kapasite Kullanımı</span>
+                                    <span class="sub-val" id="recBlowerUsage">- %</span>
+                                </div>
+                                <div class="sub-value-item">
+                                    <span class="sub-lbl">Blower Maksimum Debisi</span>
+                                    <span class="sub-val" id="recBlowerCapacity">- m³/sa</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Capacity utilization progress bar -->
+                            <div class="progress-container">
+                                <div class="progress-bar" id="recBlowerProgressBar" style="width: 0%"></div>
+                            </div>
+                            
+                            <!-- Alternative compatible models -->
+                            <div class="alternatives-section">
+                                <span class="alt-title">Uyumlu Alternatif Modeller</span>
+                                <div class="alt-tags" id="recBlowerAlternatives">
+                                    <span class="no-alt">Alternatif yok</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="blower-no-match" id="blowerNoMatchContainer" style="display: none;">
+                            <div class="no-match-alert">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span>Uyumlu Blower Bulunamadı!</span>
+                            </div>
+                            <p class="result-desc">Girdiğiniz yüksek basınç veya debi değerlerine uygun Doğuşsan 2RB blower modeli mevcut değildir. Lütfen boru çapını büyüterek basınç kaybını düşürün ya da Trifaze gücü seçin.</p>
+                        </div>
+                    </div>
+
+
                     <!-- Pipeline Schematic -->
                     <div class="diagram-container">
                         <svg class="conveying-svg" viewBox="0 0 400 240" fill="none" xmlns="http://www.w3.org/2000/svg">

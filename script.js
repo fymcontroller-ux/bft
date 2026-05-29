@@ -31,9 +31,117 @@ const products = [
     { name: "Sellüloz Pulver", size: "0.04 mm", density: 1380, bulkDensity: 230, velocityRange: "20-25 m/s", beta: 0.04, defaultV: 25 },
     { name: "Soya", size: "6.3 mm", density: 1270, bulkDensity: 690, velocityRange: "22-25 m/s", beta: 0.04, defaultV: 25 },
     { name: "Sabun(rende)", size: "20x5 mm", density: 1100, bulkDensity: 600, velocityRange: "23-27 m/s", beta: 0.08, defaultV: 27 },
-    { name: "Toz şeker", size: "0.52 mm", density: 1610, bulkDensity: 860, velocityRange: "20-25 m/s", beta: 0.08, defaultV: 25 },
-    { name: "Yulaf", size: "3.4 mm", density: 1340, bulkDensity: 510, velocityRange: "22-25 m/s", beta: 0.04, defaultV: 25 }
 ];
+
+// Global state for blower phase selection
+let selectedPhase = "3AC";
+
+// Blower models coordinates and specs database (based on Vacuum diagrams in Grafikler(Vakum).pdf)
+const blowerModels = [
+    // --- 3AC Trifaze Tek Kademe Modeller ---
+    { name: "2RB 010", phase: "3AC", power: "0.20", maxFlow: 38, maxVacuum: 60, points: [[0, 38], [30, 32], [50, 20], [60, 0]] },
+    { name: "2RB 110", phase: "3AC", power: "0.40", maxFlow: 55, maxVacuum: 80, points: [[0, 55], [40, 42], [60, 28], [80, 0]] },
+    { name: "2RB 210", phase: "3AC", power: "0.70", maxFlow: 80, maxVacuum: 110, points: [[0, 80], [50, 65], [80, 45], [110, 0]] },
+    { name: "2RB 230", phase: "3AC", power: "0.85", maxFlow: 88, maxVacuum: 120, points: [[0, 88], [60, 70], [90, 55], [120, 0]] },
+    { name: "2RB 310", phase: "3AC", power: "0.85", maxFlow: 100, maxVacuum: 120, points: [[0, 100], [60, 82], [90, 64], [120, 0]] },
+    { name: "2RB 330", phase: "3AC", power: "1.30", maxFlow: 120, maxVacuum: 140, points: [[0, 120], [70, 98], [110, 70], [140, 0]] },
+    { name: "2RB 410", phase: "3AC", power: "0.85", maxFlow: 145, maxVacuum: 120, points: [[0, 145], [60, 115], [90, 85], [120, 0]] },
+    { name: "2RB 430", phase: "3AC", power: "1.60", maxFlow: 150, maxVacuum: 170, points: [[0, 150], [80, 125], [130, 90], [170, 0]] },
+    { name: "2RB 510", phase: "3AC", power: "2.20", maxFlow: 200, maxVacuum: 190, points: [[0, 200], [90, 160], [140, 120], [190, 0]] },
+    { name: "2RB 530", phase: "3AC", power: "3.00", maxFlow: 230, maxVacuum: 260, points: [[0, 230], [120, 185], [190, 130], [260, 0]] },
+    { name: "2RB 610", phase: "3AC", power: "2.20", maxFlow: 270, maxVacuum: 250, points: [[0, 270], [100, 220], [180, 150], [250, 0]] },
+    { name: "2RB 710", phase: "3AC", power: "3.00", maxFlow: 320, maxVacuum: 270, points: [[0, 320], [120, 260], [200, 180], [270, 0]] },
+    { name: "2RB 630", phase: "3AC", power: "4.00", maxFlow: 320, maxVacuum: 280, points: [[0, 320], [130, 265], [210, 195], [280, 0]] },
+    { name: "2RB 730", phase: "3AC", power: "5.50", maxFlow: 350, maxVacuum: 310, points: [[0, 350], [150, 290], [230, 210], [310, 0]] },
+    { name: "2RB 810", phase: "3AC", power: "8.50", maxFlow: 530, maxVacuum: 320, points: [[0, 530], [150, 450], [250, 350], [320, 0]] },
+    { name: "2RB 830", phase: "3AC", power: "12.50", maxFlow: 580, maxVacuum: 340, points: [[0, 580], [160, 500], [260, 380], [340, 0]] },
+    { name: "2RB 910", phase: "3AC", power: "15.00", maxFlow: 1050, maxVacuum: 460, points: [[0, 1050], [200, 880], [350, 600], [460, 0]] },
+    { name: "2RB 930", phase: "3AC", power: "18.50", maxFlow: 1150, maxVacuum: 460, points: [[0, 1150], [200, 970], [350, 700], [460, 0]] },
+
+    // --- 3AC Trifaze Çift Kademe Modeller ---
+    { name: "2RB 220", phase: "3AC", power: "0.85", maxFlow: 80, maxVacuum: 240, points: [[0, 80], [100, 68], [180, 50], [240, 0]] },
+    { name: "2RB 320", phase: "3AC", power: "1.60", maxFlow: 110, maxVacuum: 280, points: [[0, 110], [120, 92], [200, 72], [280, 0]] },
+    { name: "2RB 420", phase: "3AC", power: "3.00", maxFlow: 150, maxVacuum: 320, points: [[0, 150], [150, 122], [240, 92], [320, 0]] },
+    { name: "2RB 520", phase: "3AC", power: "5.50", maxFlow: 230, maxVacuum: 400, points: [[0, 230], [180, 192], [290, 142], [400, 0]] },
+    { name: "2RB 720", phase: "3AC", power: "7.50", maxFlow: 320, maxVacuum: 460, points: [[0, 320], [200, 265], [320, 205], [460, 0]] },
+    { name: "2RB 740", phase: "3AC", power: "11.00", maxFlow: 420, maxVacuum: 480, points: [[0, 420], [220, 345], [350, 265], [480, 0]] },
+    { name: "2RB 820", phase: "3AC", power: "11.00", maxFlow: 530, maxVacuum: 420, points: [[0, 530], [200, 445], [320, 345], [420, 0]] },
+    { name: "2RB 840", phase: "3AC", power: "20.00", maxFlow: 700, maxVacuum: 480, points: [[0, 700], [250, 580], [380, 440], [480, 0]] },
+    { name: "2RB 920", phase: "3AC", power: "20.00", maxFlow: 1050, maxVacuum: 420, points: [[0, 1050], [200, 920], [320, 760], [420, 0]] },
+    { name: "2RB 940", phase: "3AC", power: "20.00", maxFlow: 1900, maxVacuum: 360, points: [[0, 1900], [150, 1680], [270, 1380], [360, 0]] },
+    { name: "2RB 943", phase: "3AC", power: "20.00", maxFlow: 2050, maxVacuum: 370, points: [[0, 2050], [160, 1820], [280, 1500], [370, 0]] },
+
+    // --- 1AC Monofaze Modeller ---
+    { name: "2RB 010 (1AC)", phase: "1AC", power: "0.20", maxFlow: 38, maxVacuum: 65, points: [[0, 38], [30, 29], [50, 18], [65, 0]] },
+    { name: "2RB 110 (1AC)", phase: "1AC", power: "0.37", maxFlow: 55, maxVacuum: 80, points: [[0, 55], [40, 40], [60, 25], [80, 0]] },
+    { name: "2RB 210 (1AC)", phase: "1AC", power: "0.55", maxFlow: 80, maxVacuum: 115, points: [[0, 80], [50, 60], [80, 40], [115, 0]] },
+    { name: "2RB 220 (1AC)", phase: "1AC", power: "0.70", maxFlow: 80, maxVacuum: 245, points: [[0, 80], [100, 65], [170, 45], [245, 0]] },
+    { name: "2RB 310 (1AC)", phase: "1AC", power: "0.55", maxFlow: 100, maxVacuum: 125, points: [[0, 100], [50, 80], [80, 58], [125, 0]] },
+    { name: "2RB 320 (1AC)", phase: "1AC", power: "1.10", maxFlow: 110, maxVacuum: 285, points: [[0, 110], [120, 85], [200, 55], [285, 0]] },
+    { name: "2RB 330 (1AC)", phase: "1AC", power: "1.10", maxFlow: 120, maxVacuum: 145, points: [[0, 120], [60, 95], [100, 70], [145, 0]] },
+    { name: "2RB 410 (1AC)", phase: "1AC", power: "0.80", maxFlow: 145, maxVacuum: 125, points: [[0, 145], [60, 110], [90, 80], [125, 0]] },
+    { name: "2RB 420 (1AC)", phase: "1AC", power: "1.50", maxFlow: 150, maxVacuum: 325, points: [[0, 150], [120, 120], [220, 85], [325, 0]] },
+    { name: "2RB 430 (1AC)", phase: "1AC", power: "1.50", maxFlow: 150, maxVacuum: 175, points: [[0, 150], [70, 120], [120, 85], [175, 0]] },
+    { name: "2RB 510 (1AC)", phase: "1AC", power: "1.50", maxFlow: 200, maxVacuum: 195, points: [[0, 200], [80, 160], [130, 115], [195, 0]] },
+    { name: "2RB 530 (1AC)", phase: "1AC", power: "2.20", maxFlow: 230, maxVacuum: 265, points: [[0, 230], [100, 185], [180, 125], [265, 0]] },
+    { name: "2RB 710 (1AC)", phase: "1AC", power: "2.20", maxFlow: 320, maxVacuum: 275, points: [[0, 320], [120, 245], [200, 170], [275, 0]] }
+];
+
+// Linear interpolation to find flow capacity of a blower at a given vacuum pressure (mbar)
+function getFlowAtPressure(model, pressure) {
+    const pts = model.points;
+    if (pressure <= pts[0][0]) return pts[0][1];
+    if (pressure >= pts[pts.length - 1][0]) return 0;
+    
+    for (let i = 0; i < pts.length - 1; i++) {
+        const p1 = pts[i][0];
+        const q1 = pts[i][1];
+        const p2 = pts[i + 1][0];
+        const q2 = pts[i + 1][1];
+        
+        if (pressure >= p1 && pressure <= p2) {
+            // Linear interpolation formula
+            return q1 + ((q2 - q1) / (p2 - p1)) * (pressure - p1);
+        }
+    }
+    return 0;
+}
+
+// Find matching blowers and select the most optimal one
+function findRecommendedBlower(requiredFlow, requiredPressure, phase) {
+    const candidates = [];
+    
+    blowerModels.forEach(model => {
+        if (model.phase !== phase) return;
+        
+        const flowAtP = getFlowAtPressure(model, requiredPressure);
+        if (flowAtP >= requiredFlow) {
+            candidates.push({
+                model: model,
+                availFlow: flowAtP,
+                margin: flowAtP - requiredFlow
+            });
+        }
+    });
+    
+    if (candidates.length === 0) return null;
+    
+    // Sort candidates to find the most compact & energy-optimal blower
+    // 1st: Motor Power (kW) ascending
+    // 2nd: Max flow capacity (at 0 mbar) ascending
+    candidates.sort((a, b) => {
+        const pA = parseFloat(a.model.power);
+        const pB = parseFloat(b.model.power);
+        if (pA !== pB) return pA - pB;
+        return a.model.maxFlow - b.model.maxFlow;
+    });
+    
+    return {
+        recommended: candidates[0],
+        alternatives: candidates.slice(1, 5) // Up to 4 alternatives
+    };
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
     initProductSelect();
@@ -69,8 +177,10 @@ function setupEventListeners() {
 
     inputIds.forEach(id => {
         const el = document.getElementById(id);
-        el.addEventListener("input", calculate);
-        el.addEventListener("change", calculate);
+        if (el) {
+            el.addEventListener("input", calculate);
+            el.addEventListener("change", calculate);
+        }
     });
 
     document.getElementById("productSelect").addEventListener("change", () => {
@@ -79,6 +189,26 @@ function setupEventListeners() {
     });
 
     document.getElementById("exportBtn").addEventListener("click", exportToPDF);
+
+    // Phase Selection click handlers
+    const btn3AC = document.getElementById("btn3AC");
+    const btn1AC = document.getElementById("btn1AC");
+
+    if (btn3AC && btn1AC) {
+        btn3AC.addEventListener("click", () => {
+            selectedPhase = "3AC";
+            btn3AC.classList.add("active");
+            btn1AC.classList.remove("active");
+            calculate();
+        });
+
+        btn1AC.addEventListener("click", () => {
+            selectedPhase = "1AC";
+            btn1AC.classList.add("active");
+            btn3AC.classList.remove("active");
+            calculate();
+        });
+    }
 }
 
 function updateProductSpecs() {
@@ -165,7 +295,86 @@ function calculate() {
         warningBar.classList.remove("active");
     }
 
+    // Dynamic Blower recommendation matching
+    updateBlowerSelection(Q_m3hour, deltaP_mbar);
+
     updateConveyingDiagram(pipeDiameter, totalLength, elbows, pName);
+}
+
+// Update DOM elements with recommended blower details
+function updateBlowerSelection(requiredFlow, requiredPressure) {
+    const matchContainer = document.getElementById("blowerMatchContainer");
+    const noMatchContainer = document.getElementById("blowerNoMatchContainer");
+    const recBlowerModel = document.getElementById("recBlowerModel");
+    const recBlowerPower = document.getElementById("recBlowerPower");
+    const recBlowerUsage = document.getElementById("recBlowerUsage");
+    const recBlowerCapacity = document.getElementById("recBlowerCapacity");
+    const recBlowerProgressBar = document.getElementById("recBlowerProgressBar");
+    const recBlowerAlternatives = document.getElementById("recBlowerAlternatives");
+    const recBlowerDesc = document.getElementById("recBlowerDesc");
+
+    if (!matchContainer || !noMatchContainer) return;
+
+    // Find recommended blower model
+    const result = findRecommendedBlower(requiredFlow, requiredPressure, selectedPhase);
+
+    if (result) {
+        matchContainer.style.display = "block";
+        noMatchContainer.style.display = "none";
+
+        const rec = result.recommended;
+        
+        // Update recommended model display
+        recBlowerModel.textContent = rec.model.name;
+        recBlowerPower.textContent = rec.model.power + " kW";
+        
+        // Capacity utilization %
+        const usagePercent = Math.round((requiredFlow / rec.availFlow) * 100.0);
+        recBlowerUsage.textContent = usagePercent + "%";
+        recBlowerCapacity.textContent = rec.availFlow.toFixed(1) + " m³/sa";
+
+        // Update progress bar width and color
+        recBlowerProgressBar.style.width = Math.min(usagePercent, 100) + "%";
+        if (usagePercent > 85) {
+            recBlowerProgressBar.style.background = "linear-gradient(90deg, #ef4444, #f87171)"; // red warning
+        } else if (usagePercent > 70) {
+            recBlowerProgressBar.style.background = "linear-gradient(90deg, #f59e0b, #fbbf24)"; // amber
+        } else {
+            recBlowerProgressBar.style.background = "linear-gradient(90deg, var(--accent-violet), #a78bfa)"; // violet
+        }
+
+        // Custom descriptive text
+        recBlowerDesc.innerHTML = `Hesaplanan çalışma noktasına (<strong>${requiredFlow.toFixed(1)} m³/sa @ ${requiredPressure.toFixed(0)} mbar</strong>) en uygun Doğuşsan 2RB yan kanal blower modelidir.`;
+
+        // Load alternative compatible models
+        recBlowerAlternatives.innerHTML = "";
+        if (result.alternatives && result.alternatives.length > 0) {
+            result.alternatives.forEach(alt => {
+                const tag = document.createElement("span");
+                tag.className = "alt-tag";
+                tag.textContent = `${alt.model.name} (${alt.model.power} kW)`;
+                tag.title = `${requiredPressure.toFixed(0)} mbar vakumda maks debisi: ${alt.availFlow.toFixed(1)} m³/sa`;
+                
+                // Allow interactive preview of alternative specs upon clicking tag
+                tag.addEventListener("click", () => {
+                    recBlowerModel.textContent = alt.model.name;
+                    recBlowerPower.textContent = alt.model.power + " kW";
+                    const altUsage = Math.round((requiredFlow / alt.availFlow) * 100.0);
+                    recBlowerUsage.textContent = altUsage + "%";
+                    recBlowerCapacity.textContent = alt.availFlow.toFixed(1) + " m³/sa";
+                    recBlowerProgressBar.style.width = Math.min(altUsage, 100) + "%";
+                });
+
+                recBlowerAlternatives.appendChild(tag);
+            });
+        } else {
+            recBlowerAlternatives.innerHTML = `<span class="no-alt">Uyumlu alternatif model bulunmamaktadır.</span>`;
+        }
+    } else {
+        // No match found
+        matchContainer.style.display = "none";
+        noMatchContainer.style.display = "block";
+    }
 }
 
 function updateConveyingDiagram(diameter, length, elbows, pName) {

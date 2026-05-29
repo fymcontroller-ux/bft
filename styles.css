@@ -6,6 +6,8 @@
     --bg-input: #151722;
     --accent-teal: #14b8a6;
     --accent-indigo: #6366f1;
+    --accent-violet: #8b5cf6;
+    --accent-violet-glow: rgba(139, 92, 246, 0.15);
     --accent-glow: rgba(20, 184, 166, 0.15);
     --text-primary: #f3f4f6;
     --text-secondary: #9ca3af;
@@ -474,3 +476,176 @@ footer {
     color: var(--text-muted);
     font-size: 0.85rem;
 }
+
+/* Blower Card Styling */
+.result-card.glow-violet:hover {
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.05);
+}
+
+.violet-text {
+    color: var(--accent-violet);
+    text-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+}
+
+.phase-selector {
+    display: flex;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 2px;
+}
+
+.phase-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.phase-btn:hover {
+    color: var(--text-primary);
+}
+
+.phase-btn.active {
+    background: var(--accent-violet);
+    color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.progress-container {
+    background: var(--bg-input);
+    border-radius: 6px;
+    height: 6px;
+    width: 100%;
+    overflow: hidden;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-violet), #a78bfa);
+    border-radius: 6px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.alternatives-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.alt-title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.alt-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.alt-tag {
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.alt-tag:hover {
+    background: rgba(139, 92, 246, 0.12);
+    border-color: rgba(139, 92, 246, 0.35);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.no-alt {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.blower-no-match {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+}
+
+.no-match-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--error);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.no-match-alert i {
+    animation: flash 1s infinite alternate;
+}
+
+/* Print Optimization for PDF Report */
+@media print {
+    body {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+    }
+    .panel-card {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+    .panel-card::before {
+        display: none !important;
+    }
+    .export-btn, .phase-selector {
+        display: none !important;
+    }
+    .results-container {
+        gap: 1rem !important;
+    }
+    .result-card {
+        background: #fff !important;
+        border: 1px solid #ccc !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+    .teal-text, .indigo-text, .violet-text {
+        color: #000 !important;
+        text-shadow: none !important;
+    }
+    .progress-container {
+        border: 1px solid #000 !important;
+    }
+    .progress-bar {
+        background: #000 !important;
+    }
+    .alt-tag {
+        border: 1px solid #000 !important;
+        color: #000 !important;
+        background: transparent !important;
+    }
+}
+
