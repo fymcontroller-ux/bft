@@ -171,13 +171,14 @@ function getFlowAtPressure(model, pressure) {
 // Find matching blowers and select the most optimal one
 function findRecommendedBlower(requiredFlow, requiredPressure, phase) {
     const candidates = [];
+    const safetyPressure = requiredPressure * 1.25;
     
     blowerModels.forEach(model => {
         if (model.phase !== phase) return;
         
-        // Strict safety limit check:
-        // Disqualify model if operating vacuum pressure exceeds motor's continuous duty safety limit!
-        if (requiredPressure > model.maxVacuum) return;
+        // Strict safety limit check with 25% safety margin:
+        // Disqualify model if safety-adjusted operating vacuum pressure exceeds motor's continuous duty safety limit!
+        if (safetyPressure > model.maxVacuum) return;
         
         const flowAtP = getFlowAtPressure(model, requiredPressure);
         if (flowAtP >= requiredFlow) {
@@ -364,19 +365,19 @@ function calculate() {
     updateBlowerSelection(Q_m3hour, deltaP_mbar);
 }
 
-// Update DOM elements with recommended blower details
-// Update dynamic engineering safety notes and warnings based on selected blower and usage
-function updateBlowerNotes(model, usagePercent) {
+// Update dynamic engineering safety notes and warnings based on selected blower, usage, and operating pressure
+function updateBlowerNotes(model, usagePercent, requiredPressure) {
     const notesList = document.getElementById("recBlowerNotesList");
     if (!notesList) return;
     
     let html = "";
+    const safetyPressure = requiredPressure * 1.25;
     
     // 1. Safety Valve
-    html += `<li><strong>Vakum Emniyet Ventili:</strong> Sürekli işletimde pompa limit değeri olan <strong>${model.maxVacuum} mbar</strong> basıncının aşılmaması ve motorun aşırı yüklenmemesi için hatta emniyet ventili takılması kritik önemdedir.</li>`;
+    html += `<li><strong>Vakum Emniyet Ventili:</strong> Sürekli işletimde pompa limit değeri olan <strong>${model.maxVacuum} mbar</strong> basıncının aşılmaması ve motorun aşırı yüklenmemesi için hatta emniyet ventili takılması kritik önemdedir. (Sisteminiz için %25 emniyet toleranslı hedef: <strong>${safetyPressure.toFixed(0)} mbar</strong>).</li>`;
     
     // 2. Filter Koruması
-    html += `<li><strong>Vakum Kartuş Filtre:</strong> Taşınan malzemenin toz ve partiküllerinin blower rotorları arasına kaçıp sıkışmaya veya aşınmaya sebep olmaması için hatta mutlaka hassas bir emiş filtresi eklenmelidir.</li>`;
+    html += `<li><strong>Vakum Kartuş Filtre:</strong> Taşınan malzemenin toz ve partiküllerinin blower rotorları arasına kaçıp sıkışmaya veya aşınmaya sebep olmaması için hatta mutlaka emiş filtresi eklenmelidir.</li>`;
     
     // 3. Margin note based on usage
     if (usagePercent > 85) {
@@ -384,7 +385,7 @@ function updateBlowerNotes(model, usagePercent) {
     } else if (usagePercent > 70) {
         html += `<li><strong>Orta Yüksek Yük Marjı (<span style="color:#f59e0b; font-weight:600;">%${usagePercent} Kullanım</span>):</strong> Pompa ısınma eğiliminde olabilir. Körük ünitesinin iyi havalandırılan bir ortamda konuşlandırılması ve filtre bakımlarının sıklaştırılması önerilir.</li>`;
     } else {
-        html += `<li><strong>Güvenli Bölge (<span style="color:#10b981; font-weight:600;">%${usagePercent} Kullanım</span>):</strong> Pompa en yüksek verim aralığında çalışmakta olup, ısınma ve mekanik aşınma riskleri minimum seviyededir.</li>`;
+        html += `<li><strong>Güvenli Bölge (<span style="color:#10b981; font-weight:600;">%${usagePercent} Kullanım</span>):</strong> Pompa en yüksek verim aralığında çalışmakta olup, ısınma ve mekanik aşınma riskleri minimum seviyemedir.</li>`;
     }
     
     // 4. Frequency note
@@ -409,7 +410,7 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
 
     if (!matchContainer || !noMatchContainer) return;
 
-    // Find recommended blower model
+    // Find recommended blower model (requires 25% safety margin on vacuum limit check)
     const result = findRecommendedBlower(requiredFlow, requiredPressure, selectedPhase);
 
     if (result) {
@@ -441,11 +442,11 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
             recBlowerProgressBar.style.background = "linear-gradient(90deg, var(--accent-violet), #a78bfa)"; // violet
         }
 
-        // Custom descriptive text
-        recBlowerDesc.innerHTML = `Hesaplanan çalışma noktasına (<strong>${requiredFlow.toFixed(1)} m³/sa @ ${requiredPressure.toFixed(0)} mbar</strong>) en uygun Doğuşsan 2RB yan kanal blower modelidir.`;
+        // Custom descriptive text showing both actual operating vacuum and safety target
+        recBlowerDesc.innerHTML = `Hesaplanan çalışma noktasına (<strong>${requiredFlow.toFixed(1)} m³/sa @ ${requiredPressure.toFixed(0)} mbar</strong>) en uygun Doğuşsan 2RB yan kanal blower modelidir. <em>(%25 emniyet toleransı uygulanmıştır: <strong>${(requiredPressure * 1.25).toFixed(0)} mbar</strong>)</em>`;
 
         // Update warnings & safety points
-        updateBlowerNotes(rec.model, usagePercent);
+        updateBlowerNotes(rec.model, usagePercent, requiredPressure);
 
         // Load alternative compatible models (including the recommended model so the user can easily toggle back to it)
         const allMatches = [rec, ...result.alternatives];
@@ -495,7 +496,7 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
                 }
 
                 // Update dynamic warnings when this alternative is selected
-                updateBlowerNotes(alt.model, altUsage);
+                updateBlowerNotes(alt.model, altUsage, requiredPressure);
             });
 
             recBlowerAlternatives.appendChild(tag);
