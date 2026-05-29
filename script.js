@@ -47,7 +47,7 @@ const blowerModels = [
     { name: "2RB 330", phase: "3AC", power: "1.30", maxFlow: 120, maxVacuum: 140, points: [[0, 120], [70, 98], [110, 70], [140, 0]] },
     { name: "2RB 410", phase: "3AC", power: "0.85", maxFlow: 145, maxVacuum: 120, points: [[0, 145], [60, 115], [90, 85], [120, 0]] },
     { name: "2RB 430", phase: "3AC", power: "1.60", maxFlow: 150, maxVacuum: 170, points: [[0, 150], [80, 125], [130, 90], [170, 0]] },
-    { name: "2RB 510", phase: "3AC", power: "2.20", maxFlow: 200, maxVacuum: 190, points: [[0, 200], [90, 160], [140, 120], [190, 0]] },
+    { name: "2RB 510", phase: "3AC", power: "2.20", maxFlow: 215, maxVacuum: 240, points: [[0, 215], [90, 165], [140, 125], [200, 75], [220, 50], [240, 0]] },
     { name: "2RB 530", phase: "3AC", power: "3.00", maxFlow: 230, maxVacuum: 260, points: [[0, 230], [120, 185], [190, 130], [260, 0]] },
     { name: "2RB 610", phase: "3AC", power: "2.20", maxFlow: 270, maxVacuum: 250, points: [[0, 270], [100, 220], [180, 150], [250, 0]] },
     { name: "2RB 710", phase: "3AC", power: "3.00", maxFlow: 320, maxVacuum: 270, points: [[0, 320], [120, 260], [200, 180], [270, 0]] },
@@ -82,7 +82,7 @@ const blowerModels = [
     { name: "2RB 410 (1AC)", phase: "1AC", power: "0.80", maxFlow: 145, maxVacuum: 125, points: [[0, 145], [60, 110], [90, 80], [125, 0]] },
     { name: "2RB 420 (1AC)", phase: "1AC", power: "1.50", maxFlow: 150, maxVacuum: 325, points: [[0, 150], [120, 120], [220, 85], [325, 0]] },
     { name: "2RB 430 (1AC)", phase: "1AC", power: "1.50", maxFlow: 150, maxVacuum: 175, points: [[0, 150], [70, 120], [120, 85], [175, 0]] },
-    { name: "2RB 510 (1AC)", phase: "1AC", power: "1.50", maxFlow: 200, maxVacuum: 195, points: [[0, 200], [80, 160], [130, 115], [195, 0]] },
+    { name: "2RB 510 (1AC)", phase: "1AC", power: "1.50", maxFlow: 215, maxVacuum: 240, points: [[0, 215], [90, 165], [140, 125], [200, 75], [220, 50], [240, 0]] },
     { name: "2RB 530 (1AC)", phase: "1AC", power: "2.20", maxFlow: 230, maxVacuum: 265, points: [[0, 230], [100, 185], [180, 125], [265, 0]] },
     { name: "2RB 710 (1AC)", phase: "1AC", power: "2.20", maxFlow: 320, maxVacuum: 275, points: [[0, 320], [120, 245], [200, 170], [275, 0]] }
 ];
