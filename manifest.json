@@ -1,7 +1,7 @@
 {
-  "name": "FY Yönetim ve Hesaplama Portali",
-  "short_name": "FY Portal",
-  "description": "FY Yönetici Maliyet, Merkezi Sistem ve Pnömatik Hesaplama Portali",
+  "name": "BFT İşletme Yönetim",
+  "short_name": "BFT Portal",
+  "description": "Yönetici Maliyet, Merkezi Sistem ve Pnömatik Hesaplama Portali",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0a0b10",
