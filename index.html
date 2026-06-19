@@ -3,294 +3,881 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pnömatik Taşıma Hesaplayıcı</title>
+    <title>FY Merkezi Yönetim ve Hesaplama Portali</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <meta name="theme-color" content="#14b8a6">
-    
-    <!-- iOS support -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Pnömatik Hesap">
-    <link rel="apple-touch-icon" href="favicon.svg">
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <div class="logo-section">
-                <h1>
-                    <i class="fa-solid fa-wind logo-icon"></i>
-                    Pnömatik Taşıma Hesaplayıcı
-                </h1>
-                <p>Bulk Malzemeler & Blower Kapasitesi Mühendislik Analiz Paneli</p>
+    <div class="portal-container">
+        <!-- Sidebar Navigation -->
+        <aside class="portal-sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-cubes"></i>
+                <span>FY Portal</span>
             </div>
-            <button class="export-btn" id="exportBtn">
-                <i class="fa-solid fa-file-pdf"></i>
-                Rapor Yazdır / PDF
-            </button>
-        </header>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item active" data-target="dashboard-sec">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Genel</span>
+                </li>
+                <li class="sidebar-item" data-target="yukleyici-sec">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>Yükleyici</span>
+                </li>
+                <li class="sidebar-item" data-target="merkezi-sec">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <span>Merkezi</span>
+                </li>
+                <li class="sidebar-item" data-target="pnomatik-sec">
+                    <i class="fa-solid fa-wind"></i>
+                    <span>Pnömatik</span>
+                </li>
+            </ul>
+        </aside>
 
-        <!-- Main Dashboard -->
-        <div class="dashboard-grid">
-            <!-- Left Panel: Inputs -->
-            <div class="panel-card">
-                <div class="panel-title">
-                    <i class="fa-solid fa-sliders"></i>
-                    Tasarım Parametreleri ve Girdiler
-                </div>
-
-                <!-- Product Selection -->
-                <div class="form-section">
-                    <h3>1. Taşınacak Bulk Malzeme</h3>
-                    <div class="form-group">
-                        <label for="productSelect">Malzeme Seçimi</label>
-                        <div class="input-container">
-                            <select id="productSelect"></select>
-                            <span class="unit"><i class="fa-solid fa-box"></i></span>
-                        </div>
-                    </div>
-
-                    <!-- Material specs quick preview -->
-                    <div class="spec-preview-card">
-                        <div class="spec-item">
-                            <span class="spec-lbl">Tane Çapı</span>
-                            <span class="spec-val" id="specSize">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-lbl">Özgül Ağırlık</span>
-                            <span class="spec-val" id="specDensity">-</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-lbl">Yığın Yoğunluğu</span>
-                            <span class="spec-val" id="specBulk">-</span>
-                        </div>
+        <!-- Main Content Area -->
+        <main class="portal-content">
+            
+            <!-- SECTION 0: GENERAL DASHBOARD -->
+            <section id="dashboard-sec" class="portal-section active">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fa-solid fa-chart-pie" style="color: var(--accent-indigo);"></i> Genel Bakış</h2>
+                        <p>Tüm yönetim ve mühendislik hesaplama modüllerine buradan hızlıca erişebilirsiniz.</p>
                     </div>
                 </div>
 
-                <!-- Pipeline Parameters -->
-                <div class="form-section">
-                    <h3>2. Boru Hattı Geometrisi</h3>
-                    
-                    <div class="form-group">
-                        <label for="pipeDiameter">Taşıma Borusu İç Çapı</label>
-                        <div class="input-container">
-                            <input type="number" id="pipeDiameter" value="56" min="20" max="250">
-                            <span class="unit">mm</span>
+                <div class="overview-cards-grid">
+                    <div class="overview-card" onclick="switchPortalSection('yukleyici-sec')">
+                        <div class="overview-icon-container yukleyici">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </div>
+                        <div class="overview-info">
+                            <span class="overview-title">Yükleyici Maliyetleri</span>
+                            <span class="overview-desc">Model bazlı malzeme, grup, personel ve dükkan maliyet hesabı.</span>
+                            <span class="overview-link">Modüle Git <i class="fa-solid fa-arrow-right"></i></span>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="verticalLength">Dikey Boru Uzunluğu</label>
-                        <div class="input-container">
-                            <input type="number" id="verticalLength" value="4" min="0" max="50">
-                            <span class="unit">m</span>
+                    <div class="overview-card" onclick="switchPortalSection('merkezi-sec')">
+                        <div class="overview-icon-container merkezi">
+                            <i class="fa-solid fa-network-wired"></i>
+                        </div>
+                        <div class="overview-info">
+                            <span class="overview-title">Merkezi Sistem</span>
+                            <span class="overview-desc">Kapasite, istasyon ve yerleşim odaklı merkezi fiyatlandırma teklifi.</span>
+                            <span class="overview-link">Modüle Git <i class="fa-solid fa-arrow-right"></i></span>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="totalLength">Toplam Boru Uzunluğu (Yatay + Dikey)</label>
-                        <div class="input-container">
-                            <input type="number" id="totalLength" value="6" min="2" max="200">
-                            <span class="unit">m</span>
+                    <div class="overview-card" onclick="switchPortalSection('pnomatik-sec')">
+                        <div class="overview-icon-container pnomatik">
+                            <i class="fa-solid fa-wind"></i>
+                        </div>
+                        <div class="overview-info">
+                            <span class="overview-title">Pnömatik Taşıma</span>
+                            <span class="overview-desc">Bulk malzeme taşıma kapasitesi ve optimal blower motor seçimi.</span>
+                            <span class="overview-link">Modüle Git <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- SECTION 1: YÜKLEYİCİ MALİYETLERİ -->
+            <section id="yukleyici-sec" class="portal-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fa-solid fa-boxes-stacked" style="color: var(--accent-indigo);"></i> Yükleyici Maliyetleri</h2>
+                        <p>Yükleyici makinelerin malzeme fiyat listesi, model reçeteleri ve işletme gider analizi.</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="tabs-container">
+                            <button class="tab-btn active" id="btnCalcTab">
+                                <i class="fa-solid fa-calculator"></i> Hesaplama Paneli
+                            </button>
+                            <button class="tab-btn" id="btnPriceTab">
+                                <i class="fa-solid fa-tags"></i> Malzeme Yönetimi
+                            </button>
+                            <button class="tab-btn" id="btnExpenseTab">
+                                <i class="fa-solid fa-building-columns"></i> İşletme Giderleri
+                            </button>
+                        </div>
+                        <button class="export-btn" id="exportBtnYukleyici">
+                            <i class="fa-solid fa-file-pdf"></i> Yazdır / PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab 1: Cost Dashboard -->
+                <div id="calcTabContent" class="tab-content active-content">
+                    <div class="dashboard-grid">
+                        <div class="panel-card">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-sliders"></i> Sistem Seçimleri ve Parametreler
+                            </div>
+                            <div class="form-section stacked-form-section">
+                                <h3>Model Seçimi</h3>
+                                <div class="form-group">
+                                    <label for="modelSelect">Yükleyici Modeli</label>
+                                    <div class="input-container">
+                                        <select id="modelSelect">
+                                            <option value="YTY">YTY (Yerden Trifaze Yükleyici)</option>
+                                            <option value="HY500">HY500</option>
+                                            <option value="MY300">MY300</option>
+                                            <option value="MY500">MY500</option>
+                                            <option value="MY502" selected>MY502</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                    <button type="button" class="project-btn-main btn-save" id="btnEditModel" style="flex: 1;">
+                                        <i class="fa-solid fa-pen-to-square"></i> Modeli Düzenle
+                                    </button>
+                                    <button type="button" class="project-btn-main" id="btnAddNewModel" style="background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.2); color: #c7d2fe; flex: 1;">
+                                        <i class="fa-solid fa-plus"></i> Yeni Model Ekle
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="spec-preview-card" style="margin-top: 1rem; margin-bottom: 1rem;">
+                                <div class="spec-item">
+                                    <span class="spec-lbl">Model Kapasitesi</span>
+                                    <span class="spec-val" id="modelMachineCount">20 Makine</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-lbl">Toplam Malzeme Çeşidi</span>
+                                    <span class="spec-val" id="modelItemTypesCount">0 Kalem</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-card scroll-x">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-receipt"></i> Maliyet Dökümü ve Özet Sonuçlar
+                            </div>
+                            <div class="metrics-grid">
+                                <div class="metric-card glow-teal">
+                                    <span class="metric-lbl">Ara Toplam ($)</span>
+                                    <span class="metric-val teal-text" id="summarySubtotalUSD">$0.00</span>
+                                </div>
+                                <div class="metric-card glow-indigo">
+                                    <span class="metric-lbl">İşletme Maliyeti / Makine ($)</span>
+                                    <span class="metric-val indigo-text" id="summaryOperatingUSD">$0.00</span>
+                                </div>
+                                <div class="metric-card glow-violet">
+                                    <span class="metric-lbl">Genel Toplam ($)</span>
+                                    <span class="metric-val violet-text" id="summaryGrandTotalUSD">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <table class="cost-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parça Adı</th>
+                                            <th>Miktar</th>
+                                            <th>Tedarikçi Firma</th>
+                                            <th>Birim Fiyat ($)</th>
+                                            <th>Toplam Fiyat ($)</th>
+                                            <th>Güncelleme Tarihi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="costTableBody">
+                                        <!-- Dynamically loaded -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Materials Management -->
+                <div id="priceTabContent" class="tab-content">
+                    <div class="panel-card">
+                        <div class="panel-title" style="justify-content: space-between; display: flex; align-items: center; width: 100%; flex-wrap: wrap; gap: 1rem;">
+                            <span><i class="fa-solid fa-tags"></i> Malzeme & Grup Fiyat Yönetim Paneli</span>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button class="reset-btn" id="btnAddNewGroup" style="background: rgba(20, 184, 166, 0.08); border-color: rgba(20, 184, 166, 0.2); color: #99f6e4;">
+                                    <i class="fa-solid fa-folder-plus"></i> Yeni Grup Ekle
+                                </button>
+                                <button class="reset-btn" id="resetPricesBtn">
+                                    <i class="fa-solid fa-arrow-rotate-left"></i> Fabrika Ayarlarına Dön
+                                </button>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem;">
+                            Malzemelerin USD ($) fiyatlarını, tedarikçi firma bilgilerini ve güncelleme tarihlerini aşağıdan güncelleyebilirsiniz.
+                        </p>
+                        <div id="newGroupFormContainer" style="display: none; margin-bottom: 2rem; padding: 1.25rem; border: 1px solid var(--accent-indigo); background: rgba(99, 102, 241, 0.03); border-radius: 16px; max-width: 500px;">
+                            <h3 style="font-size: 1rem; color: var(--accent-indigo); margin-bottom: 1rem;"><i class="fa-solid fa-folder-plus"></i> Yeni Malzeme Grubu Ekle</h3>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <div class="input-container" style="flex: 1; padding: 0.4rem 0.6rem;">
+                                    <input type="text" id="newGroupNameInput" placeholder="Grup Adı Örn: Kablolar" style="text-align: left;">
+                                </div>
+                                <button type="button" class="project-btn-main btn-save" id="btnNewGroupSubmit" style="padding: 0.4rem 1rem;">Oluştur</button>
+                                <button type="button" class="project-btn-main btn-delete" id="btnNewGroupCancel" style="padding: 0.4rem 1rem;">İptal</button>
+                            </div>
+                        </div>
+                        <div class="price-edit-grid" id="priceEditGrid">
+                            <!-- Dynamically loaded -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Operating Expenses -->
+                <div id="expenseTabContent" class="tab-content">
+                    <div class="panel-card">
+                        <div class="panel-title" style="justify-content: space-between; display: flex; align-items: center; width: 100%; flex-wrap: wrap; gap: 1rem;">
+                            <span><i class="fa-solid fa-building-columns"></i> Sabit İşletme & Personel Giderleri (Aylık USD)</span>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button class="reset-btn" id="resetExpensesBtn">
+                                    <i class="fa-solid fa-arrow-rotate-left"></i> Giderleri Sıfırla
+                                </button>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem;">
+                            Aylık sabit dükkan giderlerini ve detaylı personel giderlerini ($) güncelleyebilirsiniz.
+                        </p>
+                        <div class="form-section project-section-card" style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-color); border-radius: 18px; padding: 1.5rem; margin-bottom: 2rem; overflow-x: auto;">
+                            <h3 style="color: var(--accent-indigo); margin-bottom: 1.25rem;"><i class="fa-solid fa-user-gear"></i> 1. Personel Gider Detayları</h3>
+                            <table class="cost-table" style="font-size: 0.85rem; margin-top: 0;">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: left;">Personel / Kadro</th>
+                                        <th style="text-align: right;">Net Maaş ($)</th>
+                                        <th style="text-align: right;">SSK / SGK ($)</th>
+                                        <th style="text-align: right;">Bağkur ($)</th>
+                                        <th style="text-align: right;">Yemek ($)</th>
+                                        <th style="text-align: right;">Yol ($)</th>
+                                        <th style="text-align: right;">Toplam ($)</th>
+                                        <th style="text-align: center; width: 80px;">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="personnelTableBody">
+                                    <!-- Dynamically loaded -->
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background: rgba(99, 102, 241, 0.03); font-weight: 600;">
+                                        <td><input type="text" id="pAddName" placeholder="Kadro / Personel Adı" style="width: 100%; padding: 0.25rem; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; font-size: 0.8rem;"></td>
+                                        <td><input type="number" id="pAddNet" placeholder="Net" step="0.1" style="width: 100%; padding: 0.25rem; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px;"></td>
+                                        <td><input type="number" id="pAddSsk" placeholder="SSK" step="0.1" style="width: 100%; padding: 0.25rem; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px;"></td>
+                                        <td><input type="number" id="pAddBagkur" placeholder="Bağkur" step="0.1" style="width: 100%; padding: 0.25rem; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px;"></td>
+                                        <td><input type="number" id="pAddYemek" placeholder="Yemek" step="0.1" style="width: 100%; padding: 0.25rem; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px;"></td>
+                                        <td><input type="number" id="pAddYol" placeholder="Yol" step="0.1" style="width: 100%; padding: 0.25rem; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px;"></td>
+                                        <td id="pAddTotalPlaceholder" style="text-align: right; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">$0.00</td>
+                                        <td style="text-align: center;"><button type="button" class="project-btn-main btn-save" id="btnPersonnelAddSubmit" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; width: 100%;"><i class="fa-solid fa-plus"></i> Ekle</button></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div class="expense-dashboard-grid">
+                            <div class="expense-editor-list-card">
+                                <h3 style="font-size: 1rem; color: var(--accent-indigo); margin-bottom: 1.25rem; border-left: 2px solid var(--accent-indigo); padding-left: 0.5rem;"><i class="fa-solid fa-shop"></i> 2. Sabit Dükkan Giderleri</h3>
+                                <div id="expenseEditList" style="margin-bottom: 1.5rem;">
+                                    <!-- Dynamically loaded -->
+                                </div>
+                                <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.75rem;">Yeni Gider Kalemi Ekle</div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <div class="input-container" style="flex: 1.5; padding: 0.4rem 0.6rem;">
+                                        <input type="text" id="newShopExpenseName" placeholder="Gider Adı Örn: Isınma" style="text-align: left; font-size: 0.85rem;">
+                                    </div>
+                                    <div class="input-container" style="flex: 1; padding: 0.4rem 0.6rem;">
+                                        <input type="number" id="newShopExpensePrice" placeholder="Tutar ($)" min="0" step="0.1" style="text-align: left; font-size: 0.85rem;">
+                                    </div>
+                                    <button type="button" class="project-btn-main btn-save" id="btnShopExpenseAddSubmit" style="padding: 0.4rem 1rem; font-size: 0.85rem;">Ekle</button>
+                                </div>
+                            </div>
+                            <div class="expense-summary-panel">
+                                <div class="expense-summary-title">Aylık Sabit Toplam Gider Hesabı</div>
+                                <div class="expense-summary-row">
+                                    <span>Toplam Personel Giderleri:</span>
+                                    <span id="expSummaryPersonnel">$0.00</span>
+                                </div>
+                                <div class="expense-summary-row">
+                                    <span>Toplam Dükkan Giderleri:</span>
+                                    <span id="expSummaryShop">$0.00</span>
+                                </div>
+                                <div class="expense-summary-row" style="border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 0.5rem;">
+                                    <span>Net Sabit Gider:</span>
+                                    <span id="expSummaryNet">$0.00</span>
+                                </div>
+                                <div class="expense-summary-row">
+                                    <span>%10 Beklenmeyen Masraf:</span>
+                                    <span id="expSummaryExtra">$0.00</span>
+                                </div>
+                                <div class="expense-summary-row highlight">
+                                    <span>Aylık Toplam Gider:</span>
+                                    <span id="expSummaryTotal">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: MERKEZİ SİSTEM -->
+            <section id="merkezi-sec" class="portal-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fa-solid fa-network-wired" style="color: var(--accent-indigo);"></i> Merkezi Sistem Fiyatlandırma</h2>
+                        <p>Kapasiteye göre istasyon ve pompa şase sistemleri teklif ve tesisat borulama hesaplayıcı.</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="tabs-container">
+                            <button class="tab-btn active" id="btnCalcTabMerkezi">
+                                <i class="fa-solid fa-calculator"></i> Hesaplama Paneli
+                            </button>
+                            <button class="tab-btn" id="btnPriceTabMerkezi">
+                                <i class="fa-solid fa-tags"></i> Fiyat Listesi Düzenle
+                            </button>
+                        </div>
+                        <button class="export-btn" id="exportBtnMerkezi">
+                            <i class="fa-solid fa-file-pdf"></i> Teklif Yazdır / PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab 1: Calculation Dashboard -->
+                <div id="calcTabContentMerkezi" class="tab-content active-content">
+                    <div class="dashboard-grid">
+                        <div class="panel-card">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-sliders"></i> Sistem Parametreleri ve Seçimler
+                            </div>
+                            <div class="form-section project-section-card stacked-form-section">
+                                <h3>0. Proje Yönetim Paneli</h3>
+                                <div class="form-group">
+                                    <label for="savedProjectsSelect">Kayıtlı Projeler</label>
+                                    <div class="input-container">
+                                        <select id="savedProjectsSelect">
+                                            <option value="">-- Yeni Proje Başlat --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="projectName">Aktif Proje Adı</label>
+                                    <div class="input-container">
+                                        <input type="text" id="projectName" value="Yeni Proje">
+                                        <span class="unit"><i class="fa-solid fa-file-signature"></i></span>
+                                    </div>
+                                </div>
+                                <div class="project-buttons-grid">
+                                    <button type="button" class="project-btn-main btn-save" id="btnSaveProject">
+                                        <i class="fa-solid fa-floppy-disk"></i> Değişiklikleri Kaydet
+                                    </button>
+                                    <button type="button" class="project-btn-main btn-delete" id="btnDeleteProject" disabled>
+                                        <i class="fa-solid fa-trash-can"></i> Projeyi Sil
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-section">
+                                <h3>1. Kapasite ve Yerleşim Parametreleri</h3>
+                                <div class="form-group">
+                                    <label for="stationCount">İstasyon Sayısı</label>
+                                    <div class="input-container">
+                                        <input type="number" id="stationCount" value="8" min="1" max="32">
+                                        <span class="unit">Adet</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="materialCount">Hammadde Sayısı</label>
+                                    <div class="input-container">
+                                        <input type="number" id="materialCount" value="1" min="1" max="10">
+                                        <span class="unit">Adet</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pumpCount">Pompa Sayısı</label>
+                                    <div class="input-container">
+                                        <input type="number" id="pumpCount" value="1" min="1" max="5">
+                                        <span class="unit">Adet</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="machineDistance">Makineler Arası Mesafe</label>
+                                    <div class="input-container">
+                                        <input type="number" id="machineDistance" value="1.0" min="0.1" max="20" step="0.1">
+                                        <span class="unit">m</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="longestDistance">En Uzun Hat Mesafesi</label>
+                                    <div class="input-container">
+                                        <input type="number" id="longestDistance" value="25.0" min="1.0" max="200" step="0.5">
+                                        <span class="unit">m</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-section">
+                                <h3>2. Kablo ve Spiral Hortum Mesafeleri</h3>
+                                <div class="form-group">
+                                    <label for="wallToMachineCable">Duvardan Makine Kablo Mesafesi</label>
+                                    <div class="input-container">
+                                        <input type="number" id="wallToMachineCable" value="7.0" min="0.5" max="50" step="0.5">
+                                        <span class="unit">m</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="controlCableLength">Kumanda Kablosu Boyu</label>
+                                    <div class="input-container">
+                                        <input type="number" id="controlCableLength" value="4.0" min="0.5" max="50" step="0.5">
+                                        <span class="unit">m</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="wallToMachineHose">Duvardan Makine Spiral Hortum Mesafesi</label>
+                                    <div class="input-container">
+                                        <input type="number" id="wallToMachineHose" value="7.0" min="0.5" max="50" step="0.5">
+                                        <span class="unit">m</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-section stacked-form-section">
+                                <h3>3. Model Seçimleri</h3>
+                                <div class="form-group">
+                                    <label for="screenSelect">Ekran Modeli</label>
+                                    <div class="input-container">
+                                        <select id="screenSelect"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driverSelect">Sürücü Modeli</label>
+                                    <div class="input-container">
+                                        <select id="driverSelect"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pumpSelect">Pompa (Blower) Modeli</label>
+                                    <div class="input-container">
+                                        <select id="pumpSelect"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pipeSelect">Tesisat Boru Modeli</label>
+                                    <div class="input-container">
+                                        <select id="pipeSelect"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-section">
+                                <h3>4. İşçilik ve Diğer Ayarlar</h3>
+                                <div class="form-group">
+                                    <label for="laborRatio">İşçilik Oranı</label>
+                                    <div class="input-container">
+                                        <input type="number" id="laborRatio" value="50" min="0" max="200">
+                                        <span class="unit">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="spec-preview-card" style="margin-top: 1rem;">
+                                <div class="spec-item">
+                                    <span class="spec-lbl">Gereken Giriş (I/O)</span>
+                                    <span class="spec-val" id="totalInputs">-</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-lbl">Gereken Çıkış (I/O)</span>
+                                    <span class="spec-val" id="totalOutputs">-</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-lbl">Kumanda Kablo Boyu</span>
+                                    <span class="spec-val" id="totalCableLength">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-card scroll-x">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-receipt"></i> Hesaplanan Teklif Maliyetleri
+                            </div>
+                            <div class="metrics-grid">
+                                <div class="metric-card glow-teal">
+                                    <span class="metric-lbl">Malzeme Toplamı ($)</span>
+                                    <span class="metric-val teal-text" id="summaryMaterialTotal">$0.00</span>
+                                </div>
+                                <div class="metric-card glow-indigo">
+                                    <span class="metric-lbl">İşçilik Maliyeti ($)</span>
+                                    <span class="metric-val indigo-text" id="summaryLaborTotal">$0.00</span>
+                                </div>
+                                <div class="metric-card glow-violet">
+                                    <span class="metric-lbl">Genel Toplam ($)</span>
+                                    <span class="metric-val violet-text" id="summaryGrandTotal">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <table class="cost-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Malzeme Açıklaması</th>
+                                            <th>Miktar</th>
+                                            <th>Birim Fiyat ($)</th>
+                                            <th>Toplam Fiyat ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="costTableBodyMerkezi">
+                                        <!-- Dynamically loaded -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Price List Management -->
+                <div id="priceTabContentMerkezi" class="tab-content">
+                    <div class="panel-card">
+                        <div class="panel-title" style="justify-content: space-between; display: flex; align-items: center; width: 100%; flex-wrap: wrap; gap: 1rem;">
+                            <span><i class="fa-solid fa-tags"></i> Fiyat Listesi Revizyon Paneli</span>
+                            <button class="reset-btn" id="resetPricesBtnMerkezi">
+                                <i class="fa-solid fa-arrow-rotate-left"></i> Fabrika Ayarlarına Dön
+                            </button>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem;">
+                            Merkezi Sistem bileşenlerinin fiyat revizyonlarını aşağıdan gerçekleştirebilirsiniz. Değişiklikler anlık olarak teklif tablosuna yansır.
+                        </p>
+                        <div class="price-edit-grid" id="priceEditGridMerkezi">
+                            <!-- Dynamically loaded -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: PNÖMATİK TAŞIMA -->
+            <section id="pnomatik-sec" class="portal-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fa-solid fa-wind" style="color: var(--accent-indigo);"></i> Pnömatik Taşıma Hesaplayıcı</h2>
+                        <p>Bulk malzemelerin iletim geometrisi ve Blower vakum hava debi gereksinim analizi.</p>
+                    </div>
+                    <button class="export-btn" id="exportBtnPnomatik">
+                        <i class="fa-solid fa-file-pdf"></i> Rapor Yazdır / PDF
+                    </button>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="panel-card">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-sliders"></i> Tasarım Parametreleri ve Girdiler
+                        </div>
+                        
+                        <!-- Pnömatik Proje Yönetim Paneli -->
+                        <div class="form-section project-section-card stacked-form-section" style="margin-bottom: 1.5rem;">
+                            <h3>0. Proje Yönetim Paneli</h3>
+                            <div class="form-group">
+                                <label for="savedProjectsSelectPnomatik">Kayıtlı Projeler</label>
+                                <div class="input-container">
+                                    <select id="savedProjectsSelectPnomatik">
+                                        <option value="">-- Yeni Proje Başlat --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectNamePnomatik">Aktif Proje Adı</label>
+                                <div class="input-container">
+                                    <input type="text" id="projectNamePnomatik" value="Yeni Proje">
+                                    <span class="unit"><i class="fa-solid fa-file-signature"></i></span>
+                                </div>
+                            </div>
+                            <div class="project-buttons-grid">
+                                <button type="button" class="project-btn-main btn-save" id="btnSaveProjectPnomatik">
+                                    <i class="fa-solid fa-floppy-disk"></i> Değişiklikleri Kaydet
+                                </button>
+                                <button type="button" class="project-btn-main btn-delete" id="btnDeleteProjectPnomatik" disabled>
+                                    <i class="fa-solid fa-trash-can"></i> Projeyi Sil
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>1. Taşınacak Bulk Malzeme</h3>
+                            <div class="form-group">
+                                <label for="productSelect">Malzeme Seçimi</label>
+                                <div class="input-container">
+                                    <select id="productSelect"></select>
+                                    <span class="unit"><i class="fa-solid fa-box"></i></span>
+                                </div>
+                            </div>
+                            <div class="spec-preview-card">
+                                <div class="spec-item">
+                                    <span class="spec-lbl">Tane Çapı</span>
+                                    <span class="spec-val" id="specSize">-</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-lbl">Özgül Ağırlık</span>
+                                    <span class="spec-val" id="specDensity">-</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-lbl">Yığın Yoğunluğu</span>
+                                    <span class="spec-val" id="specBulk">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h3>2. Boru Hattı Geometrisi</h3>
+                            <div class="form-group">
+                                <label for="pipeDiameter">Taşıma Borusu İç Çapı</label>
+                                <div class="input-container">
+                                    <input type="number" id="pipeDiameter" value="56" min="20" max="250">
+                                    <span class="unit">mm</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="verticalLength">Dikey Boru Uzunluğu</label>
+                                <div class="input-container">
+                                    <input type="number" id="verticalLength" value="4" min="0" max="50">
+                                    <span class="unit">m</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="totalLength">Toplam Boru Uzunluğu (Yatay + Dikey)</label>
+                                <div class="input-container">
+                                    <input type="number" id="totalLength" value="6" min="2" max="200">
+                                    <span class="unit">m</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="elbows">Kıvrımlı Dirsek Sayısı</label>
+                                <div class="input-container">
+                                    <input type="number" id="elbows" value="3" min="0" max="15">
+                                    <span class="unit">Adet</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h3>3. Taşıma Kapasitesi ve Hava Şartları</h3>
+                            <div class="form-group">
+                                <label for="capacity">İstenilen Tonaj (Kapasite)</label>
+                                <div class="input-container">
+                                    <input type="number" id="capacity" value="2" min="0.1" max="50" step="0.1">
+                                    <span class="unit">t/h</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="airDensity">Hava Yoğunluğu (İletim Başlangıcı)</label>
+                                <div class="input-container">
+                                    <input type="number" id="airDensity" value="0.8" min="0.6" max="2.5" step="0.05">
+                                    <span class="unit">kg/m³</span>
+                                </div>
+                                <div class="input-help">Yüksek basınçlı sistemlerde 1.6 – 2.0 kg/m³, emmeli (vakum) sistemlerde ise 0.80 – 0.95 kg/m³ arasında alınır.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="velocityRatio">İletim Hava Hızı Oranı (c/V)</label>
+                                <div class="input-container">
+                                    <input type="number" id="velocityRatio" value="0.7" min="0.4" max="0.9" step="0.05">
+                                    <span class="unit">c/V</span>
+                                </div>
+                                <div class="input-help">Tozsu ve irmiksi taşıma için 0.80, taneli (bulk) taşıma için 0.70 alınır.</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="elbows">Kıvrımlı Dirsek Sayısı</label>
-                        <div class="input-container">
-                            <input type="number" id="elbows" value="3" min="0" max="15">
+                    <div class="panel-card">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-chart-simple"></i> Blower Kapasitesi ve Hesaplama Çıktıları
+                        </div>
+                        <div class="warning-bar" id="warningBar">
+                            <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+                            <span id="warningMsg"></span>
+                        </div>
+                        <div class="results-container">
+                            <div class="result-card glow-teal">
+                                <div class="result-header">
+                                    <span class="result-title">Gerekli Minimum Körük/Blower Debisi</span>
+                                    <i class="fa-solid fa-gauge-high teal-text"></i>
+                                </div>
+                                <div class="primary-value-container">
+                                    <span class="primary-value teal-text" id="flowRateM3Min">-</span>
+                                    <span class="primary-unit">m³/dk</span>
+                                </div>
+                                <p class="result-desc">Taşıma havası hızını minimum değerde tutmak ve çökmeyi önlemek için blowerın sağlaması gereken debidir.</p>
+                                <div class="sub-values-grid">
+                                    <div class="sub-value-item">
+                                        <span class="sub-lbl">Debi (Saatlik)</span>
+                                        <span class="sub-val"><span id="flowRateM3Hour">-</span> m³/sa</span>
+                                    </div>
+                                    <div class="sub-value-item">
+                                        <span class="sub-lbl">Debi (Litre)</span>
+                                        <span class="sub-val"><span id="flowRateLMin">-</span> lt/dk</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-card glow-indigo">
+                                <div class="result-header">
+                                    <span class="result-title">Gerekli Minimum Körük/Blower Basıncı</span>
+                                    <i class="fa-solid fa-compress indigo-text"></i>
+                                </div>
+                                <div class="primary-value-container pressure-values">
+                                    <div class="value-block">
+                                        <div class="val-row">
+                                            <span class="primary-value indigo-text" id="pressureMbar">-</span>
+                                            <span class="primary-unit">mbar</span>
+                                        </div>
+                                        <span class="value-lbl">Net Gerekli Basınç</span>
+                                    </div>
+                                    <div class="value-divider">/</div>
+                                    <div class="value-block">
+                                        <div class="val-row">
+                                            <span class="primary-value amber-text" id="pressureSafetyMbar">-</span>
+                                            <span class="primary-unit">mbar</span>
+                                        </div>
+                                        <span class="value-lbl">Emniyetli Basınç (%25)</span>
+                                    </div>
+                                </div>
+                                <p class="result-desc">Hava sürtünmesi ve katı malzeme taşıma yükü nedeniyle oluşan toplam vakum emiş direnci.</p>
+                                <div class="sub-values-grid">
+                                    <div class="sub-value-item">
+                                        <span class="sub-lbl">Basınç Farkı (Pa)</span>
+                                        <span class="sub-val"><span id="pressurePa">-</span> Pa</span>
+                                    </div>
+                                    <div class="sub-value-item">
+                                        <span class="sub-lbl">Basınç (Psi)</span>
+                                        <span class="sub-val"><span id="pressurePsi">-</span> psi</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-card glow-violet" id="blowerRecommendationCard">
+                                <div class="result-header">
+                                    <span class="result-title">Mühendislik Blower Seçimi ve Eşleştirme</span>
+                                    <div class="phase-selector">
+                                        <button class="phase-btn active" id="btn3AC">Trifaze</button>
+                                        <button class="phase-btn" id="btn1AC">Monofaze</button>
+                                    </div>
+                                </div>
+                                <div id="blowerMatchContainer">
+                                    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.25rem;">
+                                        <span id="recBlowerModel" style="font-size: 1.6rem; font-weight: 700; color: var(--accent-violet);">Seçiliyor...</span>
+                                        <span id="recBlowerPower" style="font-size: 1.1rem; font-weight: 600; color: var(--text-secondary);">0.0 kW</span>
+                                    </div>
+                                    <p class="result-desc" id="recBlowerDesc" style="margin-bottom:0.75rem;">Hava/basınç değerlerine uygun blower modeli.</p>
+                                    <div class="slider-header" style="font-size:0.8rem; margin-bottom:0.15rem;">
+                                        <span style="color:var(--text-muted);">Çalışma Noktası Yük Marjı</span>
+                                        <span id="recBlowerUsage" style="font-weight:600; color:var(--text-primary);">0%</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" id="recBlowerProgressBar" style="width: 0%;"></div>
+                                    </div>
+                                    <div class="sub-values-grid" style="grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border-color); padding-top: 0.5rem; font-size: 0.8rem;">
+                                        <div class="sub-value-item">
+                                            <span class="sub-lbl">Sağlanan Debi</span>
+                                            <span class="sub-val" id="recBlowerCapacity">-</span>
+                                        </div>
+                                        <div class="sub-value-item">
+                                            <span class="sub-lbl">Maks. Basınç</span>
+                                            <span class="sub-val" id="recBlowerMaxVacuum">-</span>
+                                        </div>
+                                    </div>
+                                    <div class="alternatives-section">
+                                        <span class="alt-title">Diğer Uygun Modeller (Seçmek İçin Tıklayın)</span>
+                                        <div class="alt-tags" id="recBlowerAlternatives">
+                                            <!-- Dynamically filled -->
+                                        </div>
+                                    </div>
+                                    <div class="blower-notes-section">
+                                        <span class="notes-title"><i class="fa-solid fa-circle-exclamation"></i> Kritik Kurulum ve Güvenlik Notları</span>
+                                        <ul class="notes-list" id="recBlowerNotesList">
+                                            <!-- Dynamically filled -->
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="blowerNoMatchContainer" class="blower-no-match" style="display:none;">
+                                    <div class="no-match-alert">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        <span>Uygun Model Bulunamadı!</span>
+                                    </div>
+                                    <p class="result-desc">Girilen boru hattı geometrisi veya debi şartlarını karşılayan Doğuşsan 2RB serisi standart körük bulunmamaktadır. Lütfen motor gücünü, hat uzunluğunu veya boru iç çapını optimize edin.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ===== YÜKLEYİCİ MODALS ===== -->
+    <!-- Model prescription Editor Modal -->
+    <div class="modal-overlay" id="modelEditorModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-gears"></i> Model Reçete İçerik Editörü</h2>
+                <button class="modal-close-btn" id="btnCloseModelEdit">&times;</button>
+            </div>
+            <div class="modal-body-grid">
+                <div>
+                    <span class="modal-section-title">Model Genel Bilgisi</span>
+                    <div class="form-group" style="grid-template-columns: 1.5fr 1fr; margin-bottom: 1.5rem;">
+                        <label for="modelCapacityInput" style="font-size: 0.85rem;">İşletme Model Kapasitesi</label>
+                        <div class="input-container" style="padding: 0.35rem 0.5rem;">
+                            <input type="number" id="modelCapacityInput" value="20" min="1" max="200" style="font-size: 0.85rem;">
                             <span class="unit">Adet</span>
                         </div>
                     </div>
+                    <span class="modal-section-title" style="margin-top: 1.5rem;">Yeni Malzeme Ekle</span>
+                    <div class="form-group" style="grid-template-columns: 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <label for="modelAddMaterialSelect" style="font-size: 0.8rem; text-align: left;">Eklenecek Parça</label>
+                        <div class="input-container" style="padding: 0.35rem 0.5rem;">
+                            <select id="modelAddMaterialSelect" style="text-align: left; text-align-last: left; font-size: 0.8rem;"></select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="grid-template-columns: 1.5fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                        <label for="modelAddMaterialQty" style="font-size: 0.8rem;">Miktar / Metraj</label>
+                        <div class="input-container" style="padding: 0.35rem 0.5rem;">
+                            <input type="number" id="modelAddMaterialQty" value="1.0" min="0.1" step="0.1" style="font-size: 0.85rem;">
+                            <span class="unit">Miktar</span>
+                        </div>
+                    </div>
+                    <button type="button" class="project-btn-main btn-save" id="btnModelAddMaterialSubmit" style="width: 100%; font-size: 0.85rem; padding: 0.5rem;"><i class="fa-solid fa-plus"></i> Reçeteye Ekle</button>
                 </div>
-
-                <!-- Process conditions -->
-                <div class="form-section">
-                    <h3>3. Taşıma Kapasitesi ve Hava Şartları</h3>
-
-                    <div class="form-group">
-                        <label for="capacity">İstenilen Tonaj (Kapasite)</label>
-                        <div class="input-container">
-                            <input type="number" id="capacity" value="2" min="0.1" max="50" step="0.1">
-                            <span class="unit">t/h</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="airDensity">Hava Yoğunluğu (İletim Başlangıcı)</label>
-                        <div class="input-container">
-                            <input type="number" id="airDensity" value="0.8" min="0.6" max="2.5" step="0.05">
-                            <span class="unit">kg/m³</span>
-                        </div>
-                        <div class="input-help">Yüksek basınçlı sistemlerde 1.6 – 2.0 kg/m³, emmeli (vakum) sistemlerde ise 0.80 – 0.95 kg/m³ arasında alınır.</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="velocityRatio">İletim Hava Hızı Oranı (c/V)</label>
-                        <div class="input-container">
-                            <input type="number" id="velocityRatio" value="0.7" min="0.4" max="0.9" step="0.05">
-                            <span class="unit">c/V</span>
-                        </div>
-                        <div class="input-help">Tozsu ve irmiksi taşıma için 0.80, taneli (bulk) taşıma için 0.70 alınır.</div>
+                <div>
+                    <span class="modal-section-title">Model Parça Listesi</span>
+                    <div class="modal-recipe-list" id="modelEditItemsList">
+                        <!-- Dynamically filled -->
                     </div>
                 </div>
             </div>
-
-            <!-- Right Panel: Outputs -->
-            <div class="panel-card">
-                <div class="panel-title">
-                    <i class="fa-solid fa-chart-simple"></i>
-                    Blower Kapasitesi ve Hesaplama Çıktıları
-                </div>
-
-                <!-- Warnings -->
-                <div class="warning-bar" id="warningBar">
-                    <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
-                    <span id="warningMsg"></span>
-                </div>
-
-                <div class="results-container">
-                    <!-- Flow Rate Result -->
-                    <div class="result-card glow-teal">
-                        <div class="result-header">
-                            <span class="result-title">Gerekli Minimum Körük/Blower Debisi</span>
-                            <i class="fa-solid fa-gauge-high teal-text"></i>
-                        </div>
-                        <div class="primary-value-container">
-                            <span class="primary-value teal-text" id="flowRateM3Min">-</span>
-                            <span class="primary-unit">m³/dk</span>
-                        </div>
-                        <p class="result-desc">Taşıma havası hızını minimum değerde tutmak ve çökmeyi önlemek için blowerın sağlaması gereken asgari debidir.</p>
-                        
-                        <div class="sub-values-grid">
-                            <div class="sub-value-item">
-                                <span class="sub-lbl">Debi (Saatlik)</span>
-                                <span class="sub-val"><span id="flowRateM3Hour">-</span> m³/sa</span>
-                            </div>
-                            <div class="sub-value-item">
-                                <span class="sub-lbl">Debi (Litre)</span>
-                                <span class="sub-val"><span id="flowRateLMin">-</span> lt/dk</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pressure Loss Result -->
-                    <div class="result-card glow-indigo">
-                        <div class="result-header">
-                            <span class="result-title">Gerekli Minimum Körük/Blower Basıncı</span>
-                            <i class="fa-solid fa-compress indigo-text"></i>
-                        </div>
-                        <div class="primary-value-container pressure-values">
-                            <div class="value-block">
-                                <div class="val-row">
-                                    <span class="primary-value indigo-text" id="pressureMbar">-</span>
-                                    <span class="primary-unit">mbar</span>
-                                </div>
-                                <span class="value-lbl">Net Gerekli Basınç</span>
-                            </div>
-                            <div class="value-divider">/</div>
-                            <div class="value-block">
-                                <div class="val-row">
-                                    <span class="primary-value amber-text" id="pressureSafetyMbar">-</span>
-                                    <span class="primary-unit">mbar</span>
-                                </div>
-                                <span class="value-lbl">%25 Toleranslı Emniyet</span>
-                            </div>
-                        </div>
-                        <p class="result-desc">Boru sürtünmesi, dirsekler ve dikey yerçekimi direncini aşmak için sistemin yenmesi gereken toplam basınç kaybıdır.</p>
-                        
-                        <div class="sub-values-grid">
-                            <div class="sub-value-item">
-                                <span class="sub-lbl">Basınç (Pascal)</span>
-                                <span class="sub-val"><span id="pressurePa">-</span> Pa</span>
-                            </div>
-                            <div class="sub-value-item">
-                                <span class="sub-lbl">Basınç (PSI)</span>
-                                <span class="sub-val"><span id="pressurePsi">-</span> psi</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Blower Selection Result -->
-                    <div class="result-card glow-violet" id="blowerSelectionCard">
-                        <div class="result-header">
-                            <span class="result-title">Doğuşsan Blower Önerisi (Vakum Eğrisi)</span>
-                            <div class="phase-selector">
-                                <button type="button" class="phase-btn active" id="btn3AC" data-phase="3AC">Trifaze (3AC)</button>
-                                <button type="button" class="phase-btn" id="btn1AC" data-phase="1AC">Monofaze (1AC)</button>
-                            </div>
-                        </div>
-                        
-                        <div class="blower-recommendation-content" id="blowerMatchContainer">
-                            <div class="primary-value-container">
-                                <span class="primary-value violet-text" id="recBlowerModel">-</span>
-                                <span class="primary-unit" id="recBlowerPower">- kW</span>
-                            </div>
-                            <p class="result-desc" id="recBlowerDesc">Hesaplanan çalışma noktasına (debi & vakum) en uygun Doğuşsan 2RB yan kanal blower modelidir.</p>
-                            
-                            <div class="sub-values-grid">
-                                <div class="sub-value-item">
-                                    <span class="sub-lbl">Kapasite Kullanımı</span>
-                                    <span class="sub-val" id="recBlowerUsage">- %</span>
-                                </div>
-                                <div class="sub-value-item">
-                                    <span class="sub-lbl">Çalışma Noktası Debisi</span>
-                                    <span class="sub-val" id="recBlowerCapacity">- m³/sa</span>
-                                </div>
-                                <div class="sub-value-item">
-                                    <span class="sub-lbl">Maksimum Debi (Katalog)</span>
-                                    <span class="sub-val" id="recBlowerMaxFlow">- m³/sa</span>
-                                </div>
-                                <div class="sub-value-item">
-                                    <span class="sub-lbl">Maksimum Vakum (Limit)</span>
-                                    <span class="sub-val" id="recBlowerMaxVacuum">- mbar</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Capacity utilization progress bar -->
-                            <div class="progress-container">
-                                <div class="progress-bar" id="recBlowerProgressBar" style="width: 0%"></div>
-                            </div>
-                            
-                            <!-- Alternative compatible models -->
-                            <div class="alternatives-section">
-                                <span class="alt-title">Uyumlu Alternatif Modeller</span>
-                                <div class="alt-tags" id="recBlowerAlternatives">
-                                    <span class="no-alt">Alternatif yok</span>
-                                </div>
-                            </div>
-
-                            <!-- Blower warning notes -->
-                            <div class="blower-notes-section" id="recBlowerNotesSection">
-                                <span class="notes-title"><i class="fa-solid fa-triangle-exclamation"></i> İşletme ve Güvenlik Uyarıları</span>
-                                <ul class="notes-list" id="recBlowerNotesList">
-                                    <!-- Dynamic notes will be inserted here -->
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <div class="blower-no-match" id="blowerNoMatchContainer" style="display: none;">
-                            <div class="no-match-alert">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <span>Uyumlu Blower Bulunamadı!</span>
-                            </div>
-                            <p class="result-desc">Girdiğiniz yüksek basınç veya debi değerlerine uygun Doğuşsan 2RB blower modeli mevcut değildir. Lütfen boru çapını büyüterek basınç kaybını düşürün ya da Trifaze gücü seçin.</p>
-                    </div>
-                </div>
+            <div class="modal-footer">
+                <button class="project-btn-main btn-save" id="btnSaveCloseModelEdit" style="padding: 0.6rem 1.5rem;">Değişiklikleri Tamamla</button>
             </div>
         </div>
-
-        <!-- Footer -->
-        <footer>
-            <p>&copy; 2026 Pnömatik Taşıma Hesaplayıcı Uygulaması. D:\FY\Android Studio\Hesaplamalar veritabanına bağlıdır.</p>
-        </footer>
     </div>
 
-    <script src="script.js"></script>
+    <!-- New Model Ekle Modal -->
+    <div class="modal-overlay" id="newModelModal">
+        <div class="modal-box" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-folder-plus"></i> Yeni Model Kaydı</h2>
+                <button class="modal-close-btn" id="btnCloseNewModel">&times;</button>
+            </div>
+            <div class="modal-body-grid" style="grid-template-columns: 1fr; gap: 1rem;">
+                <div class="form-group" style="grid-template-columns: 1.2fr 1fr; gap: 0.5rem; margin-bottom: 0;">
+                    <label for="newModelNameInput">Model Kodu / Adı</label>
+                    <div class="input-container" style="padding: 0.35rem 0.5rem;">
+                        <input type="text" id="newModelNameInput" placeholder="Örn: MY600" style="text-align: left; font-size: 0.85rem;">
+                    </div>
+                </div>
+                <div class="form-group" style="grid-template-columns: 1.2fr 1fr; gap: 0.5rem; margin-bottom: 0;">
+                    <label for="newModelCapacityInput">Başlangıç Kapasitesi</label>
+                    <div class="input-container" style="padding: 0.35rem 0.5rem;">
+                        <input type="number" id="newModelCapacityInput" value="20" min="1" max="200" style="font-size: 0.85rem;">
+                        <span class="unit">Adet</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top: 1.5rem; padding-top: 1rem;">
+                <button class="project-btn-main btn-save" id="btnNewModelSubmit" style="padding: 0.5rem 1rem;">Model Oluştur</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load scripts in order -->
+    <script src="starter_data.js"></script>
+    <script src="yukleyici.js"></script>
+    <script src="merkezi.js"></script>
+    <script src="pnomatik.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>

@@ -1,8 +1,12 @@
-const CACHE_NAME = "pnomatik-hesap-v11";
+const CACHE_NAME = "fy-portal-v1";
 const ASSETS = [
     "index.html",
     "styles.css",
-    "script.js",
+    "starter_data.js",
+    "main.js",
+    "yukleyici.js",
+    "merkezi.js",
+    "pnomatik.js",
     "manifest.json",
     "favicon.svg"
 ];

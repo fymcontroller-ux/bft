@@ -1,12 +1,12 @@
 {
-  "name": "Pnömatik Taşıma Hesaplayıcı",
-  "short_name": "Pnömatik Hesap",
-  "description": "Pnömatik taşıma sistemleri için mühendislik hesaplama ve blower seçim aracı",
+  "name": "FY Yönetim ve Hesaplama Portali",
+  "short_name": "FY Portal",
+  "description": "FY Yönetici Maliyet, Merkezi Sistem ve Pnömatik Hesaplama Portali",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#090a0f",
-  "theme_color": "#14b8a6",
-  "orientation": "portrait-primary",
+  "background_color": "#0a0b10",
+  "theme_color": "#6366f1",
+  "orientation": "any",
   "icons": [
     {
       "src": "favicon.svg",

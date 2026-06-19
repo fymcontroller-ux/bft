@@ -1,3 +1,4 @@
+(() => {
 // Products Database based on original Excel sheet
 const products = [
     { name: "Arpa", size: "4 mm", density: 1420, bulkDensity: 690, velocityRange: "20-25 m/s", beta: 0.04, defaultV: 25 },
@@ -212,6 +213,7 @@ function findRecommendedBlower(requiredFlow, requiredPressure, phase) {
 document.addEventListener("DOMContentLoaded", () => {
     initProductSelect();
     setupEventListeners();
+    loadSavedProjectsListPnomatik();
     calculate();
 
     // Register PWA Service Worker for mobile offline installation
@@ -254,7 +256,7 @@ function setupEventListeners() {
         calculate();
     });
 
-    document.getElementById("exportBtn").addEventListener("click", exportToPDF);
+    document.getElementById("exportBtnPnomatik").addEventListener("click", exportToPDF);
 
     // Phase Selection click handlers
     const btn3AC = document.getElementById("btn3AC");
@@ -274,6 +276,19 @@ function setupEventListeners() {
             btn3AC.classList.remove("active");
             calculate();
         });
+    }
+
+    // Project management listeners
+    const btnSaveProj = document.getElementById("btnSaveProjectPnomatik");
+    if (btnSaveProj) btnSaveProj.addEventListener("click", saveCurrentProjectPnomatik);
+    const btnDelProj = document.getElementById("btnDeleteProjectPnomatik");
+    if (btnDelProj) btnDelProj.addEventListener("click", deleteSelectedProjectPnomatik);
+    const selectProj = document.getElementById("savedProjectsSelectPnomatik");
+    if (selectProj) selectProj.addEventListener("change", loadSelectedProjectPnomatik);
+    
+    const projNameInp = document.getElementById("projectNamePnomatik");
+    if (projNameInp) {
+        projNameInp.addEventListener("input", calculate);
     }
 }
 
@@ -516,5 +531,171 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
 }
 
 function exportToPDF() {
+    const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
+    const projNameInp = document.getElementById("projectNamePnomatik");
+    const projName = projNameInp ? projNameInp.value.trim() : "";
+    const originalTitle = document.title;
+    
+    document.title = `${dateStr} - ${projName || "Pnomatik Tasarim Projesi"} - Rapor`;
     window.print();
+    
+    setTimeout(() => {
+        document.title = originalTitle;
+    }, 1000);
 }
+
+// --- PROJECT MANAGEMENT FUNCTIONS ---
+function loadSavedProjectsListPnomatik() {
+    const list = JSON.parse(localStorage.getItem("p_projects")) || {};
+    const select = document.getElementById("savedProjectsSelectPnomatik");
+    if (!select) return;
+    
+    const currentSelection = select.value;
+    select.innerHTML = '<option value="">-- Yeni Proje Başlat --</option>';
+    
+    Object.keys(list).sort().forEach(name => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        select.appendChild(opt);
+    });
+
+    select.value = currentSelection;
+    toggleDeleteButtonStatePnomatik();
+}
+
+function toggleDeleteButtonStatePnomatik() {
+    const select = document.getElementById("savedProjectsSelectPnomatik");
+    const deleteBtn = document.getElementById("btnDeleteProjectPnomatik");
+    if (!select || !deleteBtn) return;
+    deleteBtn.disabled = (select.value === "");
+}
+
+function saveCurrentProjectPnomatik() {
+    const nameInput = document.getElementById("projectNamePnomatik");
+    const name = nameInput ? nameInput.value.trim() : "";
+    if (!name) {
+        alert("Lütfen kaydetmeden önce bir proje adı girin.");
+        return;
+    }
+
+    const projects = JSON.parse(localStorage.getItem("p_projects")) || {};
+    
+    projects[name] = {
+        name: name,
+        productSelect: document.getElementById("productSelect").value,
+        capacity: parseFloat(document.getElementById("capacity").value) || 2,
+        pipeDiameter: parseFloat(document.getElementById("pipeDiameter").value) || 56,
+        verticalLength: parseFloat(document.getElementById("verticalLength").value) || 4,
+        totalLength: parseFloat(document.getElementById("totalLength").value) || 6,
+        elbows: parseInt(document.getElementById("elbows").value) || 3,
+        airDensity: parseFloat(document.getElementById("airDensity").value) || 0.8,
+        velocityRatio: parseFloat(document.getElementById("velocityRatio").value) || 0.7,
+        selectedPhase: selectedPhase
+    };
+
+    localStorage.setItem("p_projects", JSON.stringify(projects));
+    loadSavedProjectsListPnomatik();
+    
+    document.getElementById("savedProjectsSelectPnomatik").value = name;
+    toggleDeleteButtonStatePnomatik();
+    
+    // Update main dashboard stats if it has a listener or updates
+    if (typeof updateDashboardStats === "function") {
+        updateDashboardStats();
+    }
+    
+    alert(`"${name}" projesi başarıyla kaydedildi.`);
+}
+
+function deleteSelectedProjectPnomatik() {
+    const select = document.getElementById("savedProjectsSelectPnomatik");
+    const name = select ? select.value : "";
+    if (!name) {
+        alert("Lütfen önce silmek istediğiniz projeyi seçin.");
+        return;
+    }
+
+    if (!confirm(`"${name}" projesini silmek istediğinize emin misiniz?`)) {
+        return;
+    }
+
+    const projects = JSON.parse(localStorage.getItem("p_projects")) || {};
+    delete projects[name];
+    localStorage.setItem("p_projects", JSON.stringify(projects));
+    
+    loadSavedProjectsListPnomatik();
+    resetToNewProjectPnomatik();
+    
+    if (typeof updateDashboardStats === "function") {
+        updateDashboardStats();
+    }
+}
+
+function loadSelectedProjectPnomatik() {
+    const select = document.getElementById("savedProjectsSelectPnomatik");
+    const name = select ? select.value : "";
+    
+    if (name === "") {
+        resetToNewProjectPnomatik();
+        return;
+    }
+
+    const projects = JSON.parse(localStorage.getItem("p_projects")) || {};
+    const p = projects[name];
+    if (!p) return;
+
+    document.getElementById("projectNamePnomatik").value = p.name;
+    document.getElementById("productSelect").value = p.productSelect;
+    document.getElementById("capacity").value = p.capacity;
+    document.getElementById("pipeDiameter").value = p.pipeDiameter;
+    document.getElementById("verticalLength").value = p.verticalLength;
+    document.getElementById("totalLength").value = p.totalLength;
+    document.getElementById("elbows").value = p.elbows;
+    document.getElementById("airDensity").value = p.airDensity;
+    document.getElementById("velocityRatio").value = p.velocityRatio;
+    
+    selectedPhase = p.selectedPhase || "3AC";
+    const btn3AC = document.getElementById("btn3AC");
+    const btn1AC = document.getElementById("btn1AC");
+    if (btn3AC && btn1AC) {
+        if (selectedPhase === "3AC") {
+            btn3AC.classList.add("active");
+            btn1AC.classList.remove("active");
+        } else {
+            btn1AC.classList.add("active");
+            btn3AC.classList.remove("active");
+        }
+    }
+
+    updateProductSpecs();
+    toggleDeleteButtonStatePnomatik();
+    calculate();
+}
+
+function resetToNewProjectPnomatik() {
+    document.getElementById("projectNamePnomatik").value = "Yeni Proje";
+    document.getElementById("productSelect").value = "P.Propilen granül";
+    document.getElementById("capacity").value = 2;
+    document.getElementById("pipeDiameter").value = 56;
+    document.getElementById("verticalLength").value = 4;
+    document.getElementById("totalLength").value = 6;
+    document.getElementById("elbows").value = 3;
+    document.getElementById("airDensity").value = 0.8;
+    document.getElementById("velocityRatio").value = 0.7;
+    
+    selectedPhase = "3AC";
+    const btn3AC = document.getElementById("btn3AC");
+    const btn1AC = document.getElementById("btn1AC");
+    if (btn3AC && btn1AC) {
+        btn3AC.classList.add("active");
+        btn1AC.classList.remove("active");
+    }
+
+    updateProductSpecs();
+    document.getElementById("savedProjectsSelectPnomatik").value = "";
+    toggleDeleteButtonStatePnomatik();
+    calculate();
+}
+
+})();
