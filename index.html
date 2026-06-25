@@ -61,6 +61,9 @@
                     </button>
                 </div>
                 <div id="syncStatus" style="font-size: 0.7rem; color: var(--text-muted); text-align: center; line-height: 1.2;">Son Eşleşme: Yapılmadı</div>
+                <button id="btnDeleteCloudProjects" class="project-btn-main btn-delete" style="width: 100%; padding: 0.4rem; font-size: 0.72rem; margin: 0; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.15); color: #fca5a5;">
+                    <i class="fa-solid fa-trash-can"></i> Projeleri Sil
+                </button>
             </div>
         </aside>
 
@@ -854,6 +857,51 @@
                 <!-- Tab 1: Proposal Preparation -->
                 <div id="createTeklifTabContent" class="tab-content active-content">
 
+                <!-- PANEL: Proposal Save & Load Management -->
+                <div class="panel-card" style="margin-bottom: 1.5rem;">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-folder-open"></i> Kayıtlı Teklif Şablonları Yönetimi
+                    </div>
+                    <div class="form-section" style="margin-bottom: 0; padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <!-- Save Column -->
+                            <div style="display: flex; flex-direction: column; gap: 1rem; border-right: 1px solid var(--border-color); padding-right: 2rem;">
+                                <h3 style="margin-bottom: 0.5rem; color: var(--accent-indigo); font-size: 0.95rem;">Mevcut Teklifi Şablon Olarak Kaydet</h3>
+                                <div class="form-group" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; margin-bottom: 0;">
+                                    <label for="proposalSaveName" style="font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">Şablon Kayıt Adı</label>
+                                    <div class="input-container" style="padding: 0.45rem 0.6rem; background: var(--bg-input);">
+                                        <input type="text" id="proposalSaveName" placeholder="Örn: Teklif - Befatek #2026" style="text-align: left !important; font-size: 0.85rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <button type="button" class="project-btn-main btn-save" id="btnSaveProposal" style="width: 100%; margin-top: 0.5rem; padding: 0.6rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent-indigo), rgba(99, 102, 241, 0.8));">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> Teklifi Şablon Olarak Kaydet
+                                </button>
+                            </div>
+
+                            <!-- Load Column -->
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <h3 style="margin-bottom: 0.5rem; color: var(--accent-violet); font-size: 0.95rem;">Kayıtlı Şablonları Yükle / Sil</h3>
+                                <div class="form-group" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; margin-bottom: 0;">
+                                    <label for="savedProposalsSelect" style="font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">Şablon Seçimi</label>
+                                    <div class="input-container" style="padding: 0.45rem 0.6rem; background: var(--bg-input);">
+                                        <select id="savedProposalsSelect" style="text-align: left !important; font-size: 0.85rem; width: 100%;">
+                                            <option value="">-- Yeni Teklif Hazırla --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                    <button type="button" class="project-btn-main btn-save" id="btnLoadProposal" style="flex: 1; padding: 0.6rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent-violet), rgba(139, 92, 246, 0.8));">
+                                        <i class="fa-solid fa-folder-open"></i> Yükle
+                                    </button>
+                                    <button type="button" class="project-btn-main btn-delete" id="btnDeleteProposal" disabled style="flex: 1; padding: 0.6rem; font-size: 0.85rem;">
+                                        <i class="fa-solid fa-trash-can"></i> Sil
+                                      </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- TOP PANEL: Full-width Customer Details -->
                 <div class="panel-card" style="margin-bottom: 1.5rem;">
                     <div class="panel-title">
@@ -1154,14 +1202,21 @@
                             <!-- Dynamically filled by JS -->
                         </div>
 
-                        <div class="project-buttons-grid" style="margin-top: 1.5rem;">
+                        <div class="project-buttons-grid" style="margin-top: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                             <button type="button" class="project-btn-main btn-save" id="btnPrintCustomProposal" style="background: linear-gradient(135deg, var(--accent-teal), rgba(20, 184, 166, 0.8));">
-                                <i class="fa-solid fa-file-pdf"></i> Teklifi Yazdır / PDF
+                                <i class="fa-solid fa-print"></i> Teklifi Yazdır / PDF
+                            </button>
+                            <button type="button" class="project-btn-main btn-save" id="btnSelectPdfFolder" style="background: rgba(20, 184, 166, 0.08); border-color: rgba(20, 184, 166, 0.2); color: #99f6e4;">
+                                <i class="fa-solid fa-folder-open"></i> PDF Klasörü Seç
+                            </button>
+                            <button type="button" class="project-btn-main btn-save" id="btnSaveToPdfFolder" style="background: linear-gradient(135deg, var(--accent-violet), rgba(139, 92, 246, 0.8));">
+                                <i class="fa-solid fa-file-export"></i> Otomatik Klasöre Kaydet
                             </button>
                             <button type="button" class="project-btn-main btn-delete" id="btnClearProposal">
                                 <i class="fa-solid fa-trash"></i> Teklifi Sıfırla
                             </button>
                         </div>
+                        <div id="pdfFolderStatus" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Otomatik Kayıt Klasörü: Belirlenmedi (Tarayıcı varsayılanına kaydeder)</div>
                     </div>
                 </div> <!-- End of Tab 1: Proposal Preparation -->
 
@@ -1340,10 +1395,14 @@
                     </button>
                 </div>
                 <div id="modalSyncStatus" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; line-height: 1.2;">Son Eşleşme: Yapılmadı</div>
+                <button id="btnModalDeleteCloudProjects" class="project-btn-main btn-delete" style="width: 100%; padding: 0.6rem; font-size: 0.85rem; margin: 0; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.15); color: #fca5a5;">
+                    <i class="fa-solid fa-trash-can"></i> Projeleri Sil
+                </button>
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="firebase_sync.js"></script>

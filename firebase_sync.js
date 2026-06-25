@@ -28,7 +28,8 @@
         "t_exchange_rate",
         "t_show_tl",
         "t_show_vat",
-        "t_vat_rate"
+        "t_vat_rate",
+        "t_proposals"
     ];
 
     let isSyncing = false; // Flag to prevent circular sync loop
@@ -273,6 +274,70 @@
         if (btnModalDownload) {
             btnModalDownload.addEventListener("click", () => {
                 downloadAction(() => modalInputCode.value, disableAllButtons, enableAllButtons, updateAllStatus);
+            });
+        }
+
+        const deleteProjectsAction = async (getCodeFn, disableBtnsFn, enableBtnsFn, updateStatusFn) => {
+            const companyCode = getCodeFn().trim().toLowerCase();
+            if (!companyCode) {
+                alert("Lütfen geçerli bir şirket/cihaz kodu girin.");
+                return;
+            }
+
+            if (!confirm("Tüm kayıtlı Merkezi ve Pnömatik projelerini silmek istediğinize emin misiniz? Bu işlem hem tarayıcıdan hem de buluttan verileri kalıcı olarak silecektir! (Yükleyici verileri ve fiyat listeleri korunacaktır.)")) {
+                return;
+            }
+
+            disableBtnsFn();
+            updateStatusFn("Projeler siliniyor...");
+
+            isSyncing = true;
+            localStorage.setItem("m_projects", "{}");
+            localStorage.setItem("p_projects", "{}");
+
+            const payload = {
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                data: {}
+            };
+
+            storageKeys.forEach(key => {
+                payload.data[key] = localStorage.getItem(key);
+            });
+
+            try {
+                await db.collection("portal_data").doc(companyCode).set(payload);
+                
+                const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
+                const successMsg = `Projeler Temizlendi: ${nowStr}`;
+                
+                localStorage.setItem("t_sync_last_status", successMsg);
+                localStorage.setItem("t_sync_company_code", companyCode);
+                updateSyncUI(companyCode, successMsg);
+
+                alert("Tüm Merkezi ve Pnömatik projeleri başarıyla silindi ve bulut eşitlendi.");
+                location.reload();
+            } catch (err) {
+                console.error("Firebase sync project delete error:", err);
+                updateStatusFn("Silme hatası!");
+                alert("Buluttan projeler silinirken bir hata oluştu: " + err.message);
+            } finally {
+                isSyncing = false;
+                enableBtnsFn();
+            }
+        };
+
+        // Event listeners for Delete Buttons
+        const btnDeleteCloud = document.getElementById("btnDeleteCloudProjects");
+        const btnModalDeleteCloud = document.getElementById("btnModalDeleteCloudProjects");
+
+        if (btnDeleteCloud) {
+            btnDeleteCloud.addEventListener("click", () => {
+                deleteProjectsAction(() => inputCode.value, disableAllButtons, enableAllButtons, updateAllStatus);
+            });
+        }
+        if (btnModalDeleteCloud) {
+            btnModalDeleteCloud.addEventListener("click", () => {
+                deleteProjectsAction(() => modalInputCode.value, disableAllButtons, enableAllButtons, updateAllStatus);
             });
         }
     });
