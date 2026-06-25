@@ -109,6 +109,17 @@
                             <span class="overview-link">Modüle Git <i class="fa-solid fa-arrow-right"></i></span>
                         </div>
                     </div>
+
+                    <div class="overview-card" id="btnOpenSyncModal">
+                        <div class="overview-icon-container" style="background: rgba(99, 102, 241, 0.1); color: var(--accent-indigo); border: 1px solid rgba(99, 102, 241, 0.2);">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <div class="overview-info">
+                            <span class="overview-title">Bulut Senkronizasyonu</span>
+                            <span class="overview-desc">Tüm projelerinizi buluta yedekleyin veya diğer cihazlardan buraya çekin.</span>
+                            <span class="overview-link">Sync Panelini Aç <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
                 </div>
 
             </section>
@@ -1299,6 +1310,36 @@
             </div>
             <div class="modal-footer" style="margin-top: 1.5rem; padding-top: 1rem;">
                 <button class="project-btn-main btn-save" id="btnNewModelSubmit" style="padding: 0.5rem 1rem;">Model Oluştur</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cloud Sync Modal (Mobile & Quick Access) -->
+    <div class="modal-overlay" id="cloudSyncModal">
+        <div class="modal-box" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-cloud-arrow-up"></i> Bulut Senkronizasyonu</h2>
+                <button class="modal-close-btn" id="btnCloseCloudSyncModal">&times;</button>
+            </div>
+            <div class="modal-body-grid" style="grid-template-columns: 1fr; gap: 1.25rem;">
+                <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                    Tarayıcınızdaki tüm projeleri buluta yüklemek veya buluttaki projeleri bu cihaza çekmek için ortak bir şirket kodu girin.
+                </div>
+                <div class="form-group" style="grid-template-columns: 1fr; gap: 0.4rem; margin-bottom: 0;">
+                    <label for="modalSyncCompanyCode" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Şirket / Cihaz Kodu</label>
+                    <div class="input-container" style="padding: 0.45rem 0.6rem; background: var(--bg-input);">
+                        <input type="text" id="modalSyncCompanyCode" value="bft_portal" style="font-size: 0.85rem; color: var(--text-primary); text-align: left; width: 100%; border: none; background: transparent; outline: none;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button id="btnModalUploadToCloud" class="project-btn-main btn-save" style="flex: 1; padding: 0.6rem; font-size: 0.85rem; margin: 0; background: linear-gradient(135deg, var(--accent-indigo), rgba(99, 102, 241, 0.8));">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Yükle (Upload)
+                    </button>
+                    <button id="btnModalDownloadFromCloud" class="project-btn-main" style="flex: 1; padding: 0.6rem; font-size: 0.85rem; margin: 0; background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.2); color: #c7d2fe;">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> Çek (Download)
+                    </button>
+                </div>
+                <div id="modalSyncStatus" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; line-height: 1.2;">Son Eşleşme: Yapılmadı</div>
             </div>
         </div>
     </div>
