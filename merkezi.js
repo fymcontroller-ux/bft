@@ -1055,7 +1055,7 @@ function calculate() {
             { name: selectedPipe ? selectedPipe.hose : "", qty: (H17 * 2) * H7, unitPrice: selectedPipe ? selectedPipe.hosePrice : 0, isMeter: true },
             { name: selectedPipe ? selectedPipe.clamp : "", qty: 4 * H7, unitPrice: selectedPipe ? selectedPipe.clampPrice : 0 },
             { name: selectedPipe ? selectedPipe.name : selectedPipeName, qty: H14 * (H8 + 1), unitPrice: selectedPipe ? selectedPipe.price : 0, isMeter: true },
-            { name: getGeneralItem("contali_kelepce").name, qty: 16, unitPrice: getGeneralItem("contali_kelepce").price },
+            { name: getGeneralItem("contali_kelepce").name, qty: Math.ceil((H8 * H7 * 2) + ((H14 * (H8 + 1)) / 6)), unitPrice: getGeneralItem("contali_kelepce").price },
             { name: getGeneralItem("tesisat_aparatlari").name, qty: Math.ceil(H14 / 3), unitPrice: getGeneralItem("tesisat_aparatlari").price }
         ]
     };

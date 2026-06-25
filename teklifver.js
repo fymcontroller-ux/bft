@@ -887,7 +887,7 @@ function getCentralAnnexHTML(projectName) {
                 { name: selectedPipe ? selectedPipe.hose : "", qty: (H17 * 2) * H7, isMeter: true },
                 { name: selectedPipe ? selectedPipe.clamp : "", qty: 4 * H7 },
                 { name: selectedPipe ? selectedPipe.name : proj.pipeSelect, qty: H14 * (H8 + 1), isMeter: true },
-                { name: getGeneralItem("contali_kelepce").name, qty: 16 },
+                { name: getGeneralItem("contali_kelepce").name, qty: Math.ceil((H8 * H7 * 2) + ((H14 * (H8 + 1)) / 6)) },
                 { name: getGeneralItem("tesisat_aparatlari").name, qty: Math.ceil(H14 / 3) }
             ]
         }
