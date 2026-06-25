@@ -1,4 +1,4 @@
-const CACHE_NAME = "fy-portal-v1";
+const CACHE_NAME = "fy-portal-v2";
 const ASSETS = [
     "index.html",
     "styles.css",
@@ -7,6 +7,8 @@ const ASSETS = [
     "yukleyici.js",
     "merkezi.js",
     "pnomatik.js",
+    "teklifver.js",
+    "bft_logo.png",
     "manifest.json",
     "favicon.svg"
 ];
@@ -35,14 +37,23 @@ self.addEventListener("activate", (e) => {
     );
 });
 
-// Fetch Assets from Cache or Network
+// Fetch Assets from Network First, fallback to Cache
 self.addEventListener("fetch", (e) => {
     e.respondWith(
-        caches.match(e.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
-            return fetch(e.request);
-        })
+        fetch(e.request)
+            .then((response) => {
+                // If response is valid, clone it and save to cache
+                if (response && response.status === 200) {
+                    const responseClone = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(e.request, responseClone);
+                    });
+                }
+                return response;
+            })
+            .catch(() => {
+                // If network fails (offline), load from cache
+                return caches.match(e.request);
+            })
     );
 });
