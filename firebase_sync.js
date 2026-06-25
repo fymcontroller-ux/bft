@@ -31,39 +31,6 @@
         "t_vat_rate"
     ];
 
-// Firebase Sync Module for BFT Portal
-(() => {
-    const firebaseConfig = {
-        apiKey: "AIzaSyA-276dWDiRFc_k_rJopib9qrmjte7kB3A",
-        authDomain: "bftbft-516a6.firebaseapp.com",
-        projectId: "bftbft-516a6",
-        storageBucket: "bftbft-516a6.firebasestorage.app",
-        messagingSenderId: "442465644757",
-        appId: "1:442465644757:web:0928461a1cd88fe37eb25c",
-        measurementId: "G-B898PH13VJ"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    const storageKeys = [
-        "m_projects",
-        "m_screens",
-        "m_drivers",
-        "m_pumps",
-        "m_pipes",
-        "m_generalItems",
-        "p_projects",
-        "t_company_info",
-        "t_proposal_items",
-        "t_product_catalog",
-        "t_exchange_rate",
-        "t_show_tl",
-        "t_show_vat",
-        "t_vat_rate"
-    ];
-
     document.addEventListener("DOMContentLoaded", () => {
         // Sidebar elements
         const inputCode = document.getElementById("syncCompanyCode");
