@@ -1,4 +1,4 @@
-// Firebase Sync Module for BFT Portal
+// Firebase Sync Module for BFT Portal - Automated Real-Time Sync
 (() => {
     const firebaseConfig = {
         apiKey: "AIzaSyA-276dWDiRFc_k_rJopib9qrmjte7kB3A",
@@ -31,6 +31,28 @@
         "t_vat_rate"
     ];
 
+    let isSyncing = false; // Flag to prevent circular sync loop
+    let autoUploadTimeout = null;
+    let unsubscribeSnapshot = null;
+
+    // Overriding localStorage to auto-detect changes and trigger uploads
+    const originalSetItem = localStorage.setItem;
+    const originalRemoveItem = localStorage.removeItem;
+
+    localStorage.setItem = function(key, value) {
+        originalSetItem.apply(this, arguments);
+        if (!isSyncing && storageKeys.includes(key)) {
+            scheduleAutoUpload();
+        }
+    };
+
+    localStorage.removeItem = function(key) {
+        originalRemoveItem.apply(this, arguments);
+        if (!isSyncing && storageKeys.includes(key)) {
+            scheduleAutoUpload();
+        }
+    };
+
     document.addEventListener("DOMContentLoaded", () => {
         // Sidebar elements
         const inputCode = document.getElementById("syncCompanyCode");
@@ -56,6 +78,9 @@
         const savedCode = localStorage.getItem("t_sync_company_code") || "bft_portal";
         const lastSyncMsg = localStorage.getItem("t_sync_last_status") || "Son Eşleşme: Yapılmadı";
         updateSyncUI(savedCode, lastSyncMsg);
+
+        // Setup real-time listener on start
+        setupRealtimeSync(savedCode);
 
         // Setup Modal Opening/Closing
         const btnOpenModal = document.getElementById("btnOpenSyncModal");
@@ -134,14 +159,14 @@
             disableBtnsFn();
             updateStatusFn("Veriler buluta gönderiliyor...");
 
+            isSyncing = true;
             const payload = {
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 data: {}
             };
 
             storageKeys.forEach(key => {
-                const val = localStorage.getItem(key);
-                payload.data[key] = val; // Store as raw string to preserve exact JSON structure
+                payload.data[key] = localStorage.getItem(key);
             });
 
             try {
@@ -154,12 +179,16 @@
                 localStorage.setItem("t_sync_company_code", companyCode);
                 updateSyncUI(companyCode, successMsg);
 
+                // Re-setup listener in case code changed
+                setupRealtimeSync(companyCode);
+
                 alert(`"${companyCode}" kodlu bulut kaydı başarıyla güncellendi.`);
             } catch (err) {
                 console.error("Firebase sync upload error:", err);
                 updateStatusFn("Yükleme hatası!");
                 alert("Buluta veri yüklenirken bir hata oluştu: " + err.message);
             } finally {
+                isSyncing = false;
                 enableBtnsFn();
             }
         };
@@ -178,11 +207,14 @@
             disableBtnsFn();
             updateStatusFn("Veriler buluttan çekiliyor...");
 
+            isSyncing = true;
             try {
                 const doc = await db.collection("portal_data").doc(companyCode).get();
                 if (!doc.exists) {
                     updateStatusFn("Kayıt bulunamadı!");
                     alert(`"${companyCode}" koduna ait herhangi bir bulut kaydı bulunamadı. Lütfen kodu kontrol edin veya önce diğer cihazdan yükleme yapın.`);
+                    isSyncing = false;
+                    enableBtnsFn();
                     return;
                 }
 
@@ -208,12 +240,14 @@
                     location.reload();
                 } else {
                     alert("Kayıtlı veri şablonu hatalı.");
+                    isSyncing = false;
+                    enableBtnsFn();
                 }
             } catch (err) {
                 console.error("Firebase sync download error:", err);
                 updateStatusFn("İndirme hatası!");
                 alert("Buluttan veri çekilirken bir hata oluştu: " + err.message);
-            } finally {
+                isSyncing = false;
                 enableBtnsFn();
             }
         };
@@ -242,5 +276,122 @@
             });
         }
     });
-})();
 
+    // Helper: Schedule silent auto upload
+    function scheduleAutoUpload() {
+        const companyCode = (localStorage.getItem("t_sync_company_code") || "").trim().toLowerCase();
+        if (!companyCode) return;
+
+        // Show pending save message
+        const statusEl = document.getElementById("syncStatus");
+        const modalStatusEl = document.getElementById("modalSyncStatus");
+        const pendingMsg = "Değişiklik algılandı, yedekleniyor... ⏳";
+        if (statusEl) statusEl.textContent = pendingMsg;
+        if (modalStatusEl) modalStatusEl.textContent = pendingMsg;
+
+        clearTimeout(autoUploadTimeout);
+        autoUploadTimeout = setTimeout(async () => {
+            await silentUpload(companyCode);
+        }, 3000); // 3 seconds after last local storage modification
+    }
+
+    // Helper: Silent background upload
+    async function silentUpload(companyCode) {
+        if (isSyncing) return;
+        isSyncing = true;
+
+        const payload = {
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            data: {}
+        };
+
+        storageKeys.forEach(key => {
+            payload.data[key] = localStorage.getItem(key);
+        });
+
+        try {
+            await db.collection("portal_data").doc(companyCode).set(payload);
+            
+            const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
+            const successMsg = `Bulut Eşitlendi (Otomatik): ${nowStr}`;
+            
+            localStorage.setItem("t_sync_last_status", successMsg);
+            
+            const statusEl = document.getElementById("syncStatus");
+            const modalStatusEl = document.getElementById("modalSyncStatus");
+            if (statusEl) statusEl.textContent = successMsg;
+            if (modalStatusEl) modalStatusEl.textContent = successMsg;
+        } catch (err) {
+            console.error("Auto upload failed:", err);
+            const errMsg = "Otomatik bulut eşitleme hatası!";
+            const statusEl = document.getElementById("syncStatus");
+            const modalStatusEl = document.getElementById("modalSyncStatus");
+            if (statusEl) statusEl.textContent = errMsg;
+            if (modalStatusEl) modalStatusEl.textContent = errMsg;
+        } finally {
+            isSyncing = false;
+        }
+    }
+
+    // Helper: Real-time Cloud updates listener
+    function setupRealtimeSync(companyCode) {
+        if (unsubscribeSnapshot) {
+            unsubscribeSnapshot();
+            unsubscribeSnapshot = null;
+        }
+
+        if (!companyCode) return;
+
+        unsubscribeSnapshot = db.collection("portal_data").doc(companyCode)
+            .onSnapshot(doc => {
+                if (isSyncing) return; // Prevent loops while upload/download is active
+
+                if (!doc.exists) return;
+
+                const remotePayload = doc.data();
+                if (!remotePayload || !remotePayload.data) return;
+
+                // Compare remote data keys with local localStorage
+                let hasChanges = false;
+                for (let key of storageKeys) {
+                    const localVal = localStorage.getItem(key);
+                    const remoteVal = remotePayload.data[key];
+                    if (localVal !== remoteVal) {
+                        hasChanges = true;
+                        break;
+                    }
+                }
+
+                if (hasChanges) {
+                    isSyncing = true;
+                    
+                    // Copy remote data into localStorage
+                    storageKeys.forEach(key => {
+                        const remoteVal = remotePayload.data[key];
+                        if (remoteVal !== null && remoteVal !== undefined) {
+                            localStorage.setItem(key, remoteVal);
+                        } else {
+                            localStorage.removeItem(key);
+                        }
+                    });
+
+                    const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
+                    const successMsg = `Yeni bulut verisi uygulandı: ${nowStr}`;
+                    localStorage.setItem("t_sync_last_status", successMsg);
+
+                    // Show visual feedback before reloading
+                    const statusEl = document.getElementById("syncStatus");
+                    const modalStatusEl = document.getElementById("modalSyncStatus");
+                    const reloadMsg = "Buluttan yeni veriler çekildi, sayfa yenileniyor...";
+                    if (statusEl) statusEl.textContent = reloadMsg;
+                    if (modalStatusEl) modalStatusEl.textContent = reloadMsg;
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1200);
+                }
+            }, err => {
+                console.error("Firestore onSnapshot error:", err);
+            });
+    }
+})();
