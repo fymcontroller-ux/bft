@@ -1,5 +1,42 @@
 // Portal Orchestration & Navigation Logic
 
+// Force cache busting once for v3 transition to clear old service worker cache
+if (!localStorage.getItem('sw_version_reset_v3')) {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+            let promises = [];
+            for (let registration of registrations) {
+                promises.push(registration.unregister());
+            }
+            Promise.all(promises).then(() => {
+                if (window.caches) {
+                    caches.keys().then(names => {
+                        let cachePromises = [];
+                        for (let name of names) {
+                            cachePromises.push(caches.delete(name));
+                        }
+                        Promise.all(cachePromises).then(() => {
+                            localStorage.setItem('sw_version_reset_v3', 'true');
+                            window.location.reload(true);
+                        });
+                    }).catch(() => {
+                        localStorage.setItem('sw_version_reset_v3', 'true');
+                        window.location.reload(true);
+                    });
+                } else {
+                    localStorage.setItem('sw_version_reset_v3', 'true');
+                    window.location.reload(true);
+                }
+            });
+        }).catch(() => {
+            localStorage.setItem('sw_version_reset_v3', 'true');
+            window.location.reload(true);
+        });
+    } else {
+        localStorage.setItem('sw_version_reset_v3', 'true');
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initPortalNavigation();
     updateDashboardStats();
