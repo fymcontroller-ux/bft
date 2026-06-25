@@ -1711,7 +1711,7 @@ label {
         padding-bottom: 85px; /* Leave space for bottom nav */
     }
 
-    .sidebar-logo {
+    .sidebar-logo, .sidebar-cloud-sync {
         display: none !important;
     }
 

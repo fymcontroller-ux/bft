@@ -1,4 +1,4 @@
-const CACHE_NAME = "fy-portal-v2";
+const CACHE_NAME = "fy-portal-v3";
 const ASSETS = [
     "index.html",
     "styles.css",
@@ -8,6 +8,7 @@ const ASSETS = [
     "merkezi.js",
     "pnomatik.js",
     "teklifver.js",
+    "firebase_sync.js",
     "bft_logo.png",
     "manifest.json",
     "favicon.svg"
