@@ -55,34 +55,34 @@ const defaultPipes = [
 ];
 
 const defaultGeneralItems = [
-    { name: "GMT-396T (PLC)", price: 222, category: "Pano Ekipmanları" },
-    { name: "GXM-16IA (Input Modül)", price: 70, category: "Pano Ekipmanları" },
-    { name: "GXM-16TA (Output Modül)", price: 96, category: "Pano Ekipmanları" },
-    { name: "Transtör Kart", price: 20, category: "Pano Ekipmanları" },
-    { name: "Güç Kaynağı", price: 70, category: "Pano Ekipmanları" },
-    { name: "Fren Direnci", price: 29, category: "Pano Ekipmanları" },
-    { name: "Pano Havalandırma", price: 90, category: "Pano Ekipmanları" },
-    { name: "Lobar (Küçük)", price: 30, category: "Pano Ekipmanları" },
-    { name: "Lobar (Büyük)", price: 40, category: "Pano Ekipmanları" },
-    { name: "Pano", price: 500, category: "Pano Ekipmanları" },
-    { name: "Diğer Malzemeler", price: 50, category: "Pano Ekipmanları" },
-    { name: "12X1 Kumanda Kablosu", price: 2.5, category: "Kablolar" },
-    { name: "6X0,5 Kumanda Kablosu", price: 1.0, category: "Kablolar" },
-    { name: "8X1 KUMANDA KABLOSU (Duvar-İstasyon Arası)", price: 1.5, category: "Kablolar" },
-    { name: "4x4 Bilendajlı Kablo", price: 4.0, category: "Kablolar" },
-    { name: "24LÜ SOKET (DUVAR TİPİ)", price: 35, category: "Soketler" },
-    { name: "24LÜ SOKET (MAKİNA TİPİ)", price: 35, category: "Soketler" },
-    { name: "16LI SOKET (DUVAR TİPİ)", price: 30, category: "Soketler" },
-    { name: "HAZNE", price: 275, category: "İstasyon Ekipmanları" },
-    { name: "KUMANDA SETİ", price: 30, category: "İstasyon Ekipmanları" },
-    { name: "120x120x4 Profil", price: 10.0, category: "Duvardaki Sistem" },
-    { name: "HAT BAĞLANTI EKİPMANLARI", price: 12.3, category: "Duvardaki Sistem" },
-    { name: "MA1650 PİSTON", price: 15.0, category: "Duvardaki Sistem" },
-    { name: "VALF (1/4\" 5/2 Tek Bobin)", price: 12.0, category: "Duvardaki Sistem" },
-    { name: "KLEPE TAKIMI", price: 12.0, category: "Duvardaki Sistem" },
-    { name: "ŞASE SİSTEMİ (SİKLON+JETFİLTRE)", price: 1000.0, category: "Pompa Şase" },
-    { name: "CONTALI SAÇ KELEPÇE", price: 10.0, category: "Tesisat ve Borulama" },
-    { name: "TESİSAT DÖŞEME APARATLARI", price: 10.0, category: "Tesisat ve Borulama" }
+    { id: "plc", name: "GMT-396T (PLC)", price: 222, category: "Pano Ekipmanları" },
+    { id: "input_mod", name: "GXM-16IA (Input Modül)", price: 70, category: "Pano Ekipmanları" },
+    { id: "output_mod", name: "GXM-16TA (Output Modül)", price: 96, category: "Pano Ekipmanları" },
+    { id: "transistor_kart", name: "Transtör Kart", price: 20, category: "Pano Ekipmanları" },
+    { id: "guc_kaynagi", name: "Güç Kaynağı", price: 70, category: "Pano Ekipmanları" },
+    { id: "fren_direnci", name: "Fren Direnci", price: 29, category: "Pano Ekipmanları" },
+    { id: "pano_havalandirma", name: "Pano Havalandırma", price: 90, category: "Pano Ekipmanları" },
+    { id: "lobar_kucuk", name: "Lobar (Küçük)", price: 30, category: "Pano Ekipmanları" },
+    { id: "lobar_buyuk", name: "Lobar (Büyük)", price: 40, category: "Pano Ekipmanları" },
+    { id: "pano", name: "Pano", price: 500, category: "Pano Ekipmanları" },
+    { id: "diger_malzemeler", name: "Diğer Malzemeler", price: 50, category: "Pano Ekipmanları" },
+    { id: "kablo_12x1", name: "12X1 Kumanda Kablosu", price: 2.5, category: "Kablolar" },
+    { id: "kablo_6x05", name: "6X0,5 Kumanda Kablosu", price: 1.0, category: "Kablolar" },
+    { id: "kablo_8x1", name: "8X1 KUMANDA KABLOSU (Duvar-İstasyon Arası)", price: 1.5, category: "Kablolar" },
+    { id: "kablo_4x4", name: "4x4 Bilendajlı Kablo", price: 4.0, category: "Kablolar" },
+    { id: "soket_duvar", name: "24LÜ SOKET (DUVAR TİPİ)", price: 35, category: "Soketler" },
+    { id: "soket_makina", name: "24LÜ SOKET (MAKİNA TİPİ)", price: 35, category: "Soketler" },
+    { id: "soket_duvar_16", name: "16LI SOKET (DUVAR TİPİ)", price: 30, category: "Soketler" },
+    { id: "hazne", name: "HAZNE", price: 275, category: "İstasyon Ekipmanları" },
+    { id: "kumanda_seti", name: "KUMANDA SETİ", price: 30, category: "İstasyon Ekipmanları" },
+    { id: "profil_120", name: "120x120x4 Profil", price: 10.0, category: "Duvardaki Sistem" },
+    { id: "hat_baglanti", name: "HAT BAĞLANTI EKİPMANLARI", price: 12.3, category: "Duvardaki Sistem" },
+    { id: "piston_ma1650", name: "MA1650 PİSTON", price: 15.0, category: "Duvardaki Sistem" },
+    { id: "valf_5_2", name: "VALF (1/4\" 5/2 Tek Bobin)", price: 12.0, category: "Duvardaki Sistem" },
+    { id: "klepe_takimi", name: "KLEPE TAKIMI", price: 12.0, category: "Duvardaki Sistem" },
+    { id: "sase_sistemi", name: "ŞASE SİSTEMİ (SİKLON+JETFİLTRE)", price: 1000.0, category: "Pompa Şase" },
+    { id: "contali_kelepce", name: "CONTALI SAÇ KELEPÇE", price: 10.0, category: "Tesisat ve Borulama" },
+    { id: "tesisat_aparatlari", name: "TESİSAT DÖŞEME APARATLARI", price: 10.0, category: "Tesisat ve Borulama" }
 ];
 
 // Active datasets
@@ -123,8 +123,16 @@ function loadPrices() {
 
         // Ensure missing default general items are added if not present in localStorage
         defaultGeneralItems.forEach(defaultItem => {
-            if (!storedGeneral.some(item => item.name === defaultItem.name)) {
+            if (!storedGeneral.some(item => item.name === defaultItem.name || item.id === defaultItem.id)) {
                 storedGeneral.push(JSON.parse(JSON.stringify(defaultItem)));
+            }
+        });
+
+        // Ensure every item has an id if it matches one of the defaults by name or id
+        storedGeneral.forEach(item => {
+            if (!item.id) {
+                const match = defaultGeneralItems.find(d => d.name === item.name);
+                if (match) item.id = match.id;
             }
         });
 
@@ -170,7 +178,7 @@ function initSelectors() {
     screens.forEach(s => {
         const opt = document.createElement("option");
         opt.value = s.name;
-        opt.textContent = `${s.name} ($${s.price.toFixed(2)})`;
+        opt.textContent = s.name;
         if (s.name === savedScreen) opt.selected = true;
         screenSelect.appendChild(opt);
     });
@@ -180,7 +188,7 @@ function initSelectors() {
     drivers.forEach(d => {
         const opt = document.createElement("option");
         opt.value = d.name;
-        opt.textContent = `${d.name} ($${d.price.toFixed(2)})`;
+        opt.textContent = d.name;
         if (d.name === savedDriver) opt.selected = true;
         driverSelect.appendChild(opt);
     });
@@ -190,7 +198,7 @@ function initSelectors() {
     pumps.forEach(p => {
         const opt = document.createElement("option");
         opt.value = p.name;
-        opt.textContent = `${p.name} ($${p.price.toFixed(2)})`;
+        opt.textContent = p.name;
         if (p.name === savedPump) opt.selected = true;
         pumpSelect.appendChild(opt);
     });
@@ -200,7 +208,7 @@ function initSelectors() {
     pipes.forEach(p => {
         const opt = document.createElement("option");
         opt.value = p.name;
-        opt.textContent = `${p.name} ($${p.price.toFixed(2)})`;
+        opt.textContent = p.name;
         if (p.name === savedPipe) opt.selected = true;
         pipeSelect.appendChild(opt);
     });
@@ -233,7 +241,7 @@ function initPriceEditor() {
     container.innerHTML = "";
 
     // Helper to generate a card section element
-    function createGroupCard(title, list, onUpdatePrice) {
+    function createGroupCard(title, list, onAdd, onDelete, onUpdatePrice, onUpdateName) {
         const card = document.createElement("div");
         card.className = "price-group-card";
         
@@ -244,19 +252,64 @@ function initPriceEditor() {
         list.forEach((item, idx) => {
             const row = document.createElement("div");
             row.className = "price-input-row";
+            row.style.display = "flex";
+            row.style.gap = "0.75rem";
+            row.style.alignItems = "center";
+            row.style.padding = "0.5rem 0";
+            row.style.borderBottom = "1px solid rgba(255,255,255,0.02)";
             
-            const lbl = document.createElement("label");
-            lbl.textContent = item.name;
-            lbl.title = item.name;
+            const nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = item.name;
+            nameInput.style.flex = "1";
+            nameInput.style.minWidth = "150px";
+            nameInput.style.background = "transparent";
+            nameInput.style.border = "1px solid transparent";
+            nameInput.style.borderRadius = "6px";
+            nameInput.style.color = "var(--text-primary)";
+            nameInput.style.outline = "none";
+            nameInput.style.padding = "0.25rem 0.5rem";
+            nameInput.style.textAlign = "left";
+            
+            nameInput.addEventListener("focus", () => {
+                nameInput.style.background = "var(--bg-input)";
+                nameInput.style.borderColor = "var(--accent-indigo)";
+            });
+            nameInput.addEventListener("blur", (e) => {
+                nameInput.style.background = "transparent";
+                nameInput.style.borderColor = "transparent";
+                const newName = e.target.value.trim();
+                if (!newName) {
+                    alert("İsim boş olamaz!");
+                    nameInput.value = item.name;
+                    return;
+                }
+                if (newName === item.name) return;
+                
+                if (list.some(x => x.name.toLowerCase() === newName.toLowerCase())) {
+                    alert("Bu isim zaten mevcut!");
+                    nameInput.value = item.name;
+                    return;
+                }
+                
+                onUpdateName(idx, newName);
+            });
+            nameInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") nameInput.blur();
+                if (e.key === "Escape") { nameInput.value = item.name; nameInput.blur(); }
+            });
             
             const inputContainer = document.createElement("div");
             inputContainer.className = "input-container";
+            inputContainer.style.width = "120px";
+            inputContainer.style.marginLeft = "auto";
             
             const inp = document.createElement("input");
             inp.type = "number";
             inp.step = "0.01";
             inp.min = "0";
             inp.value = item.price;
+            inp.style.textAlign = "left";
             
             inp.addEventListener("input", (e) => {
                 const val = parseFloat(e.target.value) || 0;
@@ -269,35 +322,174 @@ function initPriceEditor() {
 
             inputContainer.appendChild(inp);
             inputContainer.appendChild(unit);
-            row.appendChild(lbl);
+            
+            // Delete button
+            const delBtn = document.createElement("button");
+            delBtn.className = "project-btn-main btn-delete";
+            delBtn.style.padding = "0.4rem 0.5rem";
+            delBtn.style.marginTop = "0";
+            delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+            delBtn.addEventListener("click", () => {
+                if (confirm(`"${item.name}" malzemesini silmek istediğinize emin misiniz?`)) {
+                    onDelete(idx);
+                }
+            });
+            
+            row.appendChild(nameInput);
             row.appendChild(inputContainer);
+            row.appendChild(delBtn);
             card.appendChild(row);
         });
+
+        // Add Item Footer
+        const footerDiv = document.createElement("div");
+        footerDiv.style.marginTop = "1rem";
+        footerDiv.style.paddingTop = "0.75rem";
+        footerDiv.style.borderTop = "1px solid var(--border-color)";
+        
+        const addRow = document.createElement("div");
+        addRow.style.display = "flex";
+        addRow.style.gap = "0.5rem";
+        
+        const addName = document.createElement("div");
+        addName.className = "input-container";
+        addName.style.flex = "2";
+        addName.style.padding = "0.35rem 0.5rem";
+        const addNameInput = document.createElement("input");
+        addNameInput.placeholder = "Yeni Ekle...";
+        addNameInput.style.fontSize = "0.8rem";
+        addNameInput.style.textAlign = "left";
+        addName.appendChild(addNameInput);
+        
+        const addPrice = document.createElement("div");
+        addPrice.className = "input-container";
+        addPrice.style.flex = "1";
+        addPrice.style.padding = "0.35rem 0.5rem";
+        const addPriceInput = document.createElement("input");
+        addPriceInput.type = "number";
+        addPriceInput.step = "0.01";
+        addPriceInput.placeholder = "USD ($)";
+        addPriceInput.style.fontSize = "0.8rem";
+        addPriceInput.style.textAlign = "left";
+        addPrice.appendChild(addPriceInput);
+        
+        const addBtn = document.createElement("button");
+        addBtn.className = "project-btn-main btn-save";
+        addBtn.style.padding = "0.35rem 0.75rem";
+        addBtn.style.fontSize = "0.8rem";
+        addBtn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+        addBtn.addEventListener("click", () => {
+            const nameVal = addNameInput.value.trim();
+            const priceVal = parseFloat(addPriceInput.value) || 0;
+            if (!nameVal) {
+                alert("Lütfen geçerli bir ad girin.");
+                return;
+            }
+            if (list.some(x => x.name.toLowerCase() === nameVal.toLowerCase())) {
+                alert("Bu isim zaten mevcut!");
+                return;
+            }
+            onAdd(nameVal, priceVal);
+        });
+        
+        addRow.appendChild(addName);
+        addRow.appendChild(addPrice);
+        addRow.appendChild(addBtn);
+        footerDiv.appendChild(addRow);
+        card.appendChild(footerDiv);
 
         return card;
     }
 
-    // Render group cards
-    container.appendChild(createGroupCard("Ekran Modelleri", screens, (idx, val) => {
-        screens[idx].price = val;
-        savePrices();
-        initSelectors();
-        calculate();
-    }));
+    // Render screens card
+    container.appendChild(createGroupCard("Ekran Modelleri", screens, 
+        (name, price) => {
+            screens.push({ name, price });
+            savePrices();
+            initSelectors();
+            initPriceEditor();
+            calculate();
+        },
+        (idx) => {
+            screens.splice(idx, 1);
+            savePrices();
+            initSelectors();
+            initPriceEditor();
+            calculate();
+        },
+        (idx, price) => {
+            screens[idx].price = price;
+            savePrices();
+            initSelectors();
+            calculate();
+        },
+        (idx, name) => {
+            screens[idx].name = name;
+            savePrices();
+            initSelectors();
+            calculate();
+        }
+    ));
 
-    container.appendChild(createGroupCard("Sürücü Modelleri", drivers, (idx, val) => {
-        drivers[idx].price = val;
-        savePrices();
-        initSelectors();
-        calculate();
-    }));
+    // Render drivers card
+    container.appendChild(createGroupCard("Sürücü Modelleri", drivers, 
+        (name, price) => {
+            drivers.push({ name, price });
+            savePrices();
+            initSelectors();
+            initPriceEditor();
+            calculate();
+        },
+        (idx) => {
+            drivers.splice(idx, 1);
+            savePrices();
+            initSelectors();
+            initPriceEditor();
+            calculate();
+        },
+        (idx, price) => {
+            drivers[idx].price = price;
+            savePrices();
+            initSelectors();
+            calculate();
+        },
+        (idx, name) => {
+            drivers[idx].name = name;
+            savePrices();
+            initSelectors();
+            calculate();
+        }
+    ));
 
-    container.appendChild(createGroupCard("Pompa (Blower) Modelleri", pumps, (idx, val) => {
-        pumps[idx].price = val;
-        savePrices();
-        initSelectors();
-        calculate();
-    }));
+    // Render pumps card
+    container.appendChild(createGroupCard("Pompa (Blower) Modelleri", pumps, 
+        (name, price) => {
+            pumps.push({ name, price });
+            savePrices();
+            initSelectors();
+            initPriceEditor();
+            calculate();
+        },
+        (idx) => {
+            pumps.splice(idx, 1);
+            savePrices();
+            initSelectors();
+            initPriceEditor();
+            calculate();
+        },
+        (idx, price) => {
+            pumps[idx].price = price;
+            savePrices();
+            initSelectors();
+            calculate();
+        },
+        (idx, name) => {
+            pumps[idx].name = name;
+            savePrices();
+            initSelectors();
+            calculate();
+        }
+    ));
 
     // Render Boru models card with extra fields (Hose, Clamp Prices)
     const pipeCard = document.createElement("div");
@@ -307,74 +499,365 @@ function initPriceEditor() {
     pipeCard.appendChild(pipeH3);
 
     pipes.forEach((p, idx) => {
-        // Pipe row
+        const rowOuter = document.createElement("div");
+        rowOuter.style.padding = "0.75rem 0";
+        rowOuter.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+        rowOuter.style.position = "relative";
+
+        // Pipe Row
         const rowPipe = document.createElement("div");
         rowPipe.className = "price-input-row";
-        rowPipe.innerHTML = `
-            <label>${p.name}</label>
-            <div class="input-container">
-                <input type="number" step="0.01" min="0" value="${p.price}" id="pipePrice-${idx}">
-                <span class="unit">$</span>
-            </div>
-        `;
-        pipeCard.appendChild(rowPipe);
-        pipeCard.querySelector(`#pipePrice-${idx}`).addEventListener("input", (e) => {
+        rowPipe.style.display = "flex";
+        rowPipe.style.gap = "0.75rem";
+        rowPipe.style.alignItems = "center";
+        
+        const pipeNameInput = document.createElement("input");
+        pipeNameInput.type = "text";
+        pipeNameInput.value = p.name;
+        pipeNameInput.style.flex = "1";
+        pipeNameInput.style.minWidth = "150px";
+        pipeNameInput.style.background = "transparent";
+        pipeNameInput.style.border = "1px solid transparent";
+        pipeNameInput.style.borderRadius = "6px";
+        pipeNameInput.style.color = "var(--text-primary)";
+        pipeNameInput.style.outline = "none";
+        pipeNameInput.style.padding = "0.25rem 0.5rem";
+        pipeNameInput.style.textAlign = "left";
+        
+        pipeNameInput.addEventListener("focus", () => {
+            pipeNameInput.style.background = "var(--bg-input)";
+            pipeNameInput.style.borderColor = "var(--accent-indigo)";
+        });
+        pipeNameInput.addEventListener("blur", (e) => {
+            pipeNameInput.style.background = "transparent";
+            pipeNameInput.style.borderColor = "transparent";
+            const newName = e.target.value.trim();
+            if (!newName) {
+                alert("Boru adı boş olamaz!");
+                pipeNameInput.value = p.name;
+                return;
+            }
+            if (newName === p.name) return;
+            pipes[idx].name = newName;
+            savePrices();
+            initSelectors();
+            calculate();
+        });
+        pipeNameInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") pipeNameInput.blur();
+            if (e.key === "Escape") { pipeNameInput.value = p.name; pipeNameInput.blur(); }
+        });
+
+        const pipePriceContainer = document.createElement("div");
+        pipePriceContainer.className = "input-container";
+        pipePriceContainer.style.width = "120px";
+        pipePriceContainer.style.marginLeft = "auto";
+        const pipePriceInp = document.createElement("input");
+        pipePriceInp.type = "number";
+        pipePriceInp.step = "0.01";
+        pipePriceInp.min = "0";
+        pipePriceInp.value = p.price;
+        pipePriceInp.style.textAlign = "left";
+        pipePriceInp.addEventListener("input", (e) => {
             pipes[idx].price = parseFloat(e.target.value) || 0;
             savePrices();
             initSelectors();
             calculate();
         });
+        const unit1 = document.createElement("span");
+        unit1.className = "unit";
+        unit1.textContent = "$";
+        pipePriceContainer.appendChild(pipePriceInp);
+        pipePriceContainer.appendChild(unit1);
 
-        // Hose price
+        const delBtn = document.createElement("button");
+        delBtn.className = "project-btn-main btn-delete";
+        delBtn.style.padding = "0.4rem 0.5rem";
+        delBtn.style.marginTop = "0";
+        delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        delBtn.addEventListener("click", () => {
+            if (confirm(`"${p.name}" boru hattını tamamen silmek istediğinize emin misiniz?`)) {
+                pipes.splice(idx, 1);
+                savePrices();
+                initSelectors();
+                initPriceEditor();
+                calculate();
+            }
+        });
+
+        rowPipe.appendChild(pipeNameInput);
+        rowPipe.appendChild(pipePriceContainer);
+        rowPipe.appendChild(delBtn);
+        rowOuter.appendChild(rowPipe);
+
+        // Hose price row
         const rowHose = document.createElement("div");
         rowHose.className = "price-input-row";
         rowHose.style.paddingLeft = "1.5rem";
-        rowHose.innerHTML = `
-            <label style="font-size: 0.8rem; color: var(--text-muted);">${p.hose}</label>
-            <div class="input-container">
-                <input type="number" step="0.01" min="0" value="${p.hosePrice}" id="hosePrice-${idx}">
-                <span class="unit">$</span>
-            </div>
-        `;
-        pipeCard.appendChild(rowHose);
-        pipeCard.querySelector(`#hosePrice-${idx}`).addEventListener("input", (e) => {
-            pipes[idx].hosePrice = parseFloat(e.target.value) || 0;
+        rowHose.style.display = "flex";
+        rowHose.style.gap = "0.75rem";
+        rowHose.style.alignItems = "center";
+        
+        const hoseNameInput = document.createElement("input");
+        hoseNameInput.type = "text";
+        hoseNameInput.value = p.hose;
+        hoseNameInput.style.flex = "1";
+        hoseNameInput.style.minWidth = "150px";
+        hoseNameInput.style.background = "transparent";
+        hoseNameInput.style.border = "1px solid transparent";
+        hoseNameInput.style.borderRadius = "6px";
+        hoseNameInput.style.color = "var(--text-muted)";
+        hoseNameInput.style.fontSize = "0.8rem";
+        hoseNameInput.style.outline = "none";
+        hoseNameInput.style.padding = "0.25rem 0.5rem";
+        hoseNameInput.style.textAlign = "left";
+        hoseNameInput.addEventListener("focus", () => {
+            hoseNameInput.style.background = "var(--bg-input)";
+            hoseNameInput.style.borderColor = "var(--accent-indigo)";
+        });
+        hoseNameInput.addEventListener("blur", (e) => {
+            hoseNameInput.style.background = "transparent";
+            hoseNameInput.style.borderColor = "transparent";
+            const newHoseName = e.target.value.trim();
+            if (!newHoseName) {
+                alert("Spiral hortum adı boş olamaz!");
+                hoseNameInput.value = p.hose;
+                return;
+            }
+            if (newHoseName === p.hose) return;
+            const oldHoseName = p.hose;
+            pipes.forEach(pi => {
+                if (pi.hose === oldHoseName) {
+                    pi.hose = newHoseName;
+                }
+            });
             savePrices();
+            initPriceEditor();
             calculate();
         });
 
-        // Clamp price
-        const rowClamp = document.createElement("div");
-        rowClamp.className = "price-input-row";
-        rowClamp.style.paddingLeft = "1.5rem";
-        rowClamp.style.marginBottom = "1.5rem";
-        rowClamp.innerHTML = `
-            <label style="font-size: 0.8rem; color: var(--text-muted);">${p.clamp}</label>
-            <div class="input-container">
-                <input type="number" step="0.01" min="0" value="${p.clampPrice}" id="clampPrice-${idx}">
-                <span class="unit">$</span>
-            </div>
-        `;
-        pipeCard.appendChild(rowClamp);
-        pipeCard.querySelector(`#clampPrice-${idx}`).addEventListener("input", (e) => {
-            pipes[idx].clampPrice = parseFloat(e.target.value) || 0;
+        const hosePriceContainer = document.createElement("div");
+        hosePriceContainer.className = "input-container";
+        hosePriceContainer.style.width = "120px";
+        hosePriceContainer.style.marginLeft = "auto";
+        const hosePriceInp = document.createElement("input");
+        hosePriceInp.type = "number";
+        hosePriceInp.step = "0.01";
+        hosePriceInp.min = "0";
+        hosePriceInp.value = p.hosePrice;
+        hosePriceInp.style.textAlign = "left";
+        hosePriceInp.id = `hosePrice-${idx}`;
+        hosePriceInp.addEventListener("input", (e) => {
+            const val = parseFloat(e.target.value) || 0;
+            const targetHoseName = pipes[idx].hose;
+            pipes.forEach((pItem, i) => {
+                if (pItem.hose === targetHoseName) {
+                    pItem.hosePrice = val;
+                    const inputEl = document.getElementById(`hosePrice-${i}`);
+                    if (inputEl) {
+                        inputEl.value = val;
+                    }
+                }
+            });
             savePrices();
             calculate();
         });
+        const unit2 = document.createElement("span");
+        unit2.className = "unit";
+        unit2.textContent = "$";
+        hosePriceContainer.appendChild(hosePriceInp);
+        hosePriceContainer.appendChild(unit2);
+
+        const spacePlaceholder1 = document.createElement("div");
+        spacePlaceholder1.style.width = "32px";
+
+        rowHose.appendChild(hoseNameInput);
+        rowHose.appendChild(hosePriceContainer);
+        rowHose.appendChild(spacePlaceholder1);
+        rowOuter.appendChild(rowHose);
+
+        // Clamp price row
+        const rowClamp = document.createElement("div");
+        rowClamp.className = "price-input-row";
+        rowClamp.style.paddingLeft = "1.5rem";
+        rowClamp.style.display = "flex";
+        rowClamp.style.gap = "0.75rem";
+        rowClamp.style.alignItems = "center";
+        
+        const clampNameInput = document.createElement("input");
+        clampNameInput.type = "text";
+        clampNameInput.value = p.clamp;
+        clampNameInput.style.flex = "1";
+        clampNameInput.style.minWidth = "150px";
+        clampNameInput.style.background = "transparent";
+        clampNameInput.style.border = "1px solid transparent";
+        clampNameInput.style.borderRadius = "6px";
+        clampNameInput.style.color = "var(--text-muted)";
+        clampNameInput.style.fontSize = "0.8rem";
+        clampNameInput.style.outline = "none";
+        clampNameInput.style.padding = "0.25rem 0.5rem";
+        clampNameInput.style.textAlign = "left";
+        clampNameInput.addEventListener("focus", () => {
+            clampNameInput.style.background = "var(--bg-input)";
+            clampNameInput.style.borderColor = "var(--accent-indigo)";
+        });
+        clampNameInput.addEventListener("blur", (e) => {
+            clampNameInput.style.background = "transparent";
+            clampNameInput.style.borderColor = "transparent";
+            const newClampName = e.target.value.trim();
+            if (!newClampName) {
+                alert("Kelepçe adı boş olamaz!");
+                clampNameInput.value = p.clamp;
+                return;
+            }
+            if (newClampName === p.clamp) return;
+            const oldClampName = p.clamp;
+            pipes.forEach(pi => {
+                if (pi.clamp === oldClampName) {
+                    pi.clamp = newClampName;
+                }
+            });
+            savePrices();
+            initPriceEditor();
+            calculate();
+        });
+
+        const clampPriceContainer = document.createElement("div");
+        clampPriceContainer.className = "input-container";
+        clampPriceContainer.style.width = "120px";
+        clampPriceContainer.style.marginLeft = "auto";
+        const clampPriceInp = document.createElement("input");
+        clampPriceInp.type = "number";
+        clampPriceInp.step = "0.01";
+        clampPriceInp.min = "0";
+        clampPriceInp.value = p.clampPrice;
+        clampPriceInp.style.textAlign = "left";
+        clampPriceInp.id = `clampPrice-${idx}`;
+        clampPriceInp.addEventListener("input", (e) => {
+            const val = parseFloat(e.target.value) || 0;
+            const targetClampName = pipes[idx].clamp;
+            pipes.forEach((pItem, i) => {
+                if (pItem.clamp === targetClampName) {
+                    pItem.clampPrice = val;
+                    const inputEl = document.getElementById(`clampPrice-${i}`);
+                    if (inputEl) {
+                        inputEl.value = val;
+                    }
+                }
+            });
+            savePrices();
+            calculate();
+        });
+        const unit3 = document.createElement("span");
+        unit3.className = "unit";
+        unit3.textContent = "$";
+        clampPriceContainer.appendChild(clampPriceInp);
+        clampPriceContainer.appendChild(unit3);
+
+        const spacePlaceholder2 = document.createElement("div");
+        spacePlaceholder2.style.width = "32px";
+
+        rowClamp.appendChild(clampNameInput);
+        rowClamp.appendChild(clampPriceContainer);
+        rowClamp.appendChild(spacePlaceholder2);
+        rowOuter.appendChild(rowClamp);
+
+        pipeCard.appendChild(rowOuter);
     });
+
+    // Add pipe footer
+    const pipeFooter = document.createElement("div");
+    pipeFooter.style.marginTop = "1.5rem";
+    pipeFooter.style.paddingTop = "1rem";
+    pipeFooter.style.borderTop = "1px solid var(--border-color)";
+    pipeFooter.innerHTML = `
+        <div style="font-size: 0.8rem; font-weight:600; color: var(--text-muted); margin-bottom: 0.5rem;">YENİ BORU SİSTEMİ EKLE</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input id="addPipeName" placeholder="Boru Adı" style="font-size: 0.8rem; text-align: left;"></div>
+            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input type="number" id="addPipePrice" placeholder="Boru Fiyat ($)" style="font-size: 0.8rem; text-align: left;"></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input id="addHoseName" placeholder="Spiral Hortum Adı" style="font-size: 0.8rem; text-align: left;"></div>
+            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input type="number" id="addHosePrice" placeholder="Hortum Fiyat ($)" style="font-size: 0.8rem; text-align: left;"></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input id="addClampName" placeholder="Kelepçe Adı" style="font-size: 0.8rem; text-align: left;"></div>
+            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input type="number" id="addClampPrice" placeholder="Kelepçe Fiyat ($)" style="font-size: 0.8rem; text-align: left;"></div>
+        </div>
+        <button id="btnAddPipeSubmit" class="project-btn-main btn-save" style="width: 100%; padding: 0.4rem; font-size: 0.8rem;"><i class="fa-solid fa-plus"></i> Boru Modeli Ekle</button>
+    `;
+    pipeCard.appendChild(pipeFooter);
     container.appendChild(pipeCard);
+
+    pipeFooter.querySelector("#btnAddPipeSubmit").addEventListener("click", () => {
+        const pipeName = pipeFooter.querySelector("#addPipeName").value.trim();
+        const pipePrice = parseFloat(pipeFooter.querySelector("#addPipePrice").value) || 0;
+        const hoseName = pipeFooter.querySelector("#addHoseName").value.trim();
+        const hosePrice = parseFloat(pipeFooter.querySelector("#addHosePrice").value) || 0;
+        const clampName = pipeFooter.querySelector("#addClampName").value.trim();
+        const clampPrice = parseFloat(pipeFooter.querySelector("#addClampPrice").value) || 0;
+
+        if (!pipeName || !hoseName || !clampName) {
+            alert("Lütfen boru, hortum ve kelepçe adlarını doldurun.");
+            return;
+        }
+
+        pipes.push({
+            name: pipeName,
+            price: pipePrice,
+            hose: hoseName,
+            hosePrice: hosePrice,
+            clamp: clampName,
+            clampPrice: clampPrice
+        });
+        savePrices();
+        initSelectors();
+        initPriceEditor();
+        calculate();
+    });
 
     // Group General items by their category
     const categories = ["Pano Ekipmanları", "Kablolar", "Soketler", "İstasyon Ekipmanları", "Duvardaki Sistem", "Pompa Şase", "Tesisat ve Borulama"];
     categories.forEach(cat => {
         const catItems = generalItems.filter(item => item.category === cat);
-        container.appendChild(createGroupCard(cat, catItems, (idx, val) => {
-            const itemToUpdate = catItems[idx];
-            const trueIdx = generalItems.findIndex(g => g.name === itemToUpdate.name);
-            generalItems[trueIdx].price = val;
-            savePrices();
-            calculate();
-        }));
+        container.appendChild(createGroupCard(cat, catItems, 
+            (name, price) => {
+                generalItems.push({
+                    id: "custom_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9),
+                    name,
+                    price,
+                    category: cat
+                });
+                savePrices();
+                initPriceEditor();
+                calculate();
+            },
+            (idx) => {
+                const itemToDelete = catItems[idx];
+                generalItems = generalItems.filter(g => g.name !== itemToDelete.name || g.id !== itemToDelete.id);
+                savePrices();
+                initPriceEditor();
+                calculate();
+            },
+            (idx, price) => {
+                const itemToUpdate = catItems[idx];
+                const trueIdx = generalItems.findIndex(g => g.name === itemToUpdate.name && g.id === itemToUpdate.id);
+                if (trueIdx !== -1) {
+                    generalItems[trueIdx].price = price;
+                }
+                savePrices();
+                calculate();
+            },
+            (idx, name) => {
+                const itemToUpdate = catItems[idx];
+                const trueIdx = generalItems.findIndex(g => g.name === itemToUpdate.name && g.id === itemToUpdate.id);
+                if (trueIdx !== -1) {
+                    generalItems[trueIdx].name = name;
+                }
+                savePrices();
+                calculate();
+            }
+        ));
     });
 }
 
@@ -393,18 +876,32 @@ function setupEventListeners() {
             el.addEventListener("change", calculate);
         }
     });
-
-    document.getElementById("exportBtnMerkezi").addEventListener("click", () => {
-        // Generate Dynamic Name based on date and project
+    document.getElementById("exportBtnMerkeziRapor").addEventListener("click", () => {
         const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
         const projName = document.getElementById("projectName").value.trim() || "Merkezi Sistem Projesi";
         const originalTitle = document.title;
         
-        document.title = `${dateStr} - ${projName} - Hesaplama`;
+        // Update print-only header elements
+        const printProjNameEl = document.getElementById("printProjName");
+        const printProjDateEl = document.getElementById("printProjDate");
+        if (printProjNameEl) printProjNameEl.textContent = projName;
+        if (printProjDateEl) printProjDateEl.textContent = dateStr;
+        
+        const showPrices = document.getElementById("printShowPricesCheck").checked;
+        
+        if (showPrices) {
+            document.title = `${dateStr} - ${projName} - Rapor`;
+        } else {
+            document.title = `${dateStr} - ${projName} - Teklif`;
+            document.body.classList.add("hide-prices-print");
+        }
+        
         window.print();
         
-        // Restore title shortly after
         setTimeout(() => {
+            if (!showPrices) {
+                document.body.classList.remove("hide-prices-print");
+            }
             document.title = originalTitle;
         }, 1000);
     });
@@ -417,10 +914,10 @@ function setupEventListeners() {
     document.getElementById("savedProjectsSelect").addEventListener("change", loadSelectedProject);
 }
 
-// Helper to look up prices in generalItems
-function getGeneralPrice(itemName) {
-    const item = generalItems.find(g => g.name === itemName);
-    return item ? item.price : 0;
+// Helper to look up name & price by id or fallback to name
+function getGeneralItem(id) {
+    const item = generalItems.find(g => g.id === id) || generalItems.find(g => g.name === id);
+    return item ? item : { name: id, price: 0 };
 }
 
 function calculate() {
@@ -477,19 +974,19 @@ function calculate() {
         title: "Pano Sistem Bileşenleri",
         excludeFromTotal: false,
         items: [
-            { name: selectedScreen.name, qty: 1, unitPrice: selectedScreen.price },
-            { name: "GMT-396T (PLC)", qty: 1, unitPrice: getGeneralPrice("GMT-396T (PLC)") },
-            { name: "GXM-16IA (Input Modül)", qty: Math.ceil(H10 / 16), unitPrice: getGeneralPrice("GXM-16IA (Input Modül)") },
-            { name: "GXM-16TA (Output Modül)", qty: Math.ceil(H11 / 16), unitPrice: getGeneralPrice("GXM-16TA (Output Modül)") },
-            { name: "Transtör Kart", qty: Math.ceil(H11 / 5) + 2, unitPrice: getGeneralPrice("Transtör Kart") },
-            { name: "Güç Kaynağı", qty: 2, unitPrice: getGeneralPrice("Güç Kaynağı") },
-            { name: selectedDriver.name, qty: H9, unitPrice: selectedDriver.price },
-            { name: "Fren Direnci", qty: H9, unitPrice: getGeneralPrice("Fren Direnci") },
-            { name: "Pano Havalandırma", qty: 1, unitPrice: getGeneralPrice("Pano Havalandırma") },
-            { name: "Lobar (Küçük)", qty: 2, unitPrice: getGeneralPrice("Lobar (Küçük)") },
-            { name: "Lobar (Büyük)", qty: 2, unitPrice: getGeneralPrice("Lobar (Büyük)") },
-            { name: "Pano", qty: 1, unitPrice: getGeneralPrice("Pano") },
-            { name: "Diğer Malzemeler", qty: H7, unitPrice: getGeneralPrice("Diğer Malzemeler") }
+            { name: selectedScreen ? selectedScreen.name : selectedScreenName, qty: 1, unitPrice: selectedScreen ? selectedScreen.price : 0 },
+            { name: getGeneralItem("plc").name, qty: 1, unitPrice: getGeneralItem("plc").price },
+            { name: getGeneralItem("input_mod").name, qty: Math.ceil(H10 / 16), unitPrice: getGeneralItem("input_mod").price },
+            { name: getGeneralItem("output_mod").name, qty: Math.ceil(H11 / 16), unitPrice: getGeneralItem("output_mod").price },
+            { name: getGeneralItem("transistor_kart").name, qty: Math.ceil(H11 / 5) + 2, unitPrice: getGeneralItem("transistor_kart").price },
+            { name: getGeneralItem("guc_kaynagi").name, qty: 2, unitPrice: getGeneralItem("guc_kaynagi").price },
+            { name: selectedDriver ? selectedDriver.name : selectedDriverName, qty: H9, unitPrice: selectedDriver ? selectedDriver.price : 0 },
+            { name: getGeneralItem("fren_direnci").name, qty: H9, unitPrice: getGeneralItem("fren_direnci").price },
+            { name: getGeneralItem("pano_havalandirma").name, qty: 1, unitPrice: getGeneralItem("pano_havalandirma").price },
+            { name: getGeneralItem("lobar_kucuk").name, qty: 2, unitPrice: getGeneralItem("lobar_kucuk").price },
+            { name: getGeneralItem("lobar_buyuk").name, qty: 2, unitPrice: getGeneralItem("lobar_buyuk").price },
+            { name: getGeneralItem("pano").name, qty: 1, unitPrice: getGeneralItem("pano").price },
+            { name: getGeneralItem("diger_malzemeler").name, qty: H7, unitPrice: getGeneralItem("diger_malzemeler").price }
         ]
     };
 
@@ -498,11 +995,11 @@ function calculate() {
         title: "Kablolama Grubu",
         excludeFromTotal: false,
         items: [
-            { name: "12X1 Kumanda Kablosu", qty: cableMeters_12x1, unitPrice: getGeneralPrice("12X1 Kumanda Kablosu"), isMeter: true },
-            { name: "6X0,5 Kumanda Kablosu", qty: H16 * H7, unitPrice: getGeneralPrice("6X0,5 Kumanda Kablosu"), isMeter: true },
-            { name: "8X1 KUMANDA KABLOSU (Duvar-İstasyon Arası)", qty: H15 * H7, unitPrice: getGeneralPrice("8X1 KUMANDA KABLOSU (Duvar-İstasyon Arası)"), isMeter: true },
-            { name: "4x4 Bilendajlı Kablo", qty: 25, unitPrice: getGeneralPrice("4x4 Bilendajlı Kablo"), isMeter: true },
-            { name: "6x0,5 Kumanda Kablosu (Pano-Şase Arası)", qty: 25, unitPrice: getGeneralPrice("6X0,5 Kumanda Kablosu"), isMeter: true }
+            { name: getGeneralItem("kablo_12x1").name, qty: cableMeters_12x1, unitPrice: getGeneralItem("kablo_12x1").price, isMeter: true },
+            { name: getGeneralItem("kablo_6x05").name, qty: H16 * H7, unitPrice: getGeneralItem("kablo_6x05").price, isMeter: true },
+            { name: getGeneralItem("kablo_8x1").name, qty: H15 * H7, unitPrice: getGeneralItem("kablo_8x1").price, isMeter: true },
+            { name: getGeneralItem("kablo_4x4").name, qty: 25, unitPrice: getGeneralItem("kablo_4x4").price, isMeter: true },
+            { name: getGeneralItem("kablo_6x05").name + " (Pano-Şase Arası)", qty: 25, unitPrice: getGeneralItem("kablo_6x05").price, isMeter: true }
         ]
     };
 
@@ -511,9 +1008,9 @@ function calculate() {
         title: "Soket Malzemeleri",
         excludeFromTotal: false,
         items: [
-            { name: "24LÜ SOKET (DUVAR TİPİ)", qty: H7, unitPrice: getGeneralPrice("24LÜ SOKET (DUVAR TİPİ)") },
-            { name: "24LÜ SOKET (MAKİNA TİPİ)", qty: H7, unitPrice: getGeneralPrice("24LÜ SOKET (MAKİNA TİPİ)") },
-            { name: "16LI SOKET (DUVAR TİPİ)", qty: H7, unitPrice: getGeneralPrice("16LI SOKET (DUVAR TİPİ)") }
+            { name: getGeneralItem("soket_duvar").name, qty: H7, unitPrice: getGeneralItem("soket_duvar").price },
+            { name: getGeneralItem("soket_makina").name, qty: H7, unitPrice: getGeneralItem("soket_makina").price },
+            { name: getGeneralItem("soket_duvar_16").name, qty: H7, unitPrice: getGeneralItem("soket_duvar_16").price }
         ]
     };
 
@@ -522,8 +1019,8 @@ function calculate() {
         title: "İstasyon Ekipmanları",
         excludeFromTotal: false,
         items: [
-            { name: "HAZNE", qty: H7, unitPrice: getGeneralPrice("HAZNE") },
-            { name: "KUMANDA SETİ", qty: H7, unitPrice: getGeneralPrice("KUMANDA SETİ") }
+            { name: getGeneralItem("hazne").name, qty: H7, unitPrice: getGeneralItem("hazne").price },
+            { name: getGeneralItem("kumanda_seti").name, qty: H7, unitPrice: getGeneralItem("kumanda_seti").price }
         ]
     };
 
@@ -532,11 +1029,11 @@ function calculate() {
         title: "Duvardaki Sistem Maliyeti (Genel Toplama Dahil Değildir)",
         excludeFromTotal: true,
         items: [
-            { name: "120x120x4 Profil", qty: H7 * H8, unitPrice: getGeneralPrice("120x120x4 Profil") },
-            { name: "HAT BAĞLANTI EKİPMANLARI", qty: H7 * H8, unitPrice: getGeneralPrice("HAT BAĞLANTI EKİPMANLARI") },
-            { name: "MA1650 PİSTON", qty: H7 * H8, unitPrice: getGeneralPrice("MA1650 PİSTON") },
-            { name: "VALF (1/4\" 5/2 Tek Bobin)", qty: H7 * H8, unitPrice: getGeneralPrice("VALF (1/4\" 5/2 Tek Bobin)") },
-            { name: "KLEPE TAKIMI", qty: H7 * H8, unitPrice: getGeneralPrice("KLEPE TAKIMI") }
+            { name: getGeneralItem("profil_120").name, qty: H7 * H8, unitPrice: getGeneralItem("profil_120").price },
+            { name: getGeneralItem("hat_baglanti").name, qty: H7 * H8, unitPrice: getGeneralItem("hat_baglanti").price },
+            { name: getGeneralItem("piston_ma1650").name, qty: H7 * H8, unitPrice: getGeneralItem("piston_ma1650").price },
+            { name: getGeneralItem("valf_5_2").name, qty: H7 * H8, unitPrice: getGeneralItem("valf_5_2").price },
+            { name: getGeneralItem("klepe_takimi").name, qty: H7 * H8, unitPrice: getGeneralItem("klepe_takimi").price }
         ]
     };
 
@@ -545,8 +1042,8 @@ function calculate() {
         title: "Pompa Şase Sistemi",
         excludeFromTotal: false,
         items: [
-            { name: selectedPump.name, qty: H9, unitPrice: selectedPump.price },
-            { name: "ŞASE SİSTEMİ (SİKLON+JETFİLTRE)", qty: H9, unitPrice: getGeneralPrice("ŞASE SİSTEMİ (SİKLON+JETFİLTRE)") }
+            { name: selectedPump ? selectedPump.name : selectedPumpName, qty: H9, unitPrice: selectedPump ? selectedPump.price : 0 },
+            { name: getGeneralItem("sase_sistemi").name, qty: H9, unitPrice: getGeneralItem("sase_sistemi").price }
         ]
     };
 
@@ -555,31 +1052,79 @@ function calculate() {
         title: "Tesisat ve Borulama",
         excludeFromTotal: false,
         items: [
-            { name: selectedPipe.hose, qty: (H17 * 2) * H7, unitPrice: selectedPipe.hosePrice, isMeter: true },
-            { name: selectedPipe.clamp, qty: 4 * H7, unitPrice: selectedPipe.clampPrice },
-            { name: selectedPipe.name, qty: H14 * (H8 + 1), unitPrice: selectedPipe.price, isMeter: true },
-            { name: "CONTALI SAÇ KELEPÇE", qty: 16, unitPrice: getGeneralPrice("CONTALI SAÇ KELEPÇE") },
-            { name: "TESİSAT DÖŞEME APARATLARI", qty: Math.ceil(H14 / 3), unitPrice: getGeneralPrice("TESİSAT DÖŞEME APARATLARI") }
+            { name: selectedPipe ? selectedPipe.hose : "", qty: (H17 * 2) * H7, unitPrice: selectedPipe ? selectedPipe.hosePrice : 0, isMeter: true },
+            { name: selectedPipe ? selectedPipe.clamp : "", qty: 4 * H7, unitPrice: selectedPipe ? selectedPipe.clampPrice : 0 },
+            { name: selectedPipe ? selectedPipe.name : selectedPipeName, qty: H14 * (H8 + 1), unitPrice: selectedPipe ? selectedPipe.price : 0, isMeter: true },
+            { name: getGeneralItem("contali_kelepce").name, qty: 16, unitPrice: getGeneralItem("contali_kelepce").price },
+            { name: getGeneralItem("tesisat_aparatlari").name, qty: Math.ceil(H14 / 3), unitPrice: getGeneralItem("tesisat_aparatlari").price }
         ]
     };
 
+    const defaultIds = [
+        "plc", "input_mod", "output_mod", "transistor_kart", "guc_kaynagi", "fren_direnci",
+        "pano_havalandirma", "lobar_kucuk", "lobar_buyuk", "pano", "diger_malzemeler",
+        "kablo_12x1", "kablo_6x05", "kablo_8x1", "kablo_4x4",
+        "soket_duvar", "soket_makina", "soket_duvar_16",
+        "hazne", "kumanda_seti",
+        "profil_120", "hat_baglanti", "piston_ma1650", "valf_5_2", "klepe_takimi",
+        "sase_sistemi",
+        "contali_kelepce", "tesisat_aparatlari"
+    ];
+
+    // Append custom general items dynamically to their matching sections
+    generalItems.forEach(item => {
+        if (!item.id || !defaultIds.includes(item.id)) {
+            let targetSection = null;
+            if (item.category === "Pano Ekipmanları") targetSection = sections.pano;
+            else if (item.category === "Kablolar") targetSection = sections.kablo;
+            else if (item.category === "Soketler") targetSection = sections.soketler;
+            else if (item.category === "İstasyon Ekipmanları") targetSection = sections.istasyon;
+            else if (item.category === "Duvardaki Sistem") targetSection = sections.duvarSistemi;
+            else if (item.category === "Pompa Şase") targetSection = sections.pompaSase;
+            else if (item.category === "Tesisat ve Borulama") targetSection = sections.tesisat;
+
+            if (targetSection) {
+                targetSection.items.push({
+                    name: item.name,
+                    qty: 1,
+                    unitPrice: item.price
+                });
+            }
+        }
+    });
+
     // 4. Populate table & calculate sums
     let materialTotal = 0;
-    const tbody = document.getElementById("costTableBodyMerkezi");
-    tbody.innerHTML = "";
+    const tablesGrid = document.getElementById("tablesGridMerkezi");
+    tablesGrid.innerHTML = "";
 
     Object.keys(sections).forEach(secKey => {
         const sec = sections[secKey];
-        
-        // Add Section Header Row
-        const headerRow = document.createElement("tr");
-        headerRow.className = "category-row";
-        headerRow.innerHTML = `
-            <td colspan="4">${sec.title}</td>
-        `;
-        tbody.appendChild(headerRow);
-
         let sectionSum = 0;
+
+        // Create table card container
+        const tableCard = document.createElement("div");
+        tableCard.className = "table-container print-avoid-split";
+        
+        const table = document.createElement("table");
+        table.className = "cost-table";
+        
+        // Create table head with section title
+        const thead = document.createElement("thead");
+        thead.innerHTML = `
+            <tr class="category-row">
+                <th colspan="4">${sec.title}</th>
+            </tr>
+            <tr>
+                <th>Malzeme Açıklaması</th>
+                <th>Miktar</th>
+                <th>Birim Fiyat ($)</th>
+                <th>Toplam Fiyat ($)</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
 
         // Add Section Item Rows
         sec.items.forEach(item => {
@@ -610,6 +1155,10 @@ function calculate() {
             <td>$${sectionSum.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
         `;
         tbody.appendChild(subtotalRow);
+        
+        table.appendChild(tbody);
+        tableCard.appendChild(table);
+        tablesGrid.appendChild(tableCard);
     });
 
     // 5. Final totals computations

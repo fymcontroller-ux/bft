@@ -176,12 +176,81 @@ function initPriceEditor() {
             row.style.padding = "0.75rem 0";
             row.style.borderBottom = "1px solid rgba(255,255,255,0.02)";
             
-            const lbl = document.createElement("label");
-            lbl.textContent = item.name;
-            lbl.title = item.name;
-            lbl.style.flex = "1";
-            lbl.style.minWidth = "200px";
-            lbl.style.fontWeight = "500";
+            const nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = item.name;
+            nameInput.style.flex = "1";
+            nameInput.style.minWidth = "200px";
+            nameInput.style.fontWeight = "500";
+            nameInput.style.background = "transparent";
+            nameInput.style.border = "1px solid transparent";
+            nameInput.style.borderRadius = "6px";
+            nameInput.style.color = "var(--text-primary)";
+            nameInput.style.padding = "0.25rem 0.5rem";
+            nameInput.style.textAlign = "left";
+            nameInput.style.outline = "none";
+            nameInput.style.cursor = "text";
+            
+            // Highlight on focus
+            nameInput.addEventListener("focus", () => {
+                nameInput.style.background = "var(--bg-input)";
+                nameInput.style.borderColor = "var(--accent-indigo)";
+            });
+            nameInput.addEventListener("blur", (e) => {
+                nameInput.style.background = "transparent";
+                nameInput.style.borderColor = "transparent";
+                
+                const newName = e.target.value.trim();
+                const oldName = item.name;
+                
+                if (!newName) {
+                    alert("Malzeme adı boş olamaz!");
+                    nameInput.value = oldName;
+                    return;
+                }
+                if (newName === oldName) return;
+                
+                // Check if another material has the same name
+                if (materials.some(m => m.name.toLowerCase() === newName.toLowerCase())) {
+                    alert("Bu isimde başka bir malzeme zaten mevcut!");
+                    nameInput.value = oldName;
+                    return;
+                }
+                
+                // Update material name in materials array
+                const trueIdx = materials.findIndex(m => m.name === oldName);
+                if (trueIdx !== -1) {
+                    materials[trueIdx].name = newName;
+                    materials[trueIdx].updateDate = new Date().toLocaleDateString('tr-TR');
+                }
+                
+                // Update material name in all recipes (models)
+                Object.keys(models).forEach(modelKey => {
+                    if (models[modelKey] && Array.isArray(models[modelKey].items)) {
+                        models[modelKey].items.forEach(recipeItem => {
+                            if (recipeItem.name === oldName) {
+                                recipeItem.name = newName;
+                            }
+                        });
+                    }
+                });
+                
+                savePricesAndExpenses();
+                calculate();
+                
+                // Re-render UI list & dropdowns to keep everything in sync
+                initPriceEditor();
+                initModelEditDropdown();
+            });
+            
+            nameInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    nameInput.blur();
+                } else if (e.key === "Escape") {
+                    nameInput.value = item.name;
+                    nameInput.blur();
+                }
+            });
             
             const inputsWrapper = document.createElement("div");
             inputsWrapper.style.display = "flex";
@@ -273,7 +342,7 @@ function initPriceEditor() {
             });
             inputsWrapper.appendChild(delItemBtn);
 
-            row.appendChild(lbl);
+            row.appendChild(nameInput);
             row.appendChild(inputsWrapper);
             card.appendChild(row);
         });

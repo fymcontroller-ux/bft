@@ -131,6 +131,10 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+.print-header-merkezi {
+    display: none;
+}
+
 /* ===== DYNAMIC HEADER ===== */
 .section-header {
     display: flex;
@@ -233,12 +237,13 @@ body {
 /* ===== GRIDS & PANELS ===== */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 450px 1fr;
+    grid-template-columns: minmax(320px, 450px) 1fr;
     gap: 2rem;
     align-items: start;
+    width: 100%;
 }
 
-@media (max-width: 1300px) {
+@media screen and (max-width: 1300px) {
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
@@ -253,6 +258,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     position: relative;
     overflow: hidden;
+    max-width: 100%;
 }
 
 .panel-card::before {
@@ -461,7 +467,7 @@ label {
     margin-bottom: 2rem;
 }
 
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
     .metrics-grid {
         grid-template-columns: 1fr;
     }
@@ -516,6 +522,25 @@ label {
 /* ===== COST TABLES ===== */
 .table-container {
     overflow-x: auto;
+}
+
+.tables-grid {
+    column-count: 2;
+    column-gap: 1.5rem;
+    display: block;
+}
+
+.tables-grid > .table-container {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    break-inside: avoid;
+}
+
+@media screen and (max-width: 900px) {
+    .tables-grid {
+        column-count: 1;
+    }
 }
 
 .cost-table {
@@ -579,12 +604,14 @@ label {
 }
 
 /* Scoped Category Header inside tables */
-.cost-table tr.category-row td {
+.cost-table tr.category-row td,
+.cost-table tr.category-row th {
     background: rgba(99, 102, 241, 0.06);
     color: var(--accent-indigo);
     font-weight: 600;
     padding: 0.6rem 1rem;
     border-left: 3px solid var(--accent-indigo);
+    text-align: left;
 }
 
 .cost-table tr.subtotal-row td {
@@ -662,7 +689,7 @@ label {
     align-items: start;
 }
 
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
     .expense-dashboard-grid {
         grid-template-columns: 1fr;
     }
@@ -889,7 +916,7 @@ label {
     align-items: start;
 }
 
-@media (max-width: 700px) {
+@media screen and (max-width: 700px) {
     .modal-body-grid {
         grid-template-columns: 1fr;
     }
@@ -952,6 +979,18 @@ label {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+.results-left-col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media screen and (max-width: 900px) {
+    .results-left-col {
+        grid-template-columns: 1fr;
+    }
 }
 
 .result-card {
@@ -1296,7 +1335,7 @@ label {
     margin-bottom: 2.5rem;
 }
 
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
     .overview-cards-grid {
         grid-template-columns: 1fr;
     }
@@ -1441,10 +1480,214 @@ label {
         color: #000 !important;
         border-bottom: 1px solid #ddd !important;
     }
+
+    /* Print optimization for forms */
+    input, select {
+        border: none !important;
+        background: transparent !important;
+        color: #000 !important;
+        padding: 0 !important;
+        text-align: right !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+    }
+    .input-container {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+    }
+    .unit {
+        color: #000 !important;
+    }
+
+    /* Central Section Print Scale (90%) */
+    #merkezi-sec {
+        zoom: 90% !important;
+    }
+
+    /* Print Header Styles */
+    .print-header-merkezi {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        border-bottom: 2px solid #000 !important;
+        padding-bottom: 0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    .print-header-merkezi h2 {
+        font-size: 1.25rem !important;
+        font-weight: 700 !important;
+        color: #000 !important;
+        margin: 0 !important;
+    }
+    .print-header-merkezi span {
+        font-size: 0.85rem !important;
+        color: #555 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+
+    /* Position second card below first card on print */
+    #merkezi-sec .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.5rem !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(2) {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Hide Project Management Panel during print */
+    .project-section-card {
+        display: none !important;
+    }
+
+    /* Prevent splitting of first card, layout items side-by-side, and shrink to fit Page 1 */
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 1.5rem !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        font-size: 0.65rem !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        margin-bottom: 1rem !important;
+        padding-bottom: 0 !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .form-section {
+        flex: 1 !important;
+        margin-bottom: 0 !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .form-section h3 {
+        margin-top: 0.15rem !important;
+        margin-bottom: 0.05rem !important;
+        font-size: 0.68rem !important;
+        padding-left: 0.3rem !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .form-group {
+        margin-bottom: 0.05rem !important;
+        gap: 0.15rem !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) label {
+        font-size: 0.68rem !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .input-container {
+        padding: 0.08rem 0.25rem !important;
+        border-radius: 6px !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .input-container input,
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .input-container select {
+        font-size: 0.68rem !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .spec-preview-card {
+        margin-top: 0.4rem !important;
+        padding: 0.4rem !important;
+        gap: 0.3rem !important;
+        border-radius: 8px !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .spec-item {
+        gap: 0.05rem !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .spec-lbl {
+        font-size: 0.6rem !important;
+    }
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .spec-val {
+        font-size: 0.8rem !important;
+    }
+
+    /* Hide unneeded elements to maximize printable space */
+    #laborSection,
+    #specPreviewCard,
+    #paramsCardTitle,
+    #merkezi-sec .dashboard-grid > .panel-card:nth-child(2) > .panel-title {
+        display: none !important;
+    }
+
+    /* Adjust font size and padding to fit table in 1-2 pages */
+    .cost-table {
+        font-size: 0.70rem !important;
+        width: 100% !important;
+    }
+    .cost-table th, .cost-table td {
+        padding: 0.22rem 0.4rem !important;
+    }
+    .cost-table tr.category-row td,
+    .cost-table tr.category-row th {
+        padding: 0.18rem 0.4rem !important;
+    }
+    .cost-table tr.subtotal-row td {
+        padding: 0.35rem 0.6rem !important;
+    }
+    tr.print-page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+    }
+
+    /* Print settings for the 2-column tables grid (masonry columns layout) */
+    .tables-grid {
+        column-count: 2 !important;
+        column-gap: 0.8rem !important;
+        display: block !important;
+    }
+    .tables-grid > .table-container {
+        display: inline-block !important;
+        width: 100% !important;
+        margin-bottom: 0.8rem !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    /* Let the tables grid flow naturally on Page 1 or 2 */
+    #merkezi-sec .tables-grid {
+        page-break-before: auto !important;
+        break-before: auto !important;
+        margin-top: 0 !important;
+    }
+
+    .metrics-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.4rem !important;
+        margin-bottom: 0.5rem !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    .metric-card {
+        padding: 0.4rem !important;
+    }
+    .metric-val {
+        font-size: 0.95rem !important;
+    }
+
+    /* Yükleyici Bölümü Print Scale Optimization */
+    #yukleyici-sec {
+        zoom: 90% !important;
+    }
+
+    /* Pnömatik Sayfası Print Layout Styles & 70% Scale */
+    #pnomatik-sec {
+        zoom: 70% !important;
+    }
+    #pnomatik-sec .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+    #pnomatik-sec .results-container {
+        display: grid !important;
+        grid-template-columns: 1fr 1.2fr !important;
+        gap: 1.5rem !important;
+        width: 100% !important;
+    }
+    #pnomatik-sec .results-left-col {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.5rem !important;
+    }
 }
 
 /* ===== MOBILE PORTAL OPTIMIZATION (Bottom Nav) ===== */
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
     .portal-sidebar {
         position: fixed !important;
         z-index: 9999 !important;
@@ -1608,6 +1851,53 @@ label {
     .modal-box {
         padding: 1.5rem;
         border-radius: 16px;
+    }
+}
+
+/* Hide price columns, subtotal row, and metrics grid when printing in teklif mode */
+@media print {
+    body.hide-prices-print .cost-table th:nth-child(3),
+    body.hide-prices-print .cost-table td:nth-child(3),
+    body.hide-prices-print .cost-table th:nth-child(4),
+    body.hide-prices-print .cost-table td:nth-child(4),
+    body.hide-prices-print .cost-table tr.subtotal-row,
+    body.hide-prices-print .metrics-grid {
+        display: none !important;
+    }
+}
+
+/* ===== TEKLİF VERME (PROPOSAL CREATOR) PRINT STYLING ===== */
+.teklif-print-overlay {
+    display: none;
+}
+
+@media print {
+    body.teklif-print-active .portal-container {
+        display: none !important;
+    }
+    body.teklif-print-active .teklif-print-overlay {
+        display: block !important;
+        background: #fff !important;
+        color: #000 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    }
+    body.teklif-print-active .print-page {
+        background: #fff !important;
+        color: #000 !important;
+        page-break-after: always;
+        break-after: page;
+        padding: 20px !important;
+    }
+    body.teklif-print-active .print-page:last-child {
+        page-break-after: auto;
+        break-after: auto;
+    }
+    body.teklif-print-active .print-page.central-specs-annex {
+        zoom: 75% !important;
     }
 }
 

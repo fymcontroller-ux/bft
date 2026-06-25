@@ -698,4 +698,11 @@ function resetToNewProjectPnomatik() {
     calculate();
 }
 
+window.PnomatikData = {
+    products: products,
+    blowerModels: blowerModels,
+    findRecommendedBlower: findRecommendedBlower,
+    getFlowAtPressure: getFlowAtPressure
+};
+
 })();

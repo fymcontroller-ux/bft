@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FY Merkezi Yönetim ve Hesaplama Portali</title>
+    <title>...</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
@@ -15,7 +15,7 @@
         <aside class="portal-sidebar">
             <div class="sidebar-logo">
                 <i class="fa-solid fa-cubes"></i>
-                <span>FY Portal</span>
+                <span>BFT Portal</span>
             </div>
             <ul class="sidebar-menu">
                 <li class="sidebar-item active" data-target="dashboard-sec">
@@ -33,6 +33,10 @@
                 <li class="sidebar-item" data-target="pnomatik-sec">
                     <i class="fa-solid fa-wind"></i>
                     <span>Pnömatik</span>
+                </li>
+                <li class="sidebar-item" data-target="teklifver-sec">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    <span>Teklif Ver</span>
                 </li>
             </ul>
         </aside>
@@ -319,6 +323,11 @@
 
             <!-- SECTION 2: MERKEZİ SİSTEM -->
             <section id="merkezi-sec" class="portal-section">
+                <!-- Print-only Header (visible only during print) -->
+                <div class="print-header-merkezi">
+                    <h2 id="printProjName">Proje Adı</h2>
+                    <span id="printProjDate">Tarih</span>
+                </div>
                 <div class="section-header">
                     <div>
                         <h2><i class="fa-solid fa-network-wired" style="color: var(--accent-indigo);"></i> Merkezi Sistem Fiyatlandırma</h2>
@@ -333,9 +342,13 @@
                                 <i class="fa-solid fa-tags"></i> Fiyat Listesi Düzenle
                             </button>
                         </div>
-                        <button class="export-btn" id="exportBtnMerkezi">
-                            <i class="fa-solid fa-file-pdf"></i> Teklif Yazdır / PDF
+                        <button class="export-btn" id="exportBtnMerkeziRapor" style="background: linear-gradient(135deg, var(--accent-indigo), rgba(99, 102, 241, 0.8)); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);">
+                            <i class="fa-solid fa-file-pdf"></i> Rapor Yazdır / PDF
                         </button>
+                        <div class="checkbox-container" style="display: flex; align-items: center; gap: 0.4rem; background: var(--bg-card); border: 1px solid var(--border-color); padding: 0.5rem 0.85rem; border-radius: 12px; height: 42px;">
+                            <input type="checkbox" id="printShowPricesCheck" checked style="width: 16px; height: 16px; accent-color: var(--accent-indigo); cursor: pointer;">
+                            <label for="printShowPricesCheck" style="color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; user-select: none; font-weight: 500;">Fiyatları Göster</label>
+                        </div>
                     </div>
                 </div>
 
@@ -343,7 +356,7 @@
                 <div id="calcTabContentMerkezi" class="tab-content active-content">
                     <div class="dashboard-grid">
                         <div class="panel-card">
-                            <div class="panel-title">
+                            <div class="panel-title" id="paramsCardTitle">
                                 <i class="fa-solid fa-sliders"></i> Sistem Parametreleri ve Seçimler
                             </div>
                             <div class="form-section project-section-card stacked-form-section">
@@ -461,7 +474,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-section">
+                            <div class="form-section" id="laborSection">
                                 <h3>4. İşçilik ve Diğer Ayarlar</h3>
                                 <div class="form-group">
                                     <label for="laborRatio">İşçilik Oranı</label>
@@ -471,7 +484,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="spec-preview-card" style="margin-top: 1rem;">
+                            <div class="spec-preview-card" id="specPreviewCard" style="margin-top: 1rem;">
                                 <div class="spec-item">
                                     <span class="spec-lbl">Gereken Giriş (I/O)</span>
                                     <span class="spec-val" id="totalInputs">-</span>
@@ -505,20 +518,8 @@
                                     <span class="metric-val violet-text" id="summaryGrandTotal">$0.00</span>
                                 </div>
                             </div>
-                            <div class="table-container">
-                                <table class="cost-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Malzeme Açıklaması</th>
-                                            <th>Miktar</th>
-                                            <th>Birim Fiyat ($)</th>
-                                            <th>Toplam Fiyat ($)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="costTableBodyMerkezi">
-                                        <!-- Dynamically loaded -->
-                                    </tbody>
-                                </table>
+                            <div class="tables-grid" id="tablesGridMerkezi">
+                                <!-- Dynamically loaded tables -->
                             </div>
                         </div>
                     </div>
@@ -681,63 +682,65 @@
                             <span id="warningMsg"></span>
                         </div>
                         <div class="results-container">
-                            <div class="result-card glow-teal">
-                                <div class="result-header">
-                                    <span class="result-title">Gerekli Minimum Körük/Blower Debisi</span>
-                                    <i class="fa-solid fa-gauge-high teal-text"></i>
-                                </div>
-                                <div class="primary-value-container">
-                                    <span class="primary-value teal-text" id="flowRateM3Min">-</span>
-                                    <span class="primary-unit">m³/dk</span>
-                                </div>
-                                <p class="result-desc">Taşıma havası hızını minimum değerde tutmak ve çökmeyi önlemek için blowerın sağlaması gereken debidir.</p>
-                                <div class="sub-values-grid">
-                                    <div class="sub-value-item">
-                                        <span class="sub-lbl">Debi (Saatlik)</span>
-                                        <span class="sub-val"><span id="flowRateM3Hour">-</span> m³/sa</span>
+                            <div class="results-left-col">
+                                <div class="result-card glow-teal">
+                                    <div class="result-header">
+                                        <span class="result-title">Gerekli Minimum Körük/Blower Debisi</span>
+                                        <i class="fa-solid fa-gauge-high teal-text"></i>
                                     </div>
-                                    <div class="sub-value-item">
-                                        <span class="sub-lbl">Debi (Litre)</span>
-                                        <span class="sub-val"><span id="flowRateLMin">-</span> lt/dk</span>
+                                    <div class="primary-value-container">
+                                        <span class="primary-value teal-text" id="flowRateM3Min">-</span>
+                                        <span class="primary-unit">m³/dk</span>
+                                    </div>
+                                    <p class="result-desc">Taşıma havası hızını minimum değerde tutmak ve çökmeyi önlemek için blowerın sağlaması gereken debidir.</p>
+                                    <div class="sub-values-grid">
+                                        <div class="sub-value-item">
+                                            <span class="sub-lbl">Debi (Saatlik)</span>
+                                            <span class="sub-val"><span id="flowRateM3Hour">-</span> m³/sa</span>
+                                        </div>
+                                        <div class="sub-value-item">
+                                            <span class="sub-lbl">Debi (Litre)</span>
+                                            <span class="sub-val"><span id="flowRateLMin">-</span> lt/dk</span>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <div class="result-card glow-indigo">
+                                    <div class="result-header">
+                                        <span class="result-title">Gerekli Minimum Körük/Blower Basıncı</span>
+                                        <i class="fa-solid fa-compress indigo-text"></i>
+                                    </div>
+                                    <div class="primary-value-container pressure-values">
+                                        <div class="value-block">
+                                            <div class="val-row">
+                                                <span class="primary-value indigo-text" id="pressureMbar">-</span>
+                                                <span class="primary-unit">mbar</span>
+                                            </div>
+                                            <span class="value-lbl">Net Gerekli Basınç</span>
+                                        </div>
+                                        <div class="value-divider">/</div>
+                                        <div class="value-block">
+                                            <div class="val-row">
+                                                <span class="primary-value amber-text" id="pressureSafetyMbar">-</span>
+                                                <span class="primary-unit">mbar</span>
+                                            </div>
+                                            <span class="value-lbl">Emniyetli Basınç (%25)</span>
+                                        </div>
+                                    </div>
+                                    <p class="result-desc">Hava sürtünmesi ve katı malzeme taşıma yükü nedeniyle oluşan toplam vakum emiş direnci.</p>
+                                    <div class="sub-values-grid">
+                                        <div class="sub-value-item">
+                                            <span class="sub-lbl">Basınç Farkı (Pa)</span>
+                                            <span class="sub-val"><span id="pressurePa">-</span> Pa</span>
+                                        </div>
+                                        <div class="sub-value-item">
+                                            <span class="sub-lbl">Basınç (Psi)</span>
+                                            <span class="sub-val"><span id="pressurePsi">-</span> psi</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="result-card glow-indigo">
-                                <div class="result-header">
-                                    <span class="result-title">Gerekli Minimum Körük/Blower Basıncı</span>
-                                    <i class="fa-solid fa-compress indigo-text"></i>
-                                </div>
-                                <div class="primary-value-container pressure-values">
-                                    <div class="value-block">
-                                        <div class="val-row">
-                                            <span class="primary-value indigo-text" id="pressureMbar">-</span>
-                                            <span class="primary-unit">mbar</span>
-                                        </div>
-                                        <span class="value-lbl">Net Gerekli Basınç</span>
-                                    </div>
-                                    <div class="value-divider">/</div>
-                                    <div class="value-block">
-                                        <div class="val-row">
-                                            <span class="primary-value amber-text" id="pressureSafetyMbar">-</span>
-                                            <span class="primary-unit">mbar</span>
-                                        </div>
-                                        <span class="value-lbl">Emniyetli Basınç (%25)</span>
-                                    </div>
-                                </div>
-                                <p class="result-desc">Hava sürtünmesi ve katı malzeme taşıma yükü nedeniyle oluşan toplam vakum emiş direnci.</p>
-                                <div class="sub-values-grid">
-                                    <div class="sub-value-item">
-                                        <span class="sub-lbl">Basınç Farkı (Pa)</span>
-                                        <span class="sub-val"><span id="pressurePa">-</span> Pa</span>
-                                    </div>
-                                    <div class="sub-value-item">
-                                        <span class="sub-lbl">Basınç (Psi)</span>
-                                        <span class="sub-val"><span id="pressurePsi">-</span> psi</span>
-                                    </div>
-                                </div>
-                            </div>
-
+    
                             <div class="result-card glow-violet" id="blowerRecommendationCard">
                                 <div class="result-header">
                                     <span class="result-title">Mühendislik Blower Seçimi ve Eşleştirme</span>
@@ -789,6 +792,410 @@
                                     </div>
                                     <p class="result-desc">Girilen boru hattı geometrisi veya debi şartlarını karşılayan Doğuşsan 2RB serisi standart körük bulunmamaktadır. Lütfen motor gücünü, hat uzunluğunu veya boru iç çapını optimize edin.</p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: TEKLİF VERME -->
+            <section id="teklifver-sec" class="portal-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fa-solid fa-file-invoice-dollar" style="color: var(--accent-indigo);"></i> Teklif Hazırlama ve Yazdırma</h2>
+                        <p>Firma bilgileri girip kayıtlı ürünlerden veya elle harici kalem ekleyerek teklif oluşturun.</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="tabs-container">
+                            <button class="tab-btn active" id="btnCreateTeklifTab">
+                                <i class="fa-solid fa-calculator"></i> Teklif Hazırlama
+                            </button>
+                            <button class="tab-btn" id="btnManageCatalogTab">
+                                <i class="fa-solid fa-folder-open"></i> Katalog Yönetimi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 1: Proposal Preparation -->
+                <div id="createTeklifTabContent" class="tab-content active-content">
+
+                <!-- TOP PANEL: Full-width Customer Details -->
+                <div class="panel-card" style="margin-bottom: 1.5rem;">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-info-circle"></i> Teklif Genel Bilgileri & Müşteri Cari Detayları
+                    </div>
+                    <div class="form-section" style="margin-bottom: 0; padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                            <!-- Column 1 -->
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="proposalTitle" style="font-weight: 600; font-size: 0.9rem;">Teklif Başlığı</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="proposalTitle" value="Fiyat Teklifi" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="clientCompany" style="font-weight: 600; font-size: 0.9rem;">Firma / Müşteri Adı</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="clientCompany" placeholder="Firma Adı Girin" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="contactPerson" style="font-weight: 600; font-size: 0.9rem;">İlgili Yetkili</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="contactPerson" placeholder="Yetkili Kişi" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="clientEmail" style="font-weight: 600; font-size: 0.9rem;">E-posta Adresi</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="email" id="clientEmail" placeholder="ornek@firma.com" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="clientAddress" style="font-weight: 600; font-size: 0.9rem;">Müşteri Adresi</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="clientAddress" placeholder="Müşteri adresini detaylı olarak girin" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Column 2 -->
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="clientTaxOffice" style="font-weight: 600; font-size: 0.9rem;">Vergi Dairesi</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="clientTaxOffice" placeholder="Vergi Dairesi" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="clientTaxNo" style="font-weight: 600; font-size: 0.9rem;">Vergi Numarası</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="clientTaxNo" placeholder="Vergi Numarası" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="proposalDate" style="font-weight: 600; font-size: 0.9rem;">Teklif Tarihi</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="date" id="proposalDate" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="usdExchangeRate" style="font-weight: 600; font-size: 0.9rem;">Dolar Kuru (TL)</label>
+                                    <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
+                                        <div class="input-container" style="flex: 1; padding: 0.5rem 0.75rem;">
+                                            <input type="number" id="usdExchangeRate" value="33.5" step="0.01" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                            <span class="unit">TL</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.4rem; min-width: 170px;">
+                                            <input type="checkbox" id="showTLPrice" checked style="width: 16px !important; height: 16px !important; margin: 0 !important; cursor: pointer; appearance: checkbox !important; -webkit-appearance: checkbox !important;">
+                                            <label for="showTLPrice" style="cursor: pointer; user-select: none; font-size: 0.85rem; font-weight: 500; margin-bottom: 0;">TL Fiyatları Göster</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="vatRate" style="font-weight: 600; font-size: 0.9rem;">KDV Oranı (%)</label>
+                                    <div style="display: flex; align-items: center; gap: 1rem; width: 100%;">
+                                        <div class="input-container" style="flex: 1; padding: 0.5rem 0.75rem;">
+                                            <input type="number" id="vatRate" value="20" min="0" max="100" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                            <span class="unit">%</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.4rem; min-width: 170px;">
+                                            <input type="checkbox" id="showVATPrice" checked style="width: 16px !important; height: 16px !important; margin: 0 !important; cursor: pointer; appearance: checkbox !important; -webkit-appearance: checkbox !important;">
+                                            <label for="showVATPrice" style="cursor: pointer; user-select: none; font-size: 0.85rem; font-weight: 500; margin-bottom: 0;">KDV Dahil Et</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL: Proposal Notes & Terms -->
+                <div class="panel-card" style="margin-bottom: 1.5rem;">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-list-check"></i> Teklif Notları ve Ticari Koşullar
+                    </div>
+                    <div class="form-section" style="margin-bottom: 0; padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <!-- Column 1: Conditions Table -->
+                            <div style="display: flex; flex-direction: column; gap: 1rem; border-right: 1px solid var(--border-color); padding-right: 2rem;">
+                                <h3 style="margin-bottom: 0.5rem; color: var(--accent-indigo); font-size: 0.95rem;">Ticari Koşullar Tablosu</h3>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="termsValidity" style="font-weight: 600; font-size: 0.9rem;">Fiyat Geçerlilik Süresi</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="termsValidity" value="30.06.2026" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="termsPayment" style="font-weight: 600; font-size: 0.9rem;">Ödeme Koşulu</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="termsPayment" value="%50 PEŞİN KALAN AMBAR TESLİMİ ÖDECEK" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="termsDelivery" style="font-weight: 600; font-size: 0.9rem;">Teslim Süresi</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="termsDelivery" value="ÖN ÖDEMEDEN SONRA 30 İŞGÜNÜ" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="termsShipping" style="font-weight: 600; font-size: 0.9rem;">Nakliye</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="termsShipping" value="ALICIYA AİTTİR" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Column 2: Legal & Extra Notes -->
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <h3 style="margin-bottom: 0.5rem; color: var(--accent-violet); font-size: 0.95rem;">Ek Notlar ve Açıklamalar</h3>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="noteBankExchange" style="font-weight: 600; font-size: 0.9rem;">Döviz/TL Çevrim Notu</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="noteBankExchange" value="TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR." style="text-align: left !important; font-size: 0.85rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="noteOrderConfirm" style="font-weight: 600; font-size: 0.9rem;">Sipariş Teyit Notu</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="noteOrderConfirm" value="SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR" style="text-align: left !important; font-size: 0.85rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="noteForceMajeure" style="font-weight: 600; font-size: 0.9rem;">Mücbir Sebepler ve Yetkili Mahkeme Notu</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem; height: auto;">
+                                        <textarea id="noteForceMajeure" style="text-align: left !important; font-size: 0.85rem; width: 100%; height: 95px; background: transparent; border: none; color: var(--text-primary); outline: none; resize: vertical; font-family: inherit; line-height: 1.45;">Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir.</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MIDDLE PANEL: Full-width Product Addition Panel -->
+                <div class="panel-card" style="margin-bottom: 1.5rem;">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-cart-plus"></i> Teklife Ürün / Kalem Ekle
+                    </div>
+                    <div class="form-section" style="margin-bottom: 0; padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <!-- Column 1: Predefined Products -->
+                            <div style="display: flex; flex-direction: column; gap: 1rem; border-right: 1px solid var(--border-color); padding-right: 2rem;">
+                                <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem; color: var(--accent-indigo);">Sistemdeki Ürünlerden Seç</h3>
+                                
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="sourceProductCategory" style="font-weight: 600; font-size: 0.9rem;">Ürün Kategorisi</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <select id="sourceProductCategory" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                            <option value="">-- Kategori Seçin --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="sourceProductItem" style="font-weight: 600; font-size: 0.9rem;">Ürün / Proje Seçimi</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <select id="sourceProductItem" disabled style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                            <option value="">-- Önce Kategori Seçin --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="productQty" style="font-weight: 600; font-size: 0.9rem;">Miktar</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="number" id="productQty" value="1" min="1" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                        <span class="unit">Adet</span>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="productCustomPrice" style="font-weight: 600; font-size: 0.9rem;">Birim Fiyatı (USD)</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="number" id="productCustomPrice" placeholder="Maliyet veya Özel Fiyat" step="0.01" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                        <span class="unit">$</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="project-btn-main btn-save" id="btnAddPredefinedProduct" style="width: 100%; margin-top: 0.5rem; padding: 0.75rem;">
+                                    <i class="fa-solid fa-plus"></i> Seçilen Ürünü Teklife Ekle
+                                </button>
+                            </div>
+                            
+                            <!-- Column 2: Custom Items -->
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem; color: var(--accent-violet);">Harici Kalem Ekle (Elle Giriş)</h3>
+                                
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="customItemDesc" style="font-weight: 600; font-size: 0.9rem;">Malzeme / Açıklama</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="customItemDesc" placeholder="Örn: Özel Konveyör Revizyonu" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="customItemQty" style="font-weight: 600; font-size: 0.9rem;">Miktar</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="number" id="customItemQty" value="1" min="1" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="customItemUnit" style="font-weight: 600; font-size: 0.9rem;">Birim</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="customItemUnit" value="Adet" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="customItemPrice" style="font-weight: 600; font-size: 0.9rem;">Birim Fiyatı (USD)</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="number" id="customItemPrice" value="0.00" step="0.01" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                        <span class="unit">$</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="project-btn-main btn-save" id="btnAddCustomItem" style="width: 100%; margin-top: 0.5rem; padding: 0.75rem; background: linear-gradient(135deg, var(--accent-violet), rgba(139, 92, 246, 0.8));">
+                                    <i class="fa-solid fa-plus"></i> Harici Kalemi Teklife Ekle
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Bottom: Annex selection -->
+                        <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                <!-- Column 1: Central System Annex -->
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; margin-bottom: 0;">
+                                    <label for="annexCentralProject" style="font-weight: 600; font-size: 0.9rem; color: var(--accent-teal);">Merkezi Sistem Teklif Eki Ekle</label>
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                                        <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                            <select id="annexCentralProject" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                                <option value="">-- Proje Eki Yok --</option>
+                                            </select>
+                                        </div>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted);">
+                                            Seçilen projenin malzeme ve miktar tablosu teklif çıktısına ek olarak otomatik dahil edilecektir.
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- Column 2: Pneumatic System Annex -->
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; margin-bottom: 0;">
+                                    <label for="annexPnomatikProject" style="font-weight: 600; font-size: 0.9rem; color: var(--accent-violet);">Pnömatik Taşıma Bilgi Eki Ekle</label>
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                                        <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                            <select id="annexPnomatikProject" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                                <option value="">-- Proje Eki Yok --</option>
+                                            </select>
+                                        </div>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted);">
+                                            Seçilen pnömatik taşıma hesabının girdi, çıktı ve blower seçim detayları teklif çıktısına ek olarak otomatik dahil edilecektir.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM PANEL: Full-width Table & Totals -->
+                <div class="panel-card scroll-x">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-receipt"></i> Oluşturulan Teklif Kalemleri
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="cost-table" id="teklifTable">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Malzeme / Açıklama</th>
+                                        <th style="text-align: center;">Miktar / Birim</th>
+                                        <th style="text-align: right;">Birim Fiyat ($)</th>
+                                        <th style="text-align: right;">Toplam Fiyat ($)</th>
+                                        <th style="text-align: right;" class="hide-print-col">İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teklifTableBody">
+                                    <!-- Dynamically filled -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="teklif-totals-box" id="teklifTotalsContainer" style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-color);">
+                            <!-- Dynamically filled by JS -->
+                        </div>
+
+                        <div class="project-buttons-grid" style="margin-top: 1.5rem;">
+                            <button type="button" class="project-btn-main btn-save" id="btnPrintCustomProposal" style="background: linear-gradient(135deg, var(--accent-teal), rgba(20, 184, 166, 0.8));">
+                                <i class="fa-solid fa-file-pdf"></i> Teklifi Yazdır / PDF
+                            </button>
+                            <button type="button" class="project-btn-main btn-delete" id="btnClearProposal">
+                                <i class="fa-solid fa-trash"></i> Teklifi Sıfırla
+                            </button>
+                        </div>
+                    </div>
+                </div> <!-- End of Tab 1: Proposal Preparation -->
+
+                <!-- Tab 2: Catalog Management -->
+                <div id="manageCatalogTabContent" class="tab-content">
+                    <div class="dashboard-grid">
+                        <!-- Left Panel: Add Category & Add Product -->
+                        <div class="panel-card">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-folder-plus"></i> Kategori & Ürün Tanımlama
+                            </div>
+                            
+                            <!-- Category Add Section -->
+                            <div class="form-section stacked-form-section" style="margin-bottom: 1.5rem;">
+                                <h3>Yeni Kategori Ekle</h3>
+                                <div class="form-group">
+                                    <label for="newCatalogCategoryName">Kategori Adı</label>
+                                    <div class="input-container">
+                                        <input type="text" id="newCatalogCategoryName" placeholder="Örn: Hortum & Boru">
+                                        <span class="unit"><i class="fa-solid fa-folder"></i></span>
+                                    </div>
+                                </div>
+                                <button type="button" class="project-btn-main btn-save" id="btnAddNewCatalogCategory" style="margin-top: 0.5rem; width: 100%;">
+                                    <i class="fa-solid fa-plus"></i> Kategori Ekle
+                                </button>
+                            </div>
+
+                            <!-- Product Add Section -->
+                            <div class="form-section stacked-form-section">
+                                <h3>Kategoriye Ürün Ekle</h3>
+                                <div class="form-group">
+                                    <label for="catalogProductCategorySelect">Hedef Kategori</label>
+                                    <div class="input-container">
+                                        <select id="catalogProductCategorySelect">
+                                            <option value="">-- Kategori Seçin --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newCatalogProductName">Ürün Adı / Açıklaması</label>
+                                    <div class="input-container">
+                                        <input type="text" id="newCatalogProductName" placeholder="Örn: 2'' Spiral Hortum">
+                                        <span class="unit"><i class="fa-solid fa-box"></i></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newCatalogProductPrice">Varsayılan Fiyatı (USD)</label>
+                                    <div class="input-container">
+                                        <input type="number" id="newCatalogProductPrice" placeholder="0.00" step="0.01">
+                                        <span class="unit">$</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="project-btn-main btn-save" id="btnAddNewCatalogProduct" style="margin-top: 0.5rem; width: 100%; background: linear-gradient(135deg, var(--accent-indigo), rgba(99, 102, 241, 0.8));">
+                                    <i class="fa-solid fa-plus"></i> Ürün Ekle
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Catalog View & CRUD -->
+                        <div class="panel-card scroll-x">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-list-check"></i> Tanımlı Ürün Kataloğu
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                                Kategorileri ve altındaki ürünleri buradan görebilir, silebilirsiniz.
+                            </p>
+                            <div id="catalogViewerContainer" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                                <!-- Dynamically populated list of categories and products -->
                             </div>
                         </div>
                     </div>
@@ -873,11 +1280,11 @@
         </div>
     </div>
 
-    <!-- Load scripts in order -->
     <script src="starter_data.js"></script>
     <script src="yukleyici.js"></script>
     <script src="merkezi.js"></script>
     <script src="pnomatik.js"></script>
+    <script src="teklifver.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
