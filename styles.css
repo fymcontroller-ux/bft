@@ -771,6 +771,11 @@ label {
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
 }
 
+/* Hide Factory Reset / Reset buttons as requested by the user */
+#resetPricesBtn, #resetExpensesBtn, #resetPricesBtnMerkezi {
+    display: none !important;
+}
+
 .project-section-card {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
