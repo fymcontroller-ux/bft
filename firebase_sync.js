@@ -425,7 +425,18 @@
                 for (let key of storageKeys) {
                     const localVal = localStorage.getItem(key);
                     const remoteVal = remotePayload.data[key];
-                    if (localVal !== remoteVal) {
+                    
+                    // If a key doesn't exist in remote cloud data, don't trigger sync pull.
+                    // This prevents infinite reload loops on new keys or missing cloud keys.
+                    if (remoteVal === undefined) {
+                        continue;
+                    }
+
+                    // Normalize both null and undefined to null to prevent false mismatch reload loops
+                    const normLocal = (localVal === null || localVal === undefined) ? null : localVal;
+                    const normRemote = (remoteVal === null || remoteVal === undefined) ? null : remoteVal;
+
+                    if (normLocal !== normRemote) {
                         hasChanges = true;
                         break;
                     }
@@ -440,7 +451,10 @@
                         if (remoteVal !== null && remoteVal !== undefined) {
                             localStorage.setItem(key, remoteVal);
                         } else {
-                            localStorage.removeItem(key);
+                            // Only remove from local storage if explicitly set to null/empty in remote
+                            if (remoteVal !== undefined) {
+                                localStorage.removeItem(key);
+                            }
                         }
                     });
 
