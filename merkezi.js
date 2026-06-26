@@ -491,84 +491,372 @@ function initPriceEditor() {
         }
     ));
 
-    // Render Boru models card with extra fields (Hose, Clamp Prices)
-    const pipeCard = document.createElement("div");
-    pipeCard.className = "price-group-card";
-    const pipeH3 = document.createElement("h3");
-    pipeH3.textContent = "Boru ve Tesisat Modelleri";
-    pipeCard.appendChild(pipeH3);
+    const uniqueHoses = [];
+    pipes.forEach(p => {
+        if (p.hose && !uniqueHoses.some(h => h.name === p.hose)) {
+            uniqueHoses.push({ name: p.hose, price: p.hosePrice });
+        }
+    });
 
-    pipes.forEach((p, idx) => {
-        const rowOuter = document.createElement("div");
-        rowOuter.style.padding = "0.75rem 0";
-        rowOuter.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
-        rowOuter.style.position = "relative";
+    const uniqueClamps = [];
+    pipes.forEach(p => {
+        if (p.clamp && !uniqueClamps.some(c => c.name === p.clamp)) {
+            uniqueClamps.push({ name: p.clamp, price: p.clampPrice });
+        }
+    });
 
-        // Pipe Row
-        const rowPipe = document.createElement("div");
-        rowPipe.className = "price-input-row";
-        rowPipe.style.display = "flex";
-        rowPipe.style.gap = "0.75rem";
-        rowPipe.style.alignItems = "center";
+    function createAddPipeFooter(isKrom, onAdd) {
+        const footerDiv = document.createElement("div");
+        footerDiv.style.marginTop = "1.5rem";
+        footerDiv.style.paddingTop = "1rem";
+        footerDiv.style.borderTop = "1px solid var(--border-color)";
         
-        const pipeNameInput = document.createElement("input");
-        pipeNameInput.type = "text";
-        pipeNameInput.value = p.name;
-        pipeNameInput.style.flex = "1";
-        pipeNameInput.style.minWidth = "150px";
-        pipeNameInput.style.background = "transparent";
-        pipeNameInput.style.border = "1px solid transparent";
-        pipeNameInput.style.borderRadius = "6px";
-        pipeNameInput.style.color = "var(--text-primary)";
-        pipeNameInput.style.outline = "none";
-        pipeNameInput.style.padding = "0.25rem 0.5rem";
-        pipeNameInput.style.textAlign = "left";
+        const label = document.createElement("div");
+        label.style.fontSize = "0.8rem";
+        label.style.fontWeight = "600";
+        label.style.color = "var(--text-muted)";
+        label.style.marginBottom = "0.5rem";
+        label.textContent = isKrom ? "YENİ PASLANMAZ KROM BORU EKLE" : "YENİ SİYAH ÇELİK BORU EKLE";
+        footerDiv.appendChild(label);
+
+        const formGrid = document.createElement("div");
+        formGrid.style.display = "flex";
+        formGrid.style.flexDirection = "column";
+        formGrid.style.gap = "0.5rem";
+
+        // Row 1: Name and Price
+        const row1 = document.createElement("div");
+        row1.style.display = "flex";
+        row1.style.gap = "0.5rem";
         
-        pipeNameInput.addEventListener("focus", () => {
-            pipeNameInput.style.background = "var(--bg-input)";
-            pipeNameInput.style.borderColor = "var(--accent-indigo)";
+        const nameCont = document.createElement("div");
+        nameCont.className = "input-container";
+        nameCont.style.flex = "2";
+        nameCont.style.padding = "0.35rem 0.5rem";
+        const nameInp = document.createElement("input");
+        nameInp.placeholder = isKrom ? "Boru Adı (Krom)" : "Boru Adı (Siyah)";
+        nameInp.style.fontSize = "0.8rem";
+        nameInp.style.textAlign = "left";
+        nameCont.appendChild(nameInp);
+
+        const priceCont = document.createElement("div");
+        priceCont.className = "input-container";
+        priceCont.style.flex = "1";
+        priceCont.style.padding = "0.35rem 0.5rem";
+        const priceInp = document.createElement("input");
+        priceInp.type = "number";
+        priceInp.step = "0.01";
+        priceInp.placeholder = "Boru Fiyat ($)";
+        priceInp.style.fontSize = "0.8rem";
+        priceInp.style.textAlign = "left";
+        priceCont.appendChild(priceInp);
+
+        row1.appendChild(nameCont);
+        row1.appendChild(priceCont);
+        formGrid.appendChild(row1);
+
+        // Row 2: Hose Selection
+        const row2 = document.createElement("div");
+        row2.style.display = "flex";
+        row2.style.gap = "0.5rem";
+        row2.style.alignItems = "center";
+
+        const hoseSelectCont = document.createElement("div");
+        hoseSelectCont.className = "input-container";
+        hoseSelectCont.style.flex = "1";
+        hoseSelectCont.style.padding = "0.35rem 0.5rem";
+        const hoseSelect = document.createElement("select");
+        hoseSelect.style.width = "100%";
+        hoseSelect.style.background = "transparent";
+        hoseSelect.style.border = "none";
+        hoseSelect.style.color = "var(--text-primary)";
+        hoseSelect.style.outline = "none";
+        hoseSelect.style.fontSize = "0.8rem";
+        
+        // Populate existing hoses
+        uniqueHoses.forEach(h => {
+            const opt = document.createElement("option");
+            opt.value = h.name;
+            opt.textContent = `${h.name} ($${h.price.toFixed(2)})`;
+            opt.style.background = "var(--bg-card)";
+            hoseSelect.appendChild(opt);
         });
-        pipeNameInput.addEventListener("blur", (e) => {
-            pipeNameInput.style.background = "transparent";
-            pipeNameInput.style.borderColor = "transparent";
+        const optNewHose = document.createElement("option");
+        optNewHose.value = "__NEW__";
+        optNewHose.textContent = "+ Yeni Hortum Ekle...";
+        optNewHose.style.background = "var(--bg-card)";
+        hoseSelect.appendChild(optNewHose);
+        hoseSelectCont.appendChild(hoseSelect);
+
+        // Custom Hose input fields (hidden initially)
+        const customHoseNameCont = document.createElement("div");
+        customHoseNameCont.className = "input-container";
+        customHoseNameCont.style.flex = "1";
+        customHoseNameCont.style.padding = "0.35rem 0.5rem";
+        customHoseNameCont.style.display = "none";
+        const customHoseNameInp = document.createElement("input");
+        customHoseNameInp.placeholder = "Yeni Hortum Adı";
+        customHoseNameInp.style.fontSize = "0.8rem";
+        customHoseNameInp.style.textAlign = "left";
+        customHoseNameCont.appendChild(customHoseNameInp);
+
+        const customHosePriceCont = document.createElement("div");
+        customHosePriceCont.className = "input-container";
+        customHosePriceCont.style.flex = "0.5";
+        customHosePriceCont.style.padding = "0.35rem 0.5rem";
+        customHosePriceCont.style.display = "none";
+        const customHosePriceInp = document.createElement("input");
+        customHosePriceInp.type = "number";
+        customHosePriceInp.step = "0.01";
+        customHosePriceInp.placeholder = "Fiyat ($)";
+        customHosePriceInp.style.fontSize = "0.8rem";
+        customHosePriceInp.style.textAlign = "left";
+        customHosePriceCont.appendChild(customHosePriceInp);
+
+        row2.appendChild(hoseSelectCont);
+        row2.appendChild(customHoseNameCont);
+        row2.appendChild(customHosePriceCont);
+        formGrid.appendChild(row2);
+
+        // Row 3: Clamp Selection
+        const row3 = document.createElement("div");
+        row3.style.display = "flex";
+        row3.style.gap = "0.5rem";
+        row3.style.alignItems = "center";
+
+        const clampSelectCont = document.createElement("div");
+        clampSelectCont.className = "input-container";
+        clampSelectCont.style.flex = "1";
+        clampSelectCont.style.padding = "0.35rem 0.5rem";
+        const clampSelect = document.createElement("select");
+        clampSelect.style.width = "100%";
+        clampSelect.style.background = "transparent";
+        clampSelect.style.border = "none";
+        clampSelect.style.color = "var(--text-primary)";
+        clampSelect.style.outline = "none";
+        clampSelect.style.fontSize = "0.8rem";
+
+        // Populate existing clamps
+        uniqueClamps.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.name;
+            opt.textContent = `${c.name} ($${c.price.toFixed(2)})`;
+            opt.style.background = "var(--bg-card)";
+            clampSelect.appendChild(opt);
+        });
+        const optNewClamp = document.createElement("option");
+        optNewClamp.value = "__NEW__";
+        optNewClamp.textContent = "+ Yeni Kelepçe Ekle...";
+        optNewClamp.style.background = "var(--bg-card)";
+        clampSelect.appendChild(optNewClamp);
+        clampSelectCont.appendChild(clampSelect);
+
+        // Custom Clamp input fields (hidden initially)
+        const customClampNameCont = document.createElement("div");
+        customClampNameCont.className = "input-container";
+        customClampNameCont.style.flex = "1";
+        customClampNameCont.style.padding = "0.35rem 0.5rem";
+        customClampNameCont.style.display = "none";
+        const customClampNameInp = document.createElement("input");
+        customClampNameInp.placeholder = "Yeni Kelepçe Adı";
+        customClampNameInp.style.fontSize = "0.8rem";
+        customClampNameInp.style.textAlign = "left";
+        customClampNameCont.appendChild(customClampNameInp);
+
+        const customClampPriceCont = document.createElement("div");
+        customClampPriceCont.className = "input-container";
+        customClampPriceCont.style.flex = "0.5";
+        customClampPriceCont.style.padding = "0.35rem 0.5rem";
+        customClampPriceCont.style.display = "none";
+        const customClampPriceInp = document.createElement("input");
+        customClampPriceInp.type = "number";
+        customClampPriceInp.step = "0.01";
+        customClampPriceInp.placeholder = "Fiyat ($)";
+        customClampPriceInp.style.fontSize = "0.8rem";
+        customClampPriceInp.style.textAlign = "left";
+        customClampPriceCont.appendChild(customClampPriceInp);
+
+        row3.appendChild(clampSelectCont);
+        row3.appendChild(customClampNameCont);
+        row3.appendChild(customClampPriceCont);
+        formGrid.appendChild(row3);
+
+        // Toggle custom input fields on select change
+        hoseSelect.addEventListener("change", () => {
+            if (hoseSelect.value === "__NEW__") {
+                customHoseNameCont.style.display = "block";
+                customHosePriceCont.style.display = "block";
+            } else {
+                customHoseNameCont.style.display = "none";
+                customHosePriceCont.style.display = "none";
+            }
+        });
+
+        clampSelect.addEventListener("change", () => {
+            if (clampSelect.value === "__NEW__") {
+                customClampNameCont.style.display = "block";
+                customClampPriceCont.style.display = "block";
+            } else {
+                customClampNameCont.style.display = "none";
+                customClampPriceCont.style.display = "none";
+            }
+        });
+
+        // Add Button
+        const addBtn = document.createElement("button");
+        addBtn.className = "project-btn-main btn-save";
+        addBtn.style.padding = "0.4rem";
+        addBtn.style.width = "100%";
+        addBtn.style.fontSize = "0.8rem";
+        addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Boru Ekle';
+        addBtn.addEventListener("click", () => {
+            const pipeName = nameInp.value.trim();
+            const pipePrice = parseFloat(priceInp.value) || 0;
+
+            if (!pipeName) {
+                alert("Lütfen boru adı girin.");
+                return;
+            }
+
+            if (pipes.some(x => x.name.toLowerCase() === pipeName.toLowerCase())) {
+                alert("Bu boru modeli zaten mevcut!");
+                return;
+            }
+
+            if (!isKrom && !pipeName.toUpperCase().includes("SİYAH")) {
+                alert("Siyah çelik boru adı 'SİYAH' kelimesini içermelidir (örn. Ø38X1,5 SİYAH BORU).");
+                return;
+            }
+            if (isKrom && pipeName.toUpperCase().includes("SİYAH")) {
+                alert("Krom boru adı 'SİYAH' kelimesini içeremez.");
+                return;
+            }
+
+            let finalHoseName = "";
+            let finalHosePrice = 0;
+            if (hoseSelect.value === "__NEW__") {
+                finalHoseName = customHoseNameInp.value.trim();
+                finalHosePrice = parseFloat(customHosePriceInp.value) || 0;
+                if (!finalHoseName) {
+                    alert("Lütfen yeni hortum adı girin.");
+                    return;
+                }
+            } else {
+                finalHoseName = hoseSelect.value;
+                const matchedHose = uniqueHoses.find(h => h.name === finalHoseName);
+                finalHosePrice = matchedHose ? matchedHose.price : 0;
+            }
+
+            let finalClampName = "";
+            let finalClampPrice = 0;
+            if (clampSelect.value === "__NEW__") {
+                finalClampName = customClampNameInp.value.trim();
+                finalClampPrice = parseFloat(customClampPriceInp.value) || 0;
+                if (!finalClampName) {
+                    alert("Lütfen yeni kelepçe adı girin.");
+                    return;
+                }
+            } else {
+                finalClampName = clampSelect.value;
+                const matchedClamp = uniqueClamps.find(c => c.name === finalClampName);
+                finalClampPrice = matchedClamp ? matchedClamp.price : 0;
+            }
+
+            onAdd(pipeName, pipePrice, finalHoseName, finalHosePrice, finalClampName, finalClampPrice);
+        });
+
+        footerDiv.appendChild(formGrid);
+        footerDiv.appendChild(addBtn);
+        addBtn.style.marginTop = "0.5rem";
+
+        return footerDiv;
+    }
+
+    // Render Krom Paslanmaz Borular
+    const kromCard = document.createElement("div");
+    kromCard.className = "price-group-card";
+    const kromH3 = document.createElement("h3");
+    kromH3.textContent = "Krom Paslanmaz Borular";
+    kromCard.appendChild(kromH3);
+
+    const kromPipes = pipes.filter(p => !p.name.toUpperCase().includes("SİYAH"));
+
+    kromPipes.forEach(p => {
+        const masterIdx = pipes.findIndex(x => x.name === p.name);
+        
+        const row = document.createElement("div");
+        row.className = "price-input-row";
+        row.style.display = "flex";
+        row.style.gap = "0.75rem";
+        row.style.alignItems = "center";
+        row.style.padding = "0.5rem 0";
+        row.style.borderBottom = "1px solid rgba(255,255,255,0.02)";
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = p.name;
+        nameInput.style.flex = "1";
+        nameInput.style.minWidth = "150px";
+        nameInput.style.background = "transparent";
+        nameInput.style.border = "1px solid transparent";
+        nameInput.style.borderRadius = "6px";
+        nameInput.style.color = "var(--text-primary)";
+        nameInput.style.outline = "none";
+        nameInput.style.padding = "0.25rem 0.5rem";
+        nameInput.style.textAlign = "left";
+
+        nameInput.addEventListener("focus", () => {
+            nameInput.style.background = "var(--bg-input)";
+            nameInput.style.borderColor = "var(--accent-indigo)";
+        });
+        nameInput.addEventListener("blur", (e) => {
+            nameInput.style.background = "transparent";
+            nameInput.style.borderColor = "transparent";
             const newName = e.target.value.trim();
             if (!newName) {
                 alert("Boru adı boş olamaz!");
-                pipeNameInput.value = p.name;
+                nameInput.value = p.name;
                 return;
             }
             if (newName === p.name) return;
-            pipes[idx].name = newName;
+            if (pipes.some(x => x.name.toLowerCase() === newName.toLowerCase())) {
+                alert("Bu isim zaten mevcut!");
+                nameInput.value = p.name;
+                return;
+            }
+            pipes[masterIdx].name = newName;
             savePrices();
             initSelectors();
             calculate();
         });
-        pipeNameInput.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") pipeNameInput.blur();
-            if (e.key === "Escape") { pipeNameInput.value = p.name; pipeNameInput.blur(); }
+        nameInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") nameInput.blur();
+            if (e.key === "Escape") { nameInput.value = p.name; nameInput.blur(); }
         });
 
-        const pipePriceContainer = document.createElement("div");
-        pipePriceContainer.className = "input-container";
-        pipePriceContainer.style.width = "120px";
-        pipePriceContainer.style.marginLeft = "auto";
-        const pipePriceInp = document.createElement("input");
-        pipePriceInp.type = "number";
-        pipePriceInp.step = "0.01";
-        pipePriceInp.min = "0";
-        pipePriceInp.value = p.price;
-        pipePriceInp.style.textAlign = "left";
-        pipePriceInp.addEventListener("input", (e) => {
-            pipes[idx].price = parseFloat(e.target.value) || 0;
+        const inputContainer = document.createElement("div");
+        inputContainer.className = "input-container";
+        inputContainer.style.width = "120px";
+        inputContainer.style.marginLeft = "auto";
+
+        const inp = document.createElement("input");
+        inp.type = "number";
+        inp.step = "0.01";
+        inp.min = "0";
+        inp.value = p.price;
+        inp.style.textAlign = "left";
+        inp.addEventListener("input", (e) => {
+            pipes[masterIdx].price = parseFloat(e.target.value) || 0;
             savePrices();
-            initSelectors();
             calculate();
         });
-        const unit1 = document.createElement("span");
-        unit1.className = "unit";
-        unit1.textContent = "$";
-        pipePriceContainer.appendChild(pipePriceInp);
-        pipePriceContainer.appendChild(unit1);
+
+        const unit = document.createElement("span");
+        unit.className = "unit";
+        unit.textContent = "$";
+
+        inputContainer.appendChild(inp);
+        inputContainer.appendChild(unit);
 
         const delBtn = document.createElement("button");
         delBtn.className = "project-btn-main btn-delete";
@@ -576,8 +864,8 @@ function initPriceEditor() {
         delBtn.style.marginTop = "0";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
         delBtn.addEventListener("click", () => {
-            if (confirm(`"${p.name}" boru hattını tamamen silmek istediğinize emin misiniz?`)) {
-                pipes.splice(idx, 1);
+            if (confirm(`"${p.name}" borusunu silmek istediğinize emin misiniz?`)) {
+                pipes.splice(masterIdx, 1);
                 savePrices();
                 initSelectors();
                 initPriceEditor();
@@ -585,223 +873,13 @@ function initPriceEditor() {
             }
         });
 
-        rowPipe.appendChild(pipeNameInput);
-        rowPipe.appendChild(pipePriceContainer);
-        rowPipe.appendChild(delBtn);
-        rowOuter.appendChild(rowPipe);
-
-        // Hose price row
-        const rowHose = document.createElement("div");
-        rowHose.className = "price-input-row";
-        rowHose.style.paddingLeft = "1.5rem";
-        rowHose.style.display = "flex";
-        rowHose.style.gap = "0.75rem";
-        rowHose.style.alignItems = "center";
-        
-        const hoseNameInput = document.createElement("input");
-        hoseNameInput.type = "text";
-        hoseNameInput.value = p.hose;
-        hoseNameInput.style.flex = "1";
-        hoseNameInput.style.minWidth = "150px";
-        hoseNameInput.style.background = "transparent";
-        hoseNameInput.style.border = "1px solid transparent";
-        hoseNameInput.style.borderRadius = "6px";
-        hoseNameInput.style.color = "var(--text-muted)";
-        hoseNameInput.style.fontSize = "0.8rem";
-        hoseNameInput.style.outline = "none";
-        hoseNameInput.style.padding = "0.25rem 0.5rem";
-        hoseNameInput.style.textAlign = "left";
-        hoseNameInput.addEventListener("focus", () => {
-            hoseNameInput.style.background = "var(--bg-input)";
-            hoseNameInput.style.borderColor = "var(--accent-indigo)";
-        });
-        hoseNameInput.addEventListener("blur", (e) => {
-            hoseNameInput.style.background = "transparent";
-            hoseNameInput.style.borderColor = "transparent";
-            const newHoseName = e.target.value.trim();
-            if (!newHoseName) {
-                alert("Spiral hortum adı boş olamaz!");
-                hoseNameInput.value = p.hose;
-                return;
-            }
-            if (newHoseName === p.hose) return;
-            const oldHoseName = p.hose;
-            pipes.forEach(pi => {
-                if (pi.hose === oldHoseName) {
-                    pi.hose = newHoseName;
-                }
-            });
-            savePrices();
-            initPriceEditor();
-            calculate();
-        });
-
-        const hosePriceContainer = document.createElement("div");
-        hosePriceContainer.className = "input-container";
-        hosePriceContainer.style.width = "120px";
-        hosePriceContainer.style.marginLeft = "auto";
-        const hosePriceInp = document.createElement("input");
-        hosePriceInp.type = "number";
-        hosePriceInp.step = "0.01";
-        hosePriceInp.min = "0";
-        hosePriceInp.value = p.hosePrice;
-        hosePriceInp.style.textAlign = "left";
-        hosePriceInp.id = `hosePrice-${idx}`;
-        hosePriceInp.addEventListener("input", (e) => {
-            const val = parseFloat(e.target.value) || 0;
-            const targetHoseName = pipes[idx].hose;
-            pipes.forEach((pItem, i) => {
-                if (pItem.hose === targetHoseName) {
-                    pItem.hosePrice = val;
-                    const inputEl = document.getElementById(`hosePrice-${i}`);
-                    if (inputEl) {
-                        inputEl.value = val;
-                    }
-                }
-            });
-            savePrices();
-            calculate();
-        });
-        const unit2 = document.createElement("span");
-        unit2.className = "unit";
-        unit2.textContent = "$";
-        hosePriceContainer.appendChild(hosePriceInp);
-        hosePriceContainer.appendChild(unit2);
-
-        const spacePlaceholder1 = document.createElement("div");
-        spacePlaceholder1.style.width = "32px";
-
-        rowHose.appendChild(hoseNameInput);
-        rowHose.appendChild(hosePriceContainer);
-        rowHose.appendChild(spacePlaceholder1);
-        rowOuter.appendChild(rowHose);
-
-        // Clamp price row
-        const rowClamp = document.createElement("div");
-        rowClamp.className = "price-input-row";
-        rowClamp.style.paddingLeft = "1.5rem";
-        rowClamp.style.display = "flex";
-        rowClamp.style.gap = "0.75rem";
-        rowClamp.style.alignItems = "center";
-        
-        const clampNameInput = document.createElement("input");
-        clampNameInput.type = "text";
-        clampNameInput.value = p.clamp;
-        clampNameInput.style.flex = "1";
-        clampNameInput.style.minWidth = "150px";
-        clampNameInput.style.background = "transparent";
-        clampNameInput.style.border = "1px solid transparent";
-        clampNameInput.style.borderRadius = "6px";
-        clampNameInput.style.color = "var(--text-muted)";
-        clampNameInput.style.fontSize = "0.8rem";
-        clampNameInput.style.outline = "none";
-        clampNameInput.style.padding = "0.25rem 0.5rem";
-        clampNameInput.style.textAlign = "left";
-        clampNameInput.addEventListener("focus", () => {
-            clampNameInput.style.background = "var(--bg-input)";
-            clampNameInput.style.borderColor = "var(--accent-indigo)";
-        });
-        clampNameInput.addEventListener("blur", (e) => {
-            clampNameInput.style.background = "transparent";
-            clampNameInput.style.borderColor = "transparent";
-            const newClampName = e.target.value.trim();
-            if (!newClampName) {
-                alert("Kelepçe adı boş olamaz!");
-                clampNameInput.value = p.clamp;
-                return;
-            }
-            if (newClampName === p.clamp) return;
-            const oldClampName = p.clamp;
-            pipes.forEach(pi => {
-                if (pi.clamp === oldClampName) {
-                    pi.clamp = newClampName;
-                }
-            });
-            savePrices();
-            initPriceEditor();
-            calculate();
-        });
-
-        const clampPriceContainer = document.createElement("div");
-        clampPriceContainer.className = "input-container";
-        clampPriceContainer.style.width = "120px";
-        clampPriceContainer.style.marginLeft = "auto";
-        const clampPriceInp = document.createElement("input");
-        clampPriceInp.type = "number";
-        clampPriceInp.step = "0.01";
-        clampPriceInp.min = "0";
-        clampPriceInp.value = p.clampPrice;
-        clampPriceInp.style.textAlign = "left";
-        clampPriceInp.id = `clampPrice-${idx}`;
-        clampPriceInp.addEventListener("input", (e) => {
-            const val = parseFloat(e.target.value) || 0;
-            const targetClampName = pipes[idx].clamp;
-            pipes.forEach((pItem, i) => {
-                if (pItem.clamp === targetClampName) {
-                    pItem.clampPrice = val;
-                    const inputEl = document.getElementById(`clampPrice-${i}`);
-                    if (inputEl) {
-                        inputEl.value = val;
-                    }
-                }
-            });
-            savePrices();
-            calculate();
-        });
-        const unit3 = document.createElement("span");
-        unit3.className = "unit";
-        unit3.textContent = "$";
-        clampPriceContainer.appendChild(clampPriceInp);
-        clampPriceContainer.appendChild(unit3);
-
-        const spacePlaceholder2 = document.createElement("div");
-        spacePlaceholder2.style.width = "32px";
-
-        rowClamp.appendChild(clampNameInput);
-        rowClamp.appendChild(clampPriceContainer);
-        rowClamp.appendChild(spacePlaceholder2);
-        rowOuter.appendChild(rowClamp);
-
-        pipeCard.appendChild(rowOuter);
+        row.appendChild(nameInput);
+        row.appendChild(inputContainer);
+        row.appendChild(delBtn);
+        kromCard.appendChild(row);
     });
 
-    // Add pipe footer
-    const pipeFooter = document.createElement("div");
-    pipeFooter.style.marginTop = "1.5rem";
-    pipeFooter.style.paddingTop = "1rem";
-    pipeFooter.style.borderTop = "1px solid var(--border-color)";
-    pipeFooter.innerHTML = `
-        <div style="font-size: 0.8rem; font-weight:600; color: var(--text-muted); margin-bottom: 0.5rem;">YENİ BORU SİSTEMİ EKLE</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
-            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input id="addPipeName" placeholder="Boru Adı" style="font-size: 0.8rem; text-align: left;"></div>
-            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input type="number" id="addPipePrice" placeholder="Boru Fiyat ($)" style="font-size: 0.8rem; text-align: left;"></div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
-            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input id="addHoseName" placeholder="Spiral Hortum Adı" style="font-size: 0.8rem; text-align: left;"></div>
-            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input type="number" id="addHosePrice" placeholder="Hortum Fiyat ($)" style="font-size: 0.8rem; text-align: left;"></div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
-            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input id="addClampName" placeholder="Kelepçe Adı" style="font-size: 0.8rem; text-align: left;"></div>
-            <div class="input-container" style="padding: 0.35rem 0.5rem;"><input type="number" id="addClampPrice" placeholder="Kelepçe Fiyat ($)" style="font-size: 0.8rem; text-align: left;"></div>
-        </div>
-        <button id="btnAddPipeSubmit" class="project-btn-main btn-save" style="width: 100%; padding: 0.4rem; font-size: 0.8rem;"><i class="fa-solid fa-plus"></i> Boru Modeli Ekle</button>
-    `;
-    pipeCard.appendChild(pipeFooter);
-    container.appendChild(pipeCard);
-
-    pipeFooter.querySelector("#btnAddPipeSubmit").addEventListener("click", () => {
-        const pipeName = pipeFooter.querySelector("#addPipeName").value.trim();
-        const pipePrice = parseFloat(pipeFooter.querySelector("#addPipePrice").value) || 0;
-        const hoseName = pipeFooter.querySelector("#addHoseName").value.trim();
-        const hosePrice = parseFloat(pipeFooter.querySelector("#addHosePrice").value) || 0;
-        const clampName = pipeFooter.querySelector("#addClampName").value.trim();
-        const clampPrice = parseFloat(pipeFooter.querySelector("#addClampPrice").value) || 0;
-
-        if (!pipeName || !hoseName || !clampName) {
-            alert("Lütfen boru, hortum ve kelepçe adlarını doldurun.");
-            return;
-        }
-
+    kromCard.appendChild(createAddPipeFooter(true, (pipeName, pipePrice, hoseName, hosePrice, clampName, clampPrice) => {
         pipes.push({
             name: pipeName,
             price: pipePrice,
@@ -814,7 +892,369 @@ function initPriceEditor() {
         initSelectors();
         initPriceEditor();
         calculate();
+    }));
+    container.appendChild(kromCard);
+
+    // Render Siyah Çelik Borular
+    const siyahCard = document.createElement("div");
+    siyahCard.className = "price-group-card";
+    const siyahH3 = document.createElement("h3");
+    siyahH3.textContent = "Siyah Çelik Borular";
+    siyahCard.appendChild(siyahH3);
+
+    const siyahPipes = pipes.filter(p => p.name.toUpperCase().includes("SİYAH"));
+
+    siyahPipes.forEach(p => {
+        const masterIdx = pipes.findIndex(x => x.name === p.name);
+        
+        const row = document.createElement("div");
+        row.className = "price-input-row";
+        row.style.display = "flex";
+        row.style.gap = "0.75rem";
+        row.style.alignItems = "center";
+        row.style.padding = "0.5rem 0";
+        row.style.borderBottom = "1px solid rgba(255,255,255,0.02)";
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = p.name;
+        nameInput.style.flex = "1";
+        nameInput.style.minWidth = "150px";
+        nameInput.style.background = "transparent";
+        nameInput.style.border = "1px solid transparent";
+        nameInput.style.borderRadius = "6px";
+        nameInput.style.color = "var(--text-primary)";
+        nameInput.style.outline = "none";
+        nameInput.style.padding = "0.25rem 0.5rem";
+        nameInput.style.textAlign = "left";
+
+        nameInput.addEventListener("focus", () => {
+            nameInput.style.background = "var(--bg-input)";
+            nameInput.style.borderColor = "var(--accent-indigo)";
+        });
+        nameInput.addEventListener("blur", (e) => {
+            nameInput.style.background = "transparent";
+            nameInput.style.borderColor = "transparent";
+            const newName = e.target.value.trim();
+            if (!newName) {
+                alert("Boru adı boş olamaz!");
+                nameInput.value = p.name;
+                return;
+            }
+            if (newName === p.name) return;
+            if (pipes.some(x => x.name.toLowerCase() === newName.toLowerCase())) {
+                alert("Bu isim zaten mevcut!");
+                nameInput.value = p.name;
+                return;
+            }
+            pipes[masterIdx].name = newName;
+            savePrices();
+            initSelectors();
+            calculate();
+        });
+        nameInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") nameInput.blur();
+            if (e.key === "Escape") { nameInput.value = p.name; nameInput.blur(); }
+        });
+
+        const inputContainer = document.createElement("div");
+        inputContainer.className = "input-container";
+        inputContainer.style.width = "120px";
+        inputContainer.style.marginLeft = "auto";
+
+        const inp = document.createElement("input");
+        inp.type = "number";
+        inp.step = "0.01";
+        inp.min = "0";
+        inp.value = p.price;
+        inp.style.textAlign = "left";
+        inp.addEventListener("input", (e) => {
+            pipes[masterIdx].price = parseFloat(e.target.value) || 0;
+            savePrices();
+            calculate();
+        });
+
+        const unit = document.createElement("span");
+        unit.className = "unit";
+        unit.textContent = "$";
+
+        inputContainer.appendChild(inp);
+        inputContainer.appendChild(unit);
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "project-btn-main btn-delete";
+        delBtn.style.padding = "0.4rem 0.5rem";
+        delBtn.style.marginTop = "0";
+        delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        delBtn.addEventListener("click", () => {
+            if (confirm(`"${p.name}" borusunu silmek istediğinize emin misiniz?`)) {
+                pipes.splice(masterIdx, 1);
+                savePrices();
+                initSelectors();
+                initPriceEditor();
+                calculate();
+            }
+        });
+
+        row.appendChild(nameInput);
+        row.appendChild(inputContainer);
+        row.appendChild(delBtn);
+        siyahCard.appendChild(row);
     });
+
+    siyahCard.appendChild(createAddPipeFooter(false, (pipeName, pipePrice, hoseName, hosePrice, clampName, clampPrice) => {
+        pipes.push({
+            name: pipeName,
+            price: pipePrice,
+            hose: hoseName,
+            hosePrice: hosePrice,
+            clamp: clampName,
+            clampPrice: clampPrice
+        });
+        savePrices();
+        initSelectors();
+        initPriceEditor();
+        calculate();
+    }));
+    container.appendChild(siyahCard);
+
+    // Render Spiral Hortumlar
+    const hortumCard = document.createElement("div");
+    hortumCard.className = "price-group-card";
+    const hortumH3 = document.createElement("h3");
+    hortumH3.textContent = "Spiral Hortumlar";
+    hortumCard.appendChild(hortumH3);
+
+    uniqueHoses.forEach(h => {
+        const row = document.createElement("div");
+        row.className = "price-input-row";
+        row.style.display = "flex";
+        row.style.gap = "0.75rem";
+        row.style.alignItems = "center";
+        row.style.padding = "0.5rem 0";
+        row.style.borderBottom = "1px solid rgba(255,255,255,0.02)";
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = h.name;
+        nameInput.style.flex = "1";
+        nameInput.style.minWidth = "150px";
+        nameInput.style.background = "transparent";
+        nameInput.style.border = "1px solid transparent";
+        nameInput.style.borderRadius = "6px";
+        nameInput.style.color = "var(--text-primary)";
+        nameInput.style.outline = "none";
+        nameInput.style.padding = "0.25rem 0.5rem";
+        nameInput.style.textAlign = "left";
+
+        nameInput.addEventListener("focus", () => {
+            nameInput.style.background = "var(--bg-input)";
+            nameInput.style.borderColor = "var(--accent-indigo)";
+        });
+        nameInput.addEventListener("blur", (e) => {
+            nameInput.style.background = "transparent";
+            nameInput.style.borderColor = "transparent";
+            const newName = e.target.value.trim();
+            if (!newName) {
+                alert("Hortum adı boş olamaz!");
+                nameInput.value = h.name;
+                return;
+            }
+            if (newName === h.name) return;
+            if (uniqueHoses.some(x => x.name.toLowerCase() === newName.toLowerCase())) {
+                alert("Bu isimde bir hortum zaten mevcut!");
+                nameInput.value = h.name;
+                return;
+            }
+
+            pipes.forEach(pi => {
+                if (pi.hose === h.name) {
+                    pi.hose = newName;
+                }
+            });
+
+            savePrices();
+            initPriceEditor();
+            calculate();
+        });
+        nameInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") nameInput.blur();
+            if (e.key === "Escape") { nameInput.value = h.name; nameInput.blur(); }
+        });
+
+        const inputContainer = document.createElement("div");
+        inputContainer.className = "input-container";
+        inputContainer.style.width = "120px";
+        inputContainer.style.marginLeft = "auto";
+
+        const inp = document.createElement("input");
+        inp.type = "number";
+        inp.step = "0.01";
+        inp.min = "0";
+        inp.value = h.price;
+        inp.style.textAlign = "left";
+        inp.addEventListener("input", (e) => {
+            const val = parseFloat(e.target.value) || 0;
+            pipes.forEach(pi => {
+                if (pi.hose === h.name) {
+                    pi.hosePrice = val;
+                }
+            });
+            savePrices();
+            calculate();
+        });
+
+        const unit = document.createElement("span");
+        unit.className = "unit";
+        unit.textContent = "$";
+
+        inputContainer.appendChild(inp);
+        inputContainer.appendChild(unit);
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "project-btn-main btn-delete";
+        delBtn.style.padding = "0.4rem 0.5rem";
+        delBtn.style.marginTop = "0";
+        delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        delBtn.addEventListener("click", () => {
+            if (confirm(`"${h.name}" hortumunu tüm borulardan temizlemek istediğinize emin misiniz?`)) {
+                pipes.forEach(pi => {
+                    if (pi.hose === h.name) {
+                        pi.hose = "";
+                        pi.hosePrice = 0;
+                    }
+                });
+                savePrices();
+                initPriceEditor();
+                calculate();
+            }
+        });
+
+        row.appendChild(nameInput);
+        row.appendChild(inputContainer);
+        row.appendChild(delBtn);
+        hortumCard.appendChild(row);
+    });
+    container.appendChild(hortumCard);
+
+    // Render Spiral Hortum Kelepçeleri
+    const kelepceCard = document.createElement("div");
+    kelepceCard.className = "price-group-card";
+    const kelepceH3 = document.createElement("h3");
+    kelepceH3.textContent = "Spiral Hortum Kelepçeleri";
+    kelepceCard.appendChild(kelepceH3);
+
+    uniqueClamps.forEach(c => {
+        const row = document.createElement("div");
+        row.className = "price-input-row";
+        row.style.display = "flex";
+        row.style.gap = "0.75rem";
+        row.style.alignItems = "center";
+        row.style.padding = "0.5rem 0";
+        row.style.borderBottom = "1px solid rgba(255,255,255,0.02)";
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = c.name;
+        nameInput.style.flex = "1";
+        nameInput.style.minWidth = "150px";
+        nameInput.style.background = "transparent";
+        nameInput.style.border = "1px solid transparent";
+        nameInput.style.borderRadius = "6px";
+        nameInput.style.color = "var(--text-primary)";
+        nameInput.style.outline = "none";
+        nameInput.style.padding = "0.25rem 0.5rem";
+        nameInput.style.textAlign = "left";
+
+        nameInput.addEventListener("focus", () => {
+            nameInput.style.background = "var(--bg-input)";
+            nameInput.style.borderColor = "var(--accent-indigo)";
+        });
+        nameInput.addEventListener("blur", (e) => {
+            nameInput.style.background = "transparent";
+            nameInput.style.borderColor = "transparent";
+            const newName = e.target.value.trim();
+            if (!newName) {
+                alert("Kelepçe adı boş olamaz!");
+                nameInput.value = c.name;
+                return;
+            }
+            if (newName === c.name) return;
+            if (uniqueClamps.some(x => x.name.toLowerCase() === newName.toLowerCase())) {
+                alert("Bu isimde bir kelepçe zaten mevcut!");
+                nameInput.value = c.name;
+                return;
+            }
+
+            pipes.forEach(pi => {
+                if (pi.clamp === c.name) {
+                    pi.clamp = newName;
+                }
+            });
+
+            savePrices();
+            initPriceEditor();
+            calculate();
+        });
+        nameInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") nameInput.blur();
+            if (e.key === "Escape") { nameInput.value = c.name; nameInput.blur(); }
+        });
+
+        const inputContainer = document.createElement("div");
+        inputContainer.className = "input-container";
+        inputContainer.style.width = "120px";
+        inputContainer.style.marginLeft = "auto";
+
+        const inp = document.createElement("input");
+        inp.type = "number";
+        inp.step = "0.01";
+        inp.min = "0";
+        inp.value = c.price;
+        inp.style.textAlign = "left";
+        inp.addEventListener("input", (e) => {
+            const val = parseFloat(e.target.value) || 0;
+            pipes.forEach(pi => {
+                if (pi.clamp === c.name) {
+                    pi.clampPrice = val;
+                }
+            });
+            savePrices();
+            calculate();
+        });
+
+        const unit = document.createElement("span");
+        unit.className = "unit";
+        unit.textContent = "$";
+
+        inputContainer.appendChild(inp);
+        inputContainer.appendChild(unit);
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "project-btn-main btn-delete";
+        delBtn.style.padding = "0.4rem 0.5rem";
+        delBtn.style.marginTop = "0";
+        delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        delBtn.addEventListener("click", () => {
+            if (confirm(`"${c.name}" kelepçesini tüm borulardan temizlemek istediğinize emin misiniz?`)) {
+                pipes.forEach(pi => {
+                    if (pi.clamp === c.name) {
+                        pi.clamp = "";
+                        pi.clampPrice = 0;
+                    }
+                });
+                savePrices();
+                initPriceEditor();
+                calculate();
+            }
+        });
+
+        row.appendChild(nameInput);
+        row.appendChild(inputContainer);
+        row.appendChild(delBtn);
+        kelepceCard.appendChild(row);
+    });
+    container.appendChild(kelepceCard);
 
     // Group General items by their category
     const categories = ["Pano Ekipmanları", "Kablolar", "Soketler", "İstasyon Ekipmanları", "Duvardaki Sistem", "Pompa Şase", "Tesisat ve Borulama"];
