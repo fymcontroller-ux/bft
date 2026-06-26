@@ -857,47 +857,35 @@
                 <!-- Tab 1: Proposal Preparation -->
                 <div id="createTeklifTabContent" class="tab-content active-content">
 
-                <!-- PANEL: Proposal Save & Load Management -->
+                <!-- PANEL: Proposal Project Management (same as Merkezi/Pnömatik) -->
                 <div class="panel-card" style="margin-bottom: 1.5rem;">
                     <div class="panel-title">
-                        <i class="fa-solid fa-folder-open"></i> Kayıtlı Teklif Şablonları Yönetimi
+                        <i class="fa-solid fa-folder-open"></i> Teklif Proje Yönetimi
                     </div>
-                    <div class="form-section" style="margin-bottom: 0; padding: 1.5rem;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                            <!-- Save Column -->
-                            <div style="display: flex; flex-direction: column; gap: 1rem; border-right: 1px solid var(--border-color); padding-right: 2rem;">
-                                <h3 style="margin-bottom: 0.5rem; color: var(--accent-indigo); font-size: 0.95rem;">Mevcut Teklifi Şablon Olarak Kaydet</h3>
-                                <div class="form-group" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; margin-bottom: 0;">
-                                    <label for="proposalSaveName" style="font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">Şablon Kayıt Adı</label>
-                                    <div class="input-container" style="padding: 0.45rem 0.6rem; background: var(--bg-input);">
-                                        <input type="text" id="proposalSaveName" placeholder="Örn: Teklif - Befatek #2026" style="text-align: left !important; font-size: 0.85rem; width: 100%;">
-                                    </div>
-                                </div>
-                                <button type="button" class="project-btn-main btn-save" id="btnSaveProposal" style="width: 100%; margin-top: 0.5rem; padding: 0.6rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent-indigo), rgba(99, 102, 241, 0.8));">
-                                    <i class="fa-solid fa-cloud-arrow-up"></i> Teklifi Şablon Olarak Kaydet
-                                </button>
+                    <div class="form-section project-section-card stacked-form-section" style="margin-bottom: 0;">
+                        <h3>Teklif Kayıt Paneli</h3>
+                        <div class="form-group">
+                            <label for="savedProposalsSelect">Kayıtlı Teklifler</label>
+                            <div class="input-container">
+                                <select id="savedProposalsSelect">
+                                    <option value="">-- Yeni Teklif Başlat --</option>
+                                </select>
                             </div>
-
-                            <!-- Load Column -->
-                            <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                <h3 style="margin-bottom: 0.5rem; color: var(--accent-violet); font-size: 0.95rem;">Kayıtlı Şablonları Yükle / Sil</h3>
-                                <div class="form-group" style="display: grid; grid-template-columns: 1fr; gap: 0.4rem; margin-bottom: 0;">
-                                    <label for="savedProposalsSelect" style="font-weight: 600; font-size: 0.85rem; color: var(--text-secondary);">Şablon Seçimi</label>
-                                    <div class="input-container" style="padding: 0.45rem 0.6rem; background: var(--bg-input);">
-                                        <select id="savedProposalsSelect" style="text-align: left !important; font-size: 0.85rem; width: 100%;">
-                                            <option value="">-- Yeni Teklif Hazırla --</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
-                                    <button type="button" class="project-btn-main btn-save" id="btnLoadProposal" style="flex: 1; padding: 0.6rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent-violet), rgba(139, 92, 246, 0.8));">
-                                        <i class="fa-solid fa-folder-open"></i> Yükle
-                                    </button>
-                                    <button type="button" class="project-btn-main btn-delete" id="btnDeleteProposal" disabled style="flex: 1; padding: 0.6rem; font-size: 0.85rem;">
-                                        <i class="fa-solid fa-trash-can"></i> Sil
-                                      </button>
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="proposalSaveName">Aktif Teklif Adı</label>
+                            <div class="input-container">
+                                <input type="text" id="proposalSaveName" value="Yeni Teklif" style="text-align: left !important;">
+                                <span class="unit"><i class="fa-solid fa-file-invoice-dollar"></i></span>
                             </div>
+                        </div>
+                        <div class="project-buttons-grid">
+                            <button type="button" class="project-btn-main btn-save" id="btnSaveProposal">
+                                <i class="fa-solid fa-floppy-disk"></i> Değişiklikleri Kaydet
+                            </button>
+                            <button type="button" class="project-btn-main btn-delete" id="btnDeleteProposal" disabled>
+                                <i class="fa-solid fa-trash-can"></i> Teklifi Sil
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -159,14 +159,13 @@ function initTeklifVer() {
         if (el) el.addEventListener("input", saveCompanyInfoState);
     });
 
-    // Load saved proposals template list
+    // Load saved proposals list into dropdown
     loadSavedProposalsList();
 
-    // Bind proposal templates buttons
+    // Bind proposal project management (same UX as Merkezi/Pnömatik)
     document.getElementById("btnSaveProposal").addEventListener("click", saveCurrentProposalTemplate);
-    document.getElementById("btnLoadProposal").addEventListener("click", loadSelectedProposalTemplate);
     document.getElementById("btnDeleteProposal").addEventListener("click", deleteSelectedProposalTemplate);
-    document.getElementById("savedProposalsSelect").addEventListener("change", toggleProposalDeleteButtonState);
+    document.getElementById("savedProposalsSelect").addEventListener("change", loadSelectedProposalTemplate);
 
     // Bind PDF folder auto save buttons
     document.getElementById("btnSelectPdfFolder").addEventListener("click", selectPdfFolder);
@@ -1205,7 +1204,7 @@ function loadSavedProposalsList() {
     if (!select) return;
     
     const currentSelection = select.value;
-    select.innerHTML = '<option value="">-- Yeni Teklif Hazırla --</option>';
+    select.innerHTML = '<option value="">-- Yeni Teklif Başlat --</option>';
     
     Object.keys(list).sort().forEach(name => {
         const opt = document.createElement("option");
@@ -1222,45 +1221,38 @@ function toggleProposalDeleteButtonState() {
     const select = document.getElementById("savedProposalsSelect");
     const deleteBtn = document.getElementById("btnDeleteProposal");
     if (!select || !deleteBtn) return;
-    
-    if (select.value === "") {
-        deleteBtn.disabled = true;
-    } else {
-        deleteBtn.disabled = false;
-    }
+    deleteBtn.disabled = (select.value === "");
 }
 
 function saveCurrentProposalTemplate() {
     const nameInput = document.getElementById("proposalSaveName");
     const name = nameInput.value.trim();
     if (!name) {
-        alert("Lütfen kaydetmeden önce bir şablon adı girin.");
+        alert("Lütfen kaydetmeden önce bir teklif adı girin.");
         return;
     }
 
     const proposals = JSON.parse(localStorage.getItem("t_proposals")) || {};
     
-    const info = {
-        title: document.getElementById("proposalTitle").value,
-        company: document.getElementById("clientCompany").value,
-        contact: document.getElementById("contactPerson").value,
-        date: document.getElementById("proposalDate").value,
-        email: document.getElementById("clientEmail").value,
-        taxOffice: document.getElementById("clientTaxOffice").value,
-        taxNo: document.getElementById("clientTaxNo").value,
-        address: document.getElementById("clientAddress").value,
-        termsValidity: document.getElementById("termsValidity").value,
-        termsPayment: document.getElementById("termsPayment").value,
-        termsDelivery: document.getElementById("termsDelivery").value,
-        termsShipping: document.getElementById("termsShipping").value,
-        noteBankExchange: document.getElementById("noteBankExchange").value,
-        noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
-        noteForceMajeure: document.getElementById("noteForceMajeure").value
-    };
-
     proposals[name] = {
         name: name,
-        companyInfo: info,
+        companyInfo: {
+            title: document.getElementById("proposalTitle").value,
+            company: document.getElementById("clientCompany").value,
+            contact: document.getElementById("contactPerson").value,
+            date: document.getElementById("proposalDate").value,
+            email: document.getElementById("clientEmail").value,
+            taxOffice: document.getElementById("clientTaxOffice").value,
+            taxNo: document.getElementById("clientTaxNo").value,
+            address: document.getElementById("clientAddress").value,
+            termsValidity: document.getElementById("termsValidity").value,
+            termsPayment: document.getElementById("termsPayment").value,
+            termsDelivery: document.getElementById("termsDelivery").value,
+            termsShipping: document.getElementById("termsShipping").value,
+            noteBankExchange: document.getElementById("noteBankExchange").value,
+            noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
+            noteForceMajeure: document.getElementById("noteForceMajeure").value
+        },
         items: proposalItems,
         exchangeRate: parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate,
         showTL: document.getElementById("showTLPrice").checked,
@@ -1275,8 +1267,7 @@ function saveCurrentProposalTemplate() {
     
     document.getElementById("savedProposalsSelect").value = name;
     toggleProposalDeleteButtonState();
-    nameInput.value = "";
-    alert(`"${name}" teklif şablonu başarıyla kaydedildi ve bulut senkronizasyonuna eklendi.`);
+    alert(`"${name}" teklifi başarıyla kaydedildi.`);
 }
 
 function loadSelectedProposalTemplate() {
@@ -1284,13 +1275,17 @@ function loadSelectedProposalTemplate() {
     const name = select.value;
     
     if (name === "") {
-        clearProposal();
+        // "-- Yeni Teklif Başlat --" seçildi: formu sıfırla
+        resetToNewProposal();
         return;
     }
 
     const proposals = JSON.parse(localStorage.getItem("t_proposals")) || {};
     const prop = proposals[name];
     if (!prop) return;
+
+    // Set active name input to the loaded proposal's name
+    document.getElementById("proposalSaveName").value = name;
 
     if (prop.companyInfo) {
         document.getElementById("proposalTitle").value = prop.companyInfo.title || "";
@@ -1331,18 +1326,36 @@ function loadSelectedProposalTemplate() {
     document.getElementById("annexCentralProject").value = prop.annexCentral || "";
     document.getElementById("annexPnomatikProject").value = prop.annexPnomatik || "";
 
+    toggleProposalDeleteButtonState();
     renderProposalItems();
     updateProposalSummary();
-    
-    alert(`"${name}" teklif şablonu başarıyla yüklendi.`);
+}
+
+function resetToNewProposal() {
+    document.getElementById("proposalSaveName").value = "Yeni Teklif";
+    document.getElementById("proposalTitle").value = "Fiyat Teklifi";
+    document.getElementById("clientCompany").value = "";
+    document.getElementById("contactPerson").value = "";
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("proposalDate").value = today;
+    document.getElementById("clientEmail").value = "";
+    document.getElementById("clientTaxOffice").value = "";
+    document.getElementById("clientTaxNo").value = "";
+    document.getElementById("clientAddress").value = "";
+    document.getElementById("savedProposalsSelect").value = "";
+    toggleProposalDeleteButtonState();
+    clearProposal();
 }
 
 function deleteSelectedProposalTemplate() {
     const select = document.getElementById("savedProposalsSelect");
     const name = select.value;
-    if (!name) return;
+    if (!name) {
+        alert("Lütfen önce silmek istediğiniz teklifi seçin.");
+        return;
+    }
 
-    if (!confirm(`"${name}" teklif şablonunu kalıcı olarak silmek istediğinize emin misiniz?`)) {
+    if (!confirm(`"${name}" teklifini kalıcı olarak silmek istediğinize emin misiniz?`)) {
         return;
     }
 
@@ -1351,12 +1364,9 @@ function deleteSelectedProposalTemplate() {
     
     localStorage.setItem("t_proposals", JSON.stringify(proposals));
     
-    select.value = "";
     loadSavedProposalsList();
-    toggleProposalDeleteButtonState();
-    clearProposal();
-
-    alert(`"${name}" şablonu silindi.`);
+    resetToNewProposal();
+    alert(`"${name}" teklifi silindi.`);
 }
 
 const DB_NAME = "BFT_Portal_DB";
