@@ -29,7 +29,11 @@
         "t_show_tl",
         "t_show_vat",
         "t_vat_rate",
-        "t_proposals"
+        "t_proposals",
+        "l_personnel",
+        "l_shopExpenses",
+        "l_materials",
+        "l_models"
     ];
 
     let isSyncing = false; // Flag to prevent circular sync loop

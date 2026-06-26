@@ -309,19 +309,25 @@ function initPriceEditor() {
             supplierContainer.appendChild(supplierInp);
             inputsWrapper.appendChild(supplierContainer);
 
-            // Date input (Read-only representation)
+            // Date input (Editable representation)
             const dateContainer = document.createElement("div");
             dateContainer.className = "input-container";
             dateContainer.style.width = "120px";
-            dateContainer.style.background = "rgba(255,255,255,0.02)";
             const dateInp = document.createElement("input");
             dateInp.type = "text";
             dateInp.className = "date-input";
-            dateInp.readOnly = true;
             dateInp.placeholder = "Tarih Yok";
             dateInp.value = item.updateDate || "";
             dateInp.style.textAlign = "center";
-            dateInp.style.color = "var(--text-muted)";
+            dateInp.addEventListener("input", (e) => {
+                const val = e.target.value;
+                const trueIdx = materials.findIndex(m => m.name === item.name);
+                if (trueIdx !== -1) {
+                    materials[trueIdx].updateDate = val;
+                    savePricesAndExpenses();
+                    calculate();
+                }
+            });
             dateContainer.appendChild(dateInp);
             inputsWrapper.appendChild(dateContainer);
 
