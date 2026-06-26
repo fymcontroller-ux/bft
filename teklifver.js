@@ -167,22 +167,6 @@ function initTeklifVer() {
     document.getElementById("btnDeleteProposal").addEventListener("click", deleteSelectedProposalTemplate);
     document.getElementById("savedProposalsSelect").addEventListener("change", loadSelectedProposalTemplate);
 
-    // Bind PDF folder auto save buttons
-    document.getElementById("btnSelectPdfFolder").addEventListener("click", selectPdfFolder);
-    document.getElementById("btnSaveToPdfFolder").addEventListener("click", saveProposalToLocalFolder);
-
-    // Initialize/read directory handle
-    getSavedDirectoryHandle().then(handle => {
-        if (handle) {
-            updatePdfFolderStatus(handle.name);
-        } else {
-            updatePdfFolderStatus(null);
-        }
-    }).catch(err => {
-        console.error("Error reading saved directory handle:", err);
-        updatePdfFolderStatus(null);
-    });
-
     updateProposalSummary();
 }
 
@@ -1164,53 +1148,6 @@ function buildProposalPrintElement() {
     return printOverlay;
 }
 
-async function saveProposalToLocalFolder() {
-    try {
-        const handle = await getSavedDirectoryHandle();
-        if (!handle) {
-            alert("Lütfen önce 'PDF Klasörü Seç' butonunu kullanarak tekliflerin kaydolacağı bir klasör belirleyin.");
-            return;
-        }
-
-        const hasPermission = await verifyPermission(handle, true);
-        if (!hasPermission) {
-            alert("Seçilen klasöre yazma izni verilmedi. Otomatik kaydetme yapılamaz.");
-            return;
-        }
-
-        const company = document.getElementById("clientCompany").value.trim() || "Isimsiz_Musteri";
-        const dateStr = document.getElementById("proposalDate").value || new Date().toISOString().split('T')[0];
-        const filename = `${company}_Teklif_${dateStr}.pdf`.replace(/[\/\\?%*:|"<>]/g, '-');
-
-        const pdfContentEl = buildProposalPrintElement();
-        pdfContentEl.style.position = "absolute";
-        pdfContentEl.style.left = "-9999px";
-        pdfContentEl.style.top = "-9999px";
-        pdfContentEl.style.width = "800px";
-        document.body.appendChild(pdfContentEl);
-
-        const options = {
-            margin: 8,
-            filename: filename,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        const pdfBlob = await html2pdf().from(pdfContentEl).set(options).output('blob');
-        pdfContentEl.remove();
-
-        const fileHandle = await handle.getFileHandle(filename, { create: true });
-        const writable = await fileHandle.createWritable();
-        await writable.write(pdfBlob);
-        await writable.close();
-
-        alert(`Teklif başarıyla "${handle.name}" klasörüne "${filename}" adıyla otomatik olarak kaydedildi.`);
-    } catch (e) {
-        console.error("Auto PDF save error:", e);
-        alert("PDF dosyası kaydedilirken bir hata oluştu: " + e.message);
-    }
-}
 
 function loadSavedProposalsList() {
     const list = JSON.parse(localStorage.getItem("t_proposals")) || {};
@@ -1383,90 +1320,4 @@ function deleteSelectedProposalTemplate() {
     alert(`"${name}" teklifi silindi.`);
 }
 
-const DB_NAME = "BFT_Portal_DB";
-const STORE_NAME = "settings";
-const KEY_DIR_HANDLE = "pdf_directory_handle";
 
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, 1);
-        request.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME);
-            }
-        };
-        request.onsuccess = (e) => resolve(e.target.result);
-        request.onerror = (e) => reject(e.target.error);
-    });
-}
-
-async function getSavedDirectoryHandle() {
-    try {
-        const db = await openDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, "readonly");
-            const store = tx.objectStore(STORE_NAME);
-            const request = store.get(KEY_DIR_HANDLE);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
-    } catch (e) {
-        console.error("IndexedDB get error:", e);
-        return null;
-    }
-}
-
-async function saveDirectoryHandle(handle) {
-    try {
-        const db = await openDB();
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(STORE_NAME, "readwrite");
-            const store = tx.objectStore(STORE_NAME);
-            const request = store.put(handle, KEY_DIR_HANDLE);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
-        });
-    } catch (e) {
-        console.error("IndexedDB put error:", e);
-    }
-}
-
-async function verifyPermission(fileHandle, readWrite) {
-    const options = {};
-    if (readWrite) {
-        options.mode = 'readwrite';
-    }
-    if ((await fileHandle.queryPermission(options)) === 'granted') {
-        return true;
-    }
-    if ((await fileHandle.requestPermission(options)) === 'granted') {
-        return true;
-    }
-    return false;
-}
-
-function updatePdfFolderStatus(folderName) {
-    const statusEl = document.getElementById("pdfFolderStatus");
-    if (statusEl) {
-        if (folderName) {
-            statusEl.innerHTML = `Otomatik Kayıt Klasörü: <strong style="color: var(--accent-teal);">${folderName}</strong> (Teklifler bu klasöre kaydolacaktır)`;
-        } else {
-            statusEl.textContent = "Otomatik Kayıt Klasörü: Belirlenmedi (Tarayıcı varsayılanına kaydeder)";
-        }
-    }
-}
-
-async function selectPdfFolder() {
-    try {
-        const handle = await window.showDirectoryPicker();
-        await saveDirectoryHandle(handle);
-        updatePdfFolderStatus(handle.name);
-        alert(`"${handle.name}" klasörü otomatik PDF kayıt yeri olarak seçildi.`);
-    } catch (e) {
-        if (e.name !== 'AbortError') {
-            console.error("Folder selection error:", e);
-            alert("Klasör seçilirken bir hata oluştu: " + e.message);
-        }
-    }
-}
