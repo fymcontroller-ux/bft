@@ -221,6 +221,20 @@ function populateAnnexCentralDropdown() {
     });
 }
 
+function populateAnnexPnomatikDropdown() {
+    const list = JSON.parse(localStorage.getItem("p_projects")) || {};
+    const select = document.getElementById("annexPnomatikProject");
+    if (!select) return;
+    select.innerHTML = '<option value="">-- Proje Eki Yok --</option>';
+    
+    Object.keys(list).sort().forEach(name => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        select.appendChild(opt);
+    });
+}
+
 function updateCatalogDropdowns() {
     const sourceCategorySelect = document.getElementById("sourceProductCategory");
     const catalogCategorySelect = document.getElementById("catalogProductCategorySelect");
