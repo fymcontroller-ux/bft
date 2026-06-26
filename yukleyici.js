@@ -910,19 +910,6 @@ function setupEventListeners() {
         document.getElementById("pAddYol").value = "";
     });
 
-    document.getElementById("exportBtnYukleyici").addEventListener("click", () => {
-        const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
-        const model = document.getElementById("modelSelect").value;
-        const originalTitle = document.title;
-        
-        document.title = `${dateStr} - Yükleyici Maliyet Analizi (${model}) - Maliyet Teklifi`;
-        window.print();
-        
-        setTimeout(() => {
-            document.title = originalTitle;
-        }, 1000);
-    });
-
     document.getElementById("resetPricesBtn").addEventListener("click", resetPrices);
     document.getElementById("resetExpensesBtn").addEventListener("click", resetExpenses);
 }

@@ -146,9 +146,6 @@
                                 <i class="fa-solid fa-building-columns"></i> İşletme Giderleri
                             </button>
                         </div>
-                        <button class="export-btn" id="exportBtnYukleyici">
-                            <i class="fa-solid fa-file-pdf"></i> Yazdır / PDF
-                        </button>
                     </div>
                 </div>
 
@@ -194,7 +191,7 @@
                             </div>
                         </div>
 
-                        <div class="panel-card">
+                        <div class="panel-card scroll-x">
                             <div class="panel-title">
                                 <i class="fa-solid fa-receipt"></i> Maliyet Dökümü ve Özet Sonuçlar
                             </div>
@@ -212,26 +209,23 @@
                                     <span class="metric-val violet-text" id="summaryGrandTotalUSD">$0.00</span>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <!-- Table Section (placed below grid) -->
-                    <div class="panel-card scroll-x" style="margin-top: 1.5rem;">
-                        <div class="table-container">
-                            <table class="cost-table">
-                                <thead>
-                                    <tr>
-                                        <th>Parça Adı</th>
-                                        <th>Miktar</th>
-                                        <th>Tedarikçi Firma</th>
-                                        <th>Birim Fiyat ($)</th>
-                                        <th>Toplam Fiyat ($)</th>
-                                        <th>Güncelleme Tarihi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="costTableBody">
-                                    <!-- Dynamically loaded -->
-                                </tbody>
-                            </table>
+                            <div class="table-container">
+                                <table class="cost-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parça Adı</th>
+                                            <th>Miktar</th>
+                                            <th>Tedarikçi Firma</th>
+                                            <th>Birim Fiyat ($)</th>
+                                            <th>Toplam Fiyat ($)</th>
+                                            <th>Güncelleme Tarihi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="costTableBody">
+                                        <!-- Dynamically loaded -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
