@@ -1665,9 +1665,22 @@ label {
         font-size: 0.95rem !important;
     }
 
-    /* Yükleyici Bölümü Print Scale Optimization */
+    /* Yükleyici Bölümü Print Scale Optimization & Layout */
     #yukleyici-sec {
         zoom: 90% !important;
+    }
+    #yukleyici-sec .dashboard-grid {
+        display: grid !important;
+        grid-template-columns: 1.2fr 2fr !important;
+        gap: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    #yukleyici-sec .panel-title {
+        display: none !important;
+    }
+    #yukleyici-sec button, 
+    #yukleyici-sec .project-btn-main {
+        display: none !important;
     }
 
     /* Pnömatik Sayfası Print Layout Styles & 70% Scale */
