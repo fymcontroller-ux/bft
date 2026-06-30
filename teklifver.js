@@ -4,6 +4,7 @@ let proposalItems = [];
 
 // Custom Product Catalog structure: { "Kategori Adı": [ { name: "Ürün Adı", price: 123.45 }, ... ] }
 let productCatalog = {};
+let isLoadingProposal = false;
 
 const defaultCatalog = {
     "Pano & Kontrol": [
@@ -106,25 +107,29 @@ function initTeklifVer() {
         const rate = parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate;
         localStorage.setItem("t_exchange_rate", rate);
         updateProposalSummary();
+        saveCurrentProposalTemplateSilent();
     });
     document.getElementById("showTLPrice").addEventListener("change", (e) => {
         localStorage.setItem("t_show_tl", e.target.checked);
         updateProposalSummary();
+        saveCurrentProposalTemplateSilent();
     });
     
     document.getElementById("vatRate").addEventListener("input", () => {
         const rate = parseFloat(document.getElementById("vatRate").value) || 0;
         localStorage.setItem("t_vat_rate", rate);
         updateProposalSummary();
+        saveCurrentProposalTemplateSilent();
     });
     document.getElementById("showVATPrice").addEventListener("change", (e) => {
         localStorage.setItem("t_show_vat", e.target.checked);
         updateProposalSummary();
+        saveCurrentProposalTemplateSilent();
     });
 
-    document.getElementById("annexCentralProject").addEventListener("change", () => {});
-    document.getElementById("annexPnomatikProject").addEventListener("change", () => {});
-    document.getElementById("proposalSaveName").addEventListener("input", () => {});
+    document.getElementById("annexCentralProject").addEventListener("change", saveCurrentProposalTemplateSilent);
+    document.getElementById("annexPnomatikProject").addEventListener("change", saveCurrentProposalTemplateSilent);
+    document.getElementById("proposalSaveName").addEventListener("input", saveCurrentProposalTemplateSilent);
 
     // Load proposal from localStorage if exists
     proposalItems = JSON.parse(localStorage.getItem("t_proposal_items")) || [];
@@ -175,10 +180,12 @@ function initTeklifVer() {
     // Bind event listeners for description area
     document.getElementById("proposalDescription").addEventListener("input", (e) => {
         localStorage.setItem("t_proposal_description", e.target.value);
+        saveCurrentProposalTemplateSilent();
     });
     
     document.getElementById("showProposalDescription").addEventListener("change", (e) => {
         localStorage.setItem("t_show_proposal_description", e.target.checked);
+        saveCurrentProposalTemplateSilent();
     });
     
     document.getElementById("descLibrarySelect").addEventListener("change", (e) => {
@@ -189,6 +196,7 @@ function initTeklifVer() {
             document.getElementById("newDescName").value = title;
             localStorage.setItem("t_proposal_description", library[title]);
             document.getElementById("btnDeleteDescFromLib").disabled = false;
+            saveCurrentProposalTemplateSilent();
         } else {
             document.getElementById("btnDeleteDescFromLib").disabled = true;
         }
@@ -261,6 +269,7 @@ function saveCompanyInfoState() {
         noteForceMajeure: document.getElementById("noteForceMajeure").value
     };
     localStorage.setItem("t_company_info", JSON.stringify(info));
+    saveCurrentProposalTemplateSilent();
 }
 
 function populateAnnexCentralDropdown() {
@@ -662,6 +671,7 @@ function addCustomItem() {
 
 function saveProposalState() {
     localStorage.setItem("t_proposal_items", JSON.stringify(proposalItems));
+    saveCurrentProposalTemplateSilent();
 }
 
 function deleteProposalItem(idx) {
@@ -1543,7 +1553,55 @@ function saveCurrentProposalTemplate() {
 }
 
 function saveCurrentProposalTemplateSilent() {
-    // Auto-save disabled to prevent template overwrite confusion.
+    if (isLoadingProposal) return;
+    const nameInput = document.getElementById("proposalSaveName");
+    if (!nameInput) return;
+    const name = nameInput.value.trim();
+    if (!name) return;
+
+    const proposals = JSON.parse(localStorage.getItem("t_proposals")) || {};
+    
+    proposals[name] = {
+        name: name,
+        companyInfo: {
+            title: document.getElementById("proposalTitle").value,
+            company: document.getElementById("clientCompany").value,
+            contact: document.getElementById("contactPerson").value,
+            date: document.getElementById("proposalDate").value,
+            email: document.getElementById("clientEmail").value,
+            taxOffice: document.getElementById("clientTaxOffice").value,
+            taxNo: document.getElementById("clientTaxNo").value,
+            address: document.getElementById("clientAddress").value,
+            termsValidity: document.getElementById("termsValidity").value,
+            termsPayment: document.getElementById("termsPayment").value,
+            termsDelivery: document.getElementById("termsDelivery").value,
+            termsShipping: document.getElementById("termsShipping").value,
+            noteBankExchange: document.getElementById("noteBankExchange").value,
+            noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
+            noteForceMajeure: document.getElementById("noteForceMajeure").value
+        },
+        items: proposalItems,
+        exchangeRate: parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate,
+        showTL: document.getElementById("showTLPrice").checked,
+        showVAT: document.getElementById("showVATPrice").checked,
+        vatRate: parseFloat(document.getElementById("vatRate").value) || 20,
+        annexCentral: document.getElementById("annexCentralProject").value,
+        annexPnomatik: document.getElementById("annexPnomatikProject").value,
+        description: document.getElementById("proposalDescription").value,
+        showDescription: document.getElementById("showProposalDescription").checked
+    };
+
+    localStorage.setItem("t_proposals", JSON.stringify(proposals));
+    
+    const select = document.getElementById("savedProposalsSelect");
+    if (select) {
+        const prevVal = select.value;
+        loadSavedProposalsList();
+        if (prevVal !== name) {
+            select.value = name;
+            toggleProposalDeleteButtonState();
+        }
+    }
 }
 
 function loadSelectedProposalTemplate() {
@@ -1560,91 +1618,101 @@ function loadSelectedProposalTemplate() {
     const prop = proposals[name];
     if (!prop) return;
 
-    // Set active name input to the loaded proposal's name
-    document.getElementById("proposalSaveName").value = name;
+    isLoadingProposal = true;
+    try {
+        // Set active name input to the loaded proposal's name
+        document.getElementById("proposalSaveName").value = name;
 
-    if (prop.companyInfo) {
-        document.getElementById("proposalTitle").value = prop.companyInfo.title || "";
-        document.getElementById("clientCompany").value = prop.companyInfo.company || "";
-        document.getElementById("contactPerson").value = prop.companyInfo.contact || "";
-        if (prop.companyInfo.date) document.getElementById("proposalDate").value = prop.companyInfo.date;
-        document.getElementById("clientEmail").value = prop.companyInfo.email || "";
-        document.getElementById("clientTaxOffice").value = prop.companyInfo.taxOffice || "";
-        document.getElementById("clientTaxNo").value = prop.companyInfo.taxNo || "";
-        document.getElementById("clientAddress").value = prop.companyInfo.address || "";
+        if (prop.companyInfo) {
+            document.getElementById("proposalTitle").value = prop.companyInfo.title || "";
+            document.getElementById("clientCompany").value = prop.companyInfo.company || "";
+            document.getElementById("contactPerson").value = prop.companyInfo.contact || "";
+            if (prop.companyInfo.date) document.getElementById("proposalDate").value = prop.companyInfo.date;
+            document.getElementById("clientEmail").value = prop.companyInfo.email || "";
+            document.getElementById("clientTaxOffice").value = prop.companyInfo.taxOffice || "";
+            document.getElementById("clientTaxNo").value = prop.companyInfo.taxNo || "";
+            document.getElementById("clientAddress").value = prop.companyInfo.address || "";
+            
+            document.getElementById("termsValidity").value = prop.companyInfo.termsValidity || "";
+            document.getElementById("termsPayment").value = prop.companyInfo.termsPayment || "";
+            document.getElementById("termsDelivery").value = prop.companyInfo.termsDelivery || "";
+            document.getElementById("termsShipping").value = prop.companyInfo.termsShipping || "";
+            document.getElementById("noteBankExchange").value = prop.companyInfo.noteBankExchange || "";
+            document.getElementById("noteOrderConfirm").value = prop.companyInfo.noteOrderConfirm || "";
+            document.getElementById("noteForceMajeure").value = prop.companyInfo.noteForceMajeure || "";
+            
+            saveCompanyInfoState();
+        }
+
+        proposalItems = prop.items || [];
+        localStorage.setItem("t_proposal_items", JSON.stringify(proposalItems));
+
+        document.getElementById("usdExchangeRate").value = prop.exchangeRate || defaultExchangeRate;
+        localStorage.setItem("t_exchange_rate", prop.exchangeRate || defaultExchangeRate);
         
-        document.getElementById("termsValidity").value = prop.companyInfo.termsValidity || "";
-        document.getElementById("termsPayment").value = prop.companyInfo.termsPayment || "";
-        document.getElementById("termsDelivery").value = prop.companyInfo.termsDelivery || "";
-        document.getElementById("termsShipping").value = prop.companyInfo.termsShipping || "";
-        document.getElementById("noteBankExchange").value = prop.companyInfo.noteBankExchange || "";
-        document.getElementById("noteOrderConfirm").value = prop.companyInfo.noteOrderConfirm || "";
-        document.getElementById("noteForceMajeure").value = prop.companyInfo.noteForceMajeure || "";
-        
-        saveCompanyInfoState();
+        document.getElementById("showTLPrice").checked = prop.showTL !== false;
+        localStorage.setItem("t_show_tl", prop.showTL !== false);
+
+        document.getElementById("showVATPrice").checked = prop.showVAT !== false;
+        localStorage.setItem("t_show_vat", prop.showVAT !== false);
+
+        document.getElementById("vatRate").value = prop.vatRate || 20;
+        localStorage.setItem("t_vat_rate", prop.vatRate || 20);
+
+        document.getElementById("annexCentralProject").value = prop.annexCentral || "";
+        document.getElementById("annexPnomatikProject").value = prop.annexPnomatik || "";
+
+        const descriptionText = prop.description || "";
+        const showDescriptionVal = prop.showDescription !== false;
+        document.getElementById("proposalDescription").value = descriptionText;
+        document.getElementById("showProposalDescription").checked = showDescriptionVal;
+        localStorage.setItem("t_proposal_description", descriptionText);
+        localStorage.setItem("t_show_proposal_description", showDescriptionVal);
+        document.getElementById("newDescName").value = "";
+        document.getElementById("descLibrarySelect").value = "";
+        document.getElementById("btnDeleteDescFromLib").disabled = true;
+
+        toggleProposalDeleteButtonState();
+        updateProposalSummary();
+    } finally {
+        isLoadingProposal = false;
     }
-
-    proposalItems = prop.items || [];
-    localStorage.setItem("t_proposal_items", JSON.stringify(proposalItems));
-
-    document.getElementById("usdExchangeRate").value = prop.exchangeRate || defaultExchangeRate;
-    localStorage.setItem("t_exchange_rate", prop.exchangeRate || defaultExchangeRate);
-    
-    document.getElementById("showTLPrice").checked = prop.showTL !== false;
-    localStorage.setItem("t_show_tl", prop.showTL !== false);
-
-    document.getElementById("showVATPrice").checked = prop.showVAT !== false;
-    localStorage.setItem("t_show_vat", prop.showVAT !== false);
-
-    document.getElementById("vatRate").value = prop.vatRate || 20;
-    localStorage.setItem("t_vat_rate", prop.vatRate || 20);
-
-    document.getElementById("annexCentralProject").value = prop.annexCentral || "";
-    document.getElementById("annexPnomatikProject").value = prop.annexPnomatik || "";
-
-    const descriptionText = prop.description || "";
-    const showDescriptionVal = prop.showDescription !== false;
-    document.getElementById("proposalDescription").value = descriptionText;
-    document.getElementById("showProposalDescription").checked = showDescriptionVal;
-    localStorage.setItem("t_proposal_description", descriptionText);
-    localStorage.setItem("t_show_proposal_description", showDescriptionVal);
-    document.getElementById("newDescName").value = "";
-    document.getElementById("descLibrarySelect").value = "";
-    document.getElementById("btnDeleteDescFromLib").disabled = true;
-
-    toggleProposalDeleteButtonState();
-    updateProposalSummary();
 }
 
 function resetToNewProposal() {
-    document.getElementById("proposalSaveName").value = "Yeni Teklif";
-    document.getElementById("proposalTitle").value = "Fiyat Teklifi";
-    document.getElementById("clientCompany").value = "";
-    document.getElementById("contactPerson").value = "";
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById("proposalDate").value = today;
-    document.getElementById("clientEmail").value = "";
-    document.getElementById("clientTaxOffice").value = "";
-    document.getElementById("clientTaxNo").value = "";
-    document.getElementById("clientAddress").value = "";
-    document.getElementById("savedProposalsSelect").value = "";
-    
-    document.getElementById("proposalDescription").value = "";
-    document.getElementById("showProposalDescription").checked = true;
-    document.getElementById("newDescName").value = "";
-    document.getElementById("descLibrarySelect").value = "";
-    document.getElementById("btnDeleteDescFromLib").disabled = true;
-    localStorage.removeItem("t_proposal_description");
-    localStorage.removeItem("t_show_proposal_description");
-    
-    toggleProposalDeleteButtonState();
-    
-    // Clear items directly without prompt when resetting to new proposal
-    proposalItems = [];
-    localStorage.removeItem("t_proposal_items");
-    localStorage.removeItem("t_company_info");
-    
-    updateProposalSummary();
+    isLoadingProposal = true;
+    try {
+        document.getElementById("proposalSaveName").value = "Yeni Teklif";
+        document.getElementById("proposalTitle").value = "Fiyat Teklifi";
+        document.getElementById("clientCompany").value = "";
+        document.getElementById("contactPerson").value = "";
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("proposalDate").value = today;
+        document.getElementById("clientEmail").value = "";
+        document.getElementById("clientTaxOffice").value = "";
+        document.getElementById("clientTaxNo").value = "";
+        document.getElementById("clientAddress").value = "";
+        document.getElementById("savedProposalsSelect").value = "";
+        
+        document.getElementById("proposalDescription").value = "";
+        document.getElementById("showProposalDescription").checked = true;
+        document.getElementById("newDescName").value = "";
+        document.getElementById("descLibrarySelect").value = "";
+        document.getElementById("btnDeleteDescFromLib").disabled = true;
+        localStorage.removeItem("t_proposal_description");
+        localStorage.removeItem("t_show_proposal_description");
+        
+        toggleProposalDeleteButtonState();
+        
+        // Clear items directly without prompt when resetting to new proposal
+        proposalItems = [];
+        localStorage.removeItem("t_proposal_items");
+        localStorage.removeItem("t_company_info");
+        
+        updateProposalSummary();
+    } finally {
+        isLoadingProposal = false;
+    }
 }
 
 function deleteSelectedProposalTemplate() {
