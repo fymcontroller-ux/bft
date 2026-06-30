@@ -1896,6 +1896,7 @@ label {
         page-break-after: always;
         break-after: page;
         padding: 20px !important;
+        zoom: 90% !important;
     }
     body.teklif-print-active .print-page:last-child {
         page-break-after: auto;

@@ -610,7 +610,7 @@ function addPredefinedProduct() {
     }
     
     proposalItems.push({
-        desc: `${category} - ${selectedItem}`,
+        desc: selectedItem,
         qty: qty,
         unit: "Adet",
         unitPrice: price
