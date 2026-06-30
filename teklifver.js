@@ -1,7 +1,6 @@
 // Proposal Management Logic for 'Teklif Ver'
 
 let proposalItems = [];
-let isLoadingProposal = false;
 
 // Custom Product Catalog structure: { "Kategori Adı": [ { name: "Ürün Adı", price: 123.45 }, ... ] }
 let productCatalog = {};
@@ -107,29 +106,25 @@ function initTeklifVer() {
         const rate = parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate;
         localStorage.setItem("t_exchange_rate", rate);
         updateProposalSummary();
-        saveCurrentProposalTemplateSilent();
     });
     document.getElementById("showTLPrice").addEventListener("change", (e) => {
         localStorage.setItem("t_show_tl", e.target.checked);
         updateProposalSummary();
-        saveCurrentProposalTemplateSilent();
     });
     
     document.getElementById("vatRate").addEventListener("input", () => {
         const rate = parseFloat(document.getElementById("vatRate").value) || 0;
         localStorage.setItem("t_vat_rate", rate);
         updateProposalSummary();
-        saveCurrentProposalTemplateSilent();
     });
     document.getElementById("showVATPrice").addEventListener("change", (e) => {
         localStorage.setItem("t_show_vat", e.target.checked);
         updateProposalSummary();
-        saveCurrentProposalTemplateSilent();
     });
 
-    document.getElementById("annexCentralProject").addEventListener("change", saveCurrentProposalTemplateSilent);
-    document.getElementById("annexPnomatikProject").addEventListener("change", saveCurrentProposalTemplateSilent);
-    document.getElementById("proposalSaveName").addEventListener("input", saveCurrentProposalTemplateSilent);
+    document.getElementById("annexCentralProject").addEventListener("change", () => {});
+    document.getElementById("annexPnomatikProject").addEventListener("change", () => {});
+    document.getElementById("proposalSaveName").addEventListener("input", () => {});
 
     // Load proposal from localStorage if exists
     proposalItems = JSON.parse(localStorage.getItem("t_proposal_items")) || [];
@@ -180,12 +175,10 @@ function initTeklifVer() {
     // Bind event listeners for description area
     document.getElementById("proposalDescription").addEventListener("input", (e) => {
         localStorage.setItem("t_proposal_description", e.target.value);
-        saveCurrentProposalTemplateSilent();
     });
     
     document.getElementById("showProposalDescription").addEventListener("change", (e) => {
         localStorage.setItem("t_show_proposal_description", e.target.checked);
-        saveCurrentProposalTemplateSilent();
     });
     
     document.getElementById("descLibrarySelect").addEventListener("change", (e) => {
@@ -196,7 +189,6 @@ function initTeklifVer() {
             document.getElementById("newDescName").value = title;
             localStorage.setItem("t_proposal_description", library[title]);
             document.getElementById("btnDeleteDescFromLib").disabled = false;
-            saveCurrentProposalTemplateSilent();
         } else {
             document.getElementById("btnDeleteDescFromLib").disabled = true;
         }
@@ -251,7 +243,6 @@ function initTeklifVer() {
 }
 
 function saveCompanyInfoState() {
-    if (isLoadingProposal) return;
     const info = {
         title: document.getElementById("proposalTitle").value,
         company: document.getElementById("clientCompany").value,
@@ -270,7 +261,6 @@ function saveCompanyInfoState() {
         noteForceMajeure: document.getElementById("noteForceMajeure").value
     };
     localStorage.setItem("t_company_info", JSON.stringify(info));
-    saveCurrentProposalTemplateSilent();
 }
 
 function populateAnnexCentralDropdown() {
@@ -671,9 +661,7 @@ function addCustomItem() {
 }
 
 function saveProposalState() {
-    if (isLoadingProposal) return;
     localStorage.setItem("t_proposal_items", JSON.stringify(proposalItems));
-    saveCurrentProposalTemplateSilent();
 }
 
 function deleteProposalItem(idx) {
@@ -1555,55 +1543,7 @@ function saveCurrentProposalTemplate() {
 }
 
 function saveCurrentProposalTemplateSilent() {
-    if (isLoadingProposal) return;
-    const nameInput = document.getElementById("proposalSaveName");
-    if (!nameInput) return;
-    const name = nameInput.value.trim();
-    if (!name) return;
-
-    const proposals = JSON.parse(localStorage.getItem("t_proposals")) || {};
-    
-    proposals[name] = {
-        name: name,
-        companyInfo: {
-            title: document.getElementById("proposalTitle").value,
-            company: document.getElementById("clientCompany").value,
-            contact: document.getElementById("contactPerson").value,
-            date: document.getElementById("proposalDate").value,
-            email: document.getElementById("clientEmail").value,
-            taxOffice: document.getElementById("clientTaxOffice").value,
-            taxNo: document.getElementById("clientTaxNo").value,
-            address: document.getElementById("clientAddress").value,
-            termsValidity: document.getElementById("termsValidity").value,
-            termsPayment: document.getElementById("termsPayment").value,
-            termsDelivery: document.getElementById("termsDelivery").value,
-            termsShipping: document.getElementById("termsShipping").value,
-            noteBankExchange: document.getElementById("noteBankExchange").value,
-            noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
-            noteForceMajeure: document.getElementById("noteForceMajeure").value
-        },
-        items: proposalItems,
-        exchangeRate: parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate,
-        showTL: document.getElementById("showTLPrice").checked,
-        showVAT: document.getElementById("showVATPrice").checked,
-        vatRate: parseFloat(document.getElementById("vatRate").value) || 20,
-        annexCentral: document.getElementById("annexCentralProject").value,
-        annexPnomatik: document.getElementById("annexPnomatikProject").value,
-        description: document.getElementById("proposalDescription").value,
-        showDescription: document.getElementById("showProposalDescription").checked
-    };
-
-    localStorage.setItem("t_proposals", JSON.stringify(proposals));
-    
-    const select = document.getElementById("savedProposalsSelect");
-    if (select) {
-        const prevVal = select.value;
-        loadSavedProposalsList();
-        if (prevVal !== name) {
-            select.value = name;
-            toggleProposalDeleteButtonState();
-        }
-    }
+    // Auto-save disabled to prevent template overwrite confusion.
 }
 
 function loadSelectedProposalTemplate() {
@@ -1611,6 +1551,7 @@ function loadSelectedProposalTemplate() {
     const name = select.value;
     
     if (name === "") {
+        // "-- Yeni Teklif Başlat --" seçildi: formu sıfırla
         resetToNewProposal();
         return;
     }
@@ -1618,8 +1559,6 @@ function loadSelectedProposalTemplate() {
     const proposals = JSON.parse(localStorage.getItem("t_proposals")) || {};
     const prop = proposals[name];
     if (!prop) return;
-
-    isLoadingProposal = true;
 
     // Set active name input to the loaded proposal's name
     document.getElementById("proposalSaveName").value = name;
@@ -1642,24 +1581,7 @@ function loadSelectedProposalTemplate() {
         document.getElementById("noteOrderConfirm").value = prop.companyInfo.noteOrderConfirm || "";
         document.getElementById("noteForceMajeure").value = prop.companyInfo.noteForceMajeure || "";
         
-        const info = {
-            title: prop.companyInfo.title || "",
-            company: prop.companyInfo.company || "",
-            contact: prop.companyInfo.contact || "",
-            date: prop.companyInfo.date || "",
-            email: prop.companyInfo.email || "",
-            taxOffice: prop.companyInfo.taxOffice || "",
-            taxNo: prop.companyInfo.taxNo || "",
-            address: prop.companyInfo.address || "",
-            termsValidity: prop.companyInfo.termsValidity || "",
-            termsPayment: prop.companyInfo.termsPayment || "",
-            termsDelivery: prop.companyInfo.termsDelivery || "",
-            termsShipping: prop.companyInfo.termsShipping || "",
-            noteBankExchange: prop.companyInfo.noteBankExchange || "",
-            noteOrderConfirm: prop.companyInfo.noteOrderConfirm || "",
-            noteForceMajeure: prop.companyInfo.noteForceMajeure || ""
-        };
-        localStorage.setItem("t_company_info", JSON.stringify(info));
+        saveCompanyInfoState();
     }
 
     proposalItems = prop.items || [];
@@ -1693,13 +1615,9 @@ function loadSelectedProposalTemplate() {
     toggleProposalDeleteButtonState();
     renderProposalItems();
     updateProposalSummary();
-
-    isLoadingProposal = false;
 }
 
 function resetToNewProposal() {
-    isLoadingProposal = true;
-
     document.getElementById("proposalSaveName").value = "Yeni Teklif";
     document.getElementById("proposalTitle").value = "Fiyat Teklifi";
     document.getElementById("clientCompany").value = "";
@@ -1719,21 +1637,16 @@ function resetToNewProposal() {
     document.getElementById("btnDeleteDescFromLib").disabled = true;
     localStorage.removeItem("t_proposal_description");
     localStorage.removeItem("t_show_proposal_description");
-
-    document.getElementById("termsValidity").value = "";
-    document.getElementById("termsPayment").value = "";
-    document.getElementById("termsDelivery").value = "";
-    document.getElementById("termsShipping").value = "";
-    document.getElementById("noteBankExchange").value = "";
-    document.getElementById("noteOrderConfirm").value = "";
-    document.getElementById("noteForceMajeure").value = "";
-
-    localStorage.removeItem("t_company_info");
     
     toggleProposalDeleteButtonState();
     
-    isLoadingProposal = false;
-    clearProposal();
+    // Clear items directly without prompt when resetting to new proposal
+    proposalItems = [];
+    localStorage.removeItem("t_proposal_items");
+    localStorage.removeItem("t_company_info");
+    
+    renderProposalItems();
+    updateProposalSummary();
 }
 
 function deleteSelectedProposalTemplate() {
