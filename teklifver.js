@@ -1,6 +1,7 @@
 // Proposal Management Logic for 'Teklif Ver'
 
 let proposalItems = [];
+let isLoadingProposal = false;
 
 // Custom Product Catalog structure: { "Kategori Adı": [ { name: "Ürün Adı", price: 123.45 }, ... ] }
 let productCatalog = {};
@@ -250,6 +251,7 @@ function initTeklifVer() {
 }
 
 function saveCompanyInfoState() {
+    if (isLoadingProposal) return;
     const info = {
         title: document.getElementById("proposalTitle").value,
         company: document.getElementById("clientCompany").value,
@@ -669,6 +671,7 @@ function addCustomItem() {
 }
 
 function saveProposalState() {
+    if (isLoadingProposal) return;
     localStorage.setItem("t_proposal_items", JSON.stringify(proposalItems));
     saveCurrentProposalTemplateSilent();
 }
@@ -1552,6 +1555,7 @@ function saveCurrentProposalTemplate() {
 }
 
 function saveCurrentProposalTemplateSilent() {
+    if (isLoadingProposal) return;
     const nameInput = document.getElementById("proposalSaveName");
     if (!nameInput) return;
     const name = nameInput.value.trim();
@@ -1607,7 +1611,6 @@ function loadSelectedProposalTemplate() {
     const name = select.value;
     
     if (name === "") {
-        // "-- Yeni Teklif Başlat --" seçildi: formu sıfırla
         resetToNewProposal();
         return;
     }
@@ -1615,6 +1618,8 @@ function loadSelectedProposalTemplate() {
     const proposals = JSON.parse(localStorage.getItem("t_proposals")) || {};
     const prop = proposals[name];
     if (!prop) return;
+
+    isLoadingProposal = true;
 
     // Set active name input to the loaded proposal's name
     document.getElementById("proposalSaveName").value = name;
@@ -1637,7 +1642,24 @@ function loadSelectedProposalTemplate() {
         document.getElementById("noteOrderConfirm").value = prop.companyInfo.noteOrderConfirm || "";
         document.getElementById("noteForceMajeure").value = prop.companyInfo.noteForceMajeure || "";
         
-        saveCompanyInfoState();
+        const info = {
+            title: prop.companyInfo.title || "",
+            company: prop.companyInfo.company || "",
+            contact: prop.companyInfo.contact || "",
+            date: prop.companyInfo.date || "",
+            email: prop.companyInfo.email || "",
+            taxOffice: prop.companyInfo.taxOffice || "",
+            taxNo: prop.companyInfo.taxNo || "",
+            address: prop.companyInfo.address || "",
+            termsValidity: prop.companyInfo.termsValidity || "",
+            termsPayment: prop.companyInfo.termsPayment || "",
+            termsDelivery: prop.companyInfo.termsDelivery || "",
+            termsShipping: prop.companyInfo.termsShipping || "",
+            noteBankExchange: prop.companyInfo.noteBankExchange || "",
+            noteOrderConfirm: prop.companyInfo.noteOrderConfirm || "",
+            noteForceMajeure: prop.companyInfo.noteForceMajeure || ""
+        };
+        localStorage.setItem("t_company_info", JSON.stringify(info));
     }
 
     proposalItems = prop.items || [];
@@ -1671,9 +1693,13 @@ function loadSelectedProposalTemplate() {
     toggleProposalDeleteButtonState();
     renderProposalItems();
     updateProposalSummary();
+
+    isLoadingProposal = false;
 }
 
 function resetToNewProposal() {
+    isLoadingProposal = true;
+
     document.getElementById("proposalSaveName").value = "Yeni Teklif";
     document.getElementById("proposalTitle").value = "Fiyat Teklifi";
     document.getElementById("clientCompany").value = "";
@@ -1693,8 +1719,20 @@ function resetToNewProposal() {
     document.getElementById("btnDeleteDescFromLib").disabled = true;
     localStorage.removeItem("t_proposal_description");
     localStorage.removeItem("t_show_proposal_description");
+
+    document.getElementById("termsValidity").value = "";
+    document.getElementById("termsPayment").value = "";
+    document.getElementById("termsDelivery").value = "";
+    document.getElementById("termsShipping").value = "";
+    document.getElementById("noteBankExchange").value = "";
+    document.getElementById("noteOrderConfirm").value = "";
+    document.getElementById("noteForceMajeure").value = "";
+
+    localStorage.removeItem("t_company_info");
     
     toggleProposalDeleteButtonState();
+    
+    isLoadingProposal = false;
     clearProposal();
 }
 
