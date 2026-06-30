@@ -1155,8 +1155,14 @@ function setupEventListeners() {
     inputs.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.addEventListener("input", calculate);
-            el.addEventListener("change", calculate);
+            el.addEventListener("input", () => {
+                calculate();
+                saveCurrentProjectSilent();
+            });
+            el.addEventListener("change", () => {
+                calculate();
+                saveCurrentProjectSilent();
+            });
         }
     });
     document.getElementById("exportBtnMerkeziRapor").addEventListener("click", () => {
@@ -1518,6 +1524,42 @@ function saveCurrentProject() {
     document.getElementById("savedProjectsSelect").value = name;
     toggleDeleteButtonState();
     alert(`"${name}" projesi başarıyla kaydedildi.`);
+}
+
+function saveCurrentProjectSilent() {
+    const name = document.getElementById("projectName").value.trim();
+    if (!name) return;
+
+    const projects = JSON.parse(localStorage.getItem("m_projects")) || {};
+    
+    projects[name] = {
+        name: name,
+        stationCount: parseInt(document.getElementById("stationCount").value) || 8,
+        materialCount: parseInt(document.getElementById("materialCount").value) || 1,
+        pumpCount: parseInt(document.getElementById("pumpCount").value) || 1,
+        machineDistance: parseFloat(document.getElementById("machineDistance").value) || 1.0,
+        longestDistance: parseFloat(document.getElementById("longestDistance").value) || 25.0,
+        wallToMachineCable: parseFloat(document.getElementById("wallToMachineCable").value) || 7.0,
+        controlCableLength: parseFloat(document.getElementById("controlCableLength").value) || 4.0,
+        wallToMachineHose: parseFloat(document.getElementById("wallToMachineHose").value) || 7.0,
+        screenSelect: document.getElementById("screenSelect").value,
+        driverSelect: document.getElementById("driverSelect").value,
+        pumpSelect: document.getElementById("pumpSelect").value,
+        pipeSelect: document.getElementById("pipeSelect").value,
+        laborRatio: parseFloat(document.getElementById("laborRatio").value) || 50
+    };
+
+    localStorage.setItem("m_projects", JSON.stringify(projects));
+    
+    const select = document.getElementById("savedProjectsSelect");
+    if (select) {
+        const prevVal = select.value;
+        loadSavedProjectsList();
+        if (prevVal !== name) {
+            select.value = name;
+            toggleDeleteButtonState();
+        }
+    }
 }
 
 function loadSelectedProject() {

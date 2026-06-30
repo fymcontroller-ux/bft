@@ -246,14 +246,21 @@ function setupEventListeners() {
     inputIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.addEventListener("input", calculate);
-            el.addEventListener("change", calculate);
+            el.addEventListener("input", () => {
+                calculate();
+                saveCurrentProjectPnomatikSilent();
+            });
+            el.addEventListener("change", () => {
+                calculate();
+                saveCurrentProjectPnomatikSilent();
+            });
         }
     });
 
     document.getElementById("productSelect").addEventListener("change", () => {
         updateProductSpecs();
         calculate();
+        saveCurrentProjectPnomatikSilent();
     });
 
     document.getElementById("exportBtnPnomatik").addEventListener("click", exportToPDF);
@@ -268,6 +275,7 @@ function setupEventListeners() {
             btn3AC.classList.add("active");
             btn1AC.classList.remove("active");
             calculate();
+            saveCurrentProjectPnomatikSilent();
         });
 
         btn1AC.addEventListener("click", () => {
@@ -275,6 +283,7 @@ function setupEventListeners() {
             btn1AC.classList.add("active");
             btn3AC.classList.remove("active");
             calculate();
+            saveCurrentProjectPnomatikSilent();
         });
     }
 
@@ -288,7 +297,10 @@ function setupEventListeners() {
     
     const projNameInp = document.getElementById("projectNamePnomatik");
     if (projNameInp) {
-        projNameInp.addEventListener("input", calculate);
+        projNameInp.addEventListener("input", () => {
+            calculate();
+            saveCurrentProjectPnomatikSilent();
+        });
     }
 }
 
@@ -606,6 +618,43 @@ function saveCurrentProjectPnomatik() {
     }
     
     alert(`"${name}" projesi başarıyla kaydedildi.`);
+}
+
+function saveCurrentProjectPnomatikSilent() {
+    const nameInput = document.getElementById("projectNamePnomatik");
+    const name = nameInput ? nameInput.value.trim() : "";
+    if (!name) return;
+
+    const projects = JSON.parse(localStorage.getItem("p_projects")) || {};
+    
+    projects[name] = {
+        name: name,
+        productSelect: document.getElementById("productSelect").value,
+        capacity: parseFloat(document.getElementById("capacity").value) || 2,
+        pipeDiameter: parseFloat(document.getElementById("pipeDiameter").value) || 56,
+        verticalLength: parseFloat(document.getElementById("verticalLength").value) || 4,
+        totalLength: parseFloat(document.getElementById("totalLength").value) || 6,
+        elbows: parseInt(document.getElementById("elbows").value) || 3,
+        airDensity: parseFloat(document.getElementById("airDensity").value) || 0.8,
+        velocityRatio: parseFloat(document.getElementById("velocityRatio").value) || 0.7,
+        selectedPhase: selectedPhase
+    };
+
+    localStorage.setItem("p_projects", JSON.stringify(projects));
+    loadSavedProjectsListPnomatik();
+    
+    const select = document.getElementById("savedProjectsSelectPnomatik");
+    if (select) {
+        const prevVal = select.value;
+        if (prevVal !== name) {
+            select.value = name;
+            toggleDeleteButtonStatePnomatik();
+        }
+    }
+    
+    if (typeof updateDashboardStats === "function") {
+        updateDashboardStats();
+    }
 }
 
 function deleteSelectedProjectPnomatik() {

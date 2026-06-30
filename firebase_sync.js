@@ -30,6 +30,7 @@
         "t_show_vat",
         "t_vat_rate",
         "t_proposals",
+        "t_proposal_desc_library",
         "l_personnel",
         "l_shopExpenses",
         "l_materials",

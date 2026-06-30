@@ -106,21 +106,29 @@ function initTeklifVer() {
         const rate = parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate;
         localStorage.setItem("t_exchange_rate", rate);
         updateProposalSummary();
+        saveCurrentProposalTemplateSilent();
     });
     document.getElementById("showTLPrice").addEventListener("change", (e) => {
         localStorage.setItem("t_show_tl", e.target.checked);
         updateProposalSummary();
+        saveCurrentProposalTemplateSilent();
     });
     
     document.getElementById("vatRate").addEventListener("input", () => {
         const rate = parseFloat(document.getElementById("vatRate").value) || 0;
         localStorage.setItem("t_vat_rate", rate);
         updateProposalSummary();
+        saveCurrentProposalTemplateSilent();
     });
     document.getElementById("showVATPrice").addEventListener("change", (e) => {
         localStorage.setItem("t_show_vat", e.target.checked);
         updateProposalSummary();
+        saveCurrentProposalTemplateSilent();
     });
+
+    document.getElementById("annexCentralProject").addEventListener("change", saveCurrentProposalTemplateSilent);
+    document.getElementById("annexPnomatikProject").addEventListener("change", saveCurrentProposalTemplateSilent);
+    document.getElementById("proposalSaveName").addEventListener("input", saveCurrentProposalTemplateSilent);
 
     // Load proposal from localStorage if exists
     proposalItems = JSON.parse(localStorage.getItem("t_proposal_items")) || [];
@@ -159,6 +167,77 @@ function initTeklifVer() {
         if (el) el.addEventListener("input", saveCompanyInfoState);
     });
 
+    // Load current description and show status
+    const currentDesc = localStorage.getItem("t_proposal_description") || "";
+    const showDescVal = localStorage.getItem("t_show_proposal_description") !== "false";
+    document.getElementById("proposalDescription").value = currentDesc;
+    document.getElementById("showProposalDescription").checked = showDescVal;
+
+    // Load description library select options
+    loadDescLibrary();
+
+    // Bind event listeners for description area
+    document.getElementById("proposalDescription").addEventListener("input", (e) => {
+        localStorage.setItem("t_proposal_description", e.target.value);
+        saveCurrentProposalTemplateSilent();
+    });
+    
+    document.getElementById("showProposalDescription").addEventListener("change", (e) => {
+        localStorage.setItem("t_show_proposal_description", e.target.checked);
+        saveCurrentProposalTemplateSilent();
+    });
+    
+    document.getElementById("descLibrarySelect").addEventListener("change", (e) => {
+        const title = e.target.value;
+        const library = JSON.parse(localStorage.getItem("t_proposal_desc_library")) || {};
+        if (title && library[title] !== undefined) {
+            document.getElementById("proposalDescription").value = library[title];
+            document.getElementById("newDescName").value = title;
+            localStorage.setItem("t_proposal_description", library[title]);
+            document.getElementById("btnDeleteDescFromLib").disabled = false;
+            saveCurrentProposalTemplateSilent();
+        } else {
+            document.getElementById("btnDeleteDescFromLib").disabled = true;
+        }
+    });
+
+    document.getElementById("btnSaveDescToLib").addEventListener("click", () => {
+        const title = document.getElementById("newDescName").value.trim();
+        const text = document.getElementById("proposalDescription").value.trim();
+        if (!title) {
+            alert("Lütfen kaydetmek için bir açıklama başlığı girin.");
+            return;
+        }
+        if (!text) {
+            alert("Lütfen önce bir açıklama metni yazın.");
+            return;
+        }
+        const library = JSON.parse(localStorage.getItem("t_proposal_desc_library")) || {};
+        library[title] = text;
+        localStorage.setItem("t_proposal_desc_library", JSON.stringify(library));
+        
+        loadDescLibrary();
+        document.getElementById("descLibrarySelect").value = title;
+        document.getElementById("btnDeleteDescFromLib").disabled = false;
+        alert(`"${title}" açıklaması başarıyla hafızaya kaydedildi.`);
+    });
+
+    document.getElementById("btnDeleteDescFromLib").addEventListener("click", () => {
+        const title = document.getElementById("descLibrarySelect").value;
+        if (!title) return;
+        if (!confirm(`"${title}" açıklamasını hafızadan silmek istediğinize emin misiniz?`)) return;
+
+        const library = JSON.parse(localStorage.getItem("t_proposal_desc_library")) || {};
+        delete library[title];
+        localStorage.setItem("t_proposal_desc_library", JSON.stringify(library));
+        
+        loadDescLibrary();
+        document.getElementById("newDescName").value = "";
+        document.getElementById("descLibrarySelect").value = "";
+        document.getElementById("btnDeleteDescFromLib").disabled = true;
+        alert(`"${title}" açıklaması hafızadan silindi.`);
+    });
+
     // Load saved proposals list into dropdown
     loadSavedProposalsList();
 
@@ -189,6 +268,7 @@ function saveCompanyInfoState() {
         noteForceMajeure: document.getElementById("noteForceMajeure").value
     };
     localStorage.setItem("t_company_info", JSON.stringify(info));
+    saveCurrentProposalTemplateSilent();
 }
 
 function populateAnnexCentralDropdown() {
@@ -280,6 +360,16 @@ function handleProductItemChange() {
     const prod = productCatalog[category].find(p => p.name === selectedItem);
     if (prod) {
         customPriceInput.value = prod.price.toFixed(2);
+        
+        // Auto-fill description if the textarea is currently empty
+        if (prod.description) {
+            const descTextArea = document.getElementById("proposalDescription");
+            if (descTextArea && descTextArea.value.trim() === "") {
+                descTextArea.value = `• ${prod.name}:\n${prod.description}`;
+                localStorage.setItem("t_proposal_description", descTextArea.value);
+                saveCurrentProposalTemplateSilent();
+            }
+        }
     }
 }
 
@@ -317,9 +407,11 @@ function addCatalogProduct() {
     const category = document.getElementById("catalogProductCategorySelect").value;
     const nameInput = document.getElementById("newCatalogProductName");
     const priceInput = document.getElementById("newCatalogProductPrice");
+    const descInput = document.getElementById("newCatalogProductDescription");
     
     const name = nameInput.value.trim();
     const price = parseFloat(priceInput.value) || 0.0;
+    const description = descInput ? descInput.value.trim() : "";
 
     if (!category) {
         alert("Lütfen önce bir kategori seçin.");
@@ -337,11 +429,12 @@ function addCatalogProduct() {
         return;
     }
 
-    productCatalog[category].push({ name: name, price: price });
+    productCatalog[category].push({ name: name, price: price, description: description });
     localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
 
     nameInput.value = "";
     priceInput.value = "";
+    if (descInput) descInput.value = "";
     renderCatalogViewer();
 }
 
@@ -373,45 +466,131 @@ function renderCatalogViewer() {
         catCard.style.padding = "1rem";
         catCard.style.background = "rgba(255, 255, 255, 0.01)";
 
-        let productsHTML = "";
-        if (productCatalog[cat].length === 0) {
-            productsHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 1rem;">Bu kategoride henüz ürün bulunmuyor.</td></tr>`;
-        } else {
-            productCatalog[cat].forEach((prod, index) => {
-                productsHTML += `
-                    <tr>
-                        <td style="font-size: 0.85rem;">${prod.name}</td>
-                        <td style="text-align: right; font-size: 0.85rem; font-weight: 600;">$${prod.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                        <td style="text-align: center; width: 60px;">
-                            <button class="project-btn-main btn-delete" style="padding: 0.15rem 0.35rem; margin: 0; font-size: 0.75rem;" onclick="deleteCatalogProduct('${cat.replace(/'/g, "\\'")}', '${prod.name.replace(/'/g, "\\'")}')">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
         catCard.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
                 <h3 style="font-size: 1rem; color: var(--accent-indigo);"><i class="fa-solid fa-folder"></i> ${cat} <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">(${productCatalog[cat].length} Ürün)</span></h3>
-                <button class="project-btn-main btn-delete" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="deleteCatalogCategory('${cat.replace(/'/g, "\\'")}')">
+                <button class="project-btn-main btn-delete-cat" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
                     <i class="fa-solid fa-folder-minus"></i> Kategoriyi Sil
                 </button>
             </div>
             <table class="cost-table" style="margin: 0; font-size: 0.85rem;">
                 <thead>
                     <tr>
-                        <th>Ürün Adı</th>
+                        <th>Ürün Adı / Açıklama</th>
                         <th style="text-align: right; width: 150px;">Birim Fiyatı (USD)</th>
                         <th style="text-align: center; width: 60px;">İşlem</th>
                     </tr>
                 </thead>
-                <tbody>
-                    ${productsHTML}
-                </tbody>
+                <tbody class="catalog-tbody"></tbody>
             </table>
         `;
+
+        catCard.querySelector(".btn-delete-cat").addEventListener("click", () => {
+            deleteCatalogCategory(cat);
+        });
+
+        const tbody = catCard.querySelector(".catalog-tbody");
+        if (productCatalog[cat].length === 0) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="3" style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 1rem;">Bu kategoride henüz ürün bulunmuyor.</td>`;
+            tbody.appendChild(tr);
+        } else {
+            productCatalog[cat].forEach((prod, index) => {
+                const tr = document.createElement("tr");
+
+                // 1. Name & Description (Editable)
+                const tdName = document.createElement("td");
+                tdName.style.display = "flex";
+                tdName.style.flexDirection = "column";
+                tdName.style.gap = "4px";
+
+                const nameInp = document.createElement("input");
+                nameInp.type = "text";
+                nameInp.value = prod.name;
+                nameInp.className = "table-cell-input";
+                nameInp.style.fontWeight = "bold";
+                nameInp.style.width = "100%";
+                nameInp.addEventListener("input", (e) => {
+                    productCatalog[cat][index].name = e.target.value;
+                    localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
+                    updateCatalogDropdowns();
+                    handleCategoryChange();
+                });
+
+                const descInp = document.createElement("input");
+                descInp.type = "text";
+                descInp.value = prod.description || "";
+                descInp.placeholder = "Teknik Özellik / Açıklama ekle...";
+                descInp.className = "table-cell-input";
+                descInp.style.fontSize = "0.75rem";
+                descInp.style.color = "var(--text-secondary)";
+                descInp.style.width = "100%";
+                descInp.addEventListener("input", (e) => {
+                    productCatalog[cat][index].description = e.target.value;
+                    localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
+                    updateCatalogDropdowns();
+                    handleCategoryChange();
+                });
+
+                tdName.appendChild(nameInp);
+                tdName.appendChild(descInp);
+                tr.appendChild(tdName);
+
+                // 2. Price (Editable)
+                const tdPrice = document.createElement("td");
+                tdPrice.style.textAlign = "right";
+
+                const priceContainer = document.createElement("div");
+                priceContainer.style.display = "flex";
+                priceContainer.style.alignItems = "center";
+                priceContainer.style.justifyContent = "flex-end";
+
+                const dollarSpan = document.createElement("span");
+                dollarSpan.textContent = "$";
+                dollarSpan.style.marginRight = "2px";
+                priceContainer.appendChild(dollarSpan);
+
+                const priceInp = document.createElement("input");
+                priceInp.type = "number";
+                priceInp.step = "0.01";
+                priceInp.min = "0";
+                priceInp.value = prod.price;
+                priceInp.className = "table-cell-input";
+                priceInp.style.width = "90px";
+                priceInp.style.textAlign = "right";
+                priceInp.style.fontWeight = "600";
+                priceInp.addEventListener("input", (e) => {
+                    productCatalog[cat][index].price = parseFloat(e.target.value) || 0;
+                    localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
+                    updateCatalogDropdowns();
+                    handleCategoryChange();
+                });
+
+                priceContainer.appendChild(priceInp);
+                tdPrice.appendChild(priceContainer);
+                tr.appendChild(tdPrice);
+
+                // 3. Actions (Delete)
+                const tdActions = document.createElement("td");
+                tdActions.style.textAlign = "center";
+
+                const delBtn = document.createElement("button");
+                delBtn.className = "project-btn-main btn-delete";
+                delBtn.style.padding = "0.15rem 0.35rem";
+                delBtn.style.margin = "0";
+                delBtn.style.fontSize = "0.75rem";
+                delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+                delBtn.addEventListener("click", () => {
+                    deleteCatalogProduct(cat, prod.name);
+                });
+
+                tdActions.appendChild(delBtn);
+                tr.appendChild(tdActions);
+
+                tbody.appendChild(tr);
+            });
+        }
+
         container.appendChild(catCard);
     });
 }
@@ -433,6 +612,28 @@ function addPredefinedProduct() {
         unit: "Adet",
         unitPrice: price
     });
+    
+    // Retrieve product catalog entry to see if it has a description
+    const catList = productCatalog[category] || [];
+    const matchedProd = catList.find(p => p.name === selectedItem);
+    if (matchedProd && matchedProd.description) {
+        const descTextArea = document.getElementById("proposalDescription");
+        if (descTextArea) {
+            let currentText = descTextArea.value.trim();
+            const textToAppend = `• ${matchedProd.name}:\n${matchedProd.description}`;
+            
+            // Check if this product's description is already in the textarea
+            if (!currentText.includes(textToAppend)) {
+                if (currentText) {
+                    currentText += `\n\n${textToAppend}`;
+                } else {
+                    currentText = textToAppend;
+                }
+                descTextArea.value = currentText;
+                localStorage.setItem("t_proposal_description", currentText);
+            }
+        }
+    }
     
     saveProposalState();
     updateProposalSummary();
@@ -466,6 +667,7 @@ function addCustomItem() {
 
 function saveProposalState() {
     localStorage.setItem("t_proposal_items", JSON.stringify(proposalItems));
+    saveCurrentProposalTemplateSilent();
 }
 
 function deleteProposalItem(idx) {
@@ -482,36 +684,17 @@ function clearProposal() {
     }
 }
 
-function updateProposalSummary() {
-    const tbody = document.getElementById("teklifTableBody");
-    tbody.innerHTML = "";
-    
+function updateGrandTotalsCardOnly() {
     let subtotalUSD = 0.0;
+    proposalItems.forEach(item => {
+        subtotalUSD += item.qty * item.unitPrice;
+    });
+
     const rate = parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate;
     const showTL = document.getElementById("showTLPrice").checked;
     const showVAT = document.getElementById("showVATPrice").checked;
     const vatPercent = parseFloat(document.getElementById("vatRate").value) || 0;
-    
-    proposalItems.forEach((item, idx) => {
-        const itemTotal = item.qty * item.unitPrice;
-        subtotalUSD += itemTotal;
-        
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${idx + 1}</td>
-            <td>${item.desc}</td>
-            <td style="text-align: center;">${item.qty} ${item.unit}</td>
-            <td style="text-align: right;">$${item.unitPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-            <td style="text-align: right;">$${itemTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-            <td style="text-align: center;" class="hide-print-col">
-                <button class="project-btn-main btn-delete" style="padding: 0.2rem 0.4rem; margin: 0;" onclick="deleteProposalItem(${idx})">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-    
+
     const vatUSD = subtotalUSD * (vatPercent / 100);
     const grandTotalUSD = subtotalUSD + (showVAT ? vatUSD : 0);
     
@@ -520,6 +703,7 @@ function updateProposalSummary() {
     const grandTotalTL = grandTotalUSD * rate;
     
     const container = document.getElementById("teklifTotalsContainer");
+    if (!container) return;
     
     let totalsHTML = "";
     
@@ -574,6 +758,139 @@ function updateProposalSummary() {
     }
     
     container.innerHTML = totalsHTML;
+}
+
+function updateProposalSummary() {
+    const tbody = document.getElementById("teklifTableBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    
+    proposalItems.forEach((item, idx) => {
+        const itemTotal = item.qty * item.unitPrice;
+        
+        const row = document.createElement("tr");
+        
+        // 1. Index
+        const tdIdx = document.createElement("td");
+        tdIdx.style.textAlign = "center";
+        tdIdx.textContent = idx + 1;
+        row.appendChild(tdIdx);
+        
+        // 2. Description (Editable)
+        const tdDesc = document.createElement("td");
+        const descInp = document.createElement("input");
+        descInp.type = "text";
+        descInp.value = item.desc;
+        descInp.className = "table-cell-input";
+        descInp.style.width = "100%";
+        descInp.style.textAlign = "left";
+        descInp.addEventListener("input", (e) => {
+            proposalItems[idx].desc = e.target.value;
+            saveProposalState();
+        });
+        tdDesc.appendChild(descInp);
+        row.appendChild(tdDesc);
+        
+        // 3. Quantity & Unit (Editable)
+        const tdQty = document.createElement("td");
+        tdQty.style.textAlign = "center";
+        tdQty.style.whiteSpace = "nowrap";
+        
+        const qtyInp = document.createElement("input");
+        qtyInp.type = "number";
+        qtyInp.min = "0";
+        qtyInp.step = "any";
+        qtyInp.value = item.qty;
+        qtyInp.className = "table-cell-input";
+        qtyInp.style.width = "65px";
+        qtyInp.style.textAlign = "center";
+        
+        const unitInp = document.createElement("input");
+        unitInp.type = "text";
+        unitInp.value = item.unit || "Adet";
+        unitInp.className = "table-cell-input";
+        unitInp.style.width = "55px";
+        unitInp.style.textAlign = "center";
+        unitInp.style.color = "var(--text-secondary)";
+        
+        const updateTotals = () => {
+            const currentQty = parseFloat(qtyInp.value) || 0;
+            const currentPrice = parseFloat(priceInp.value) || 0;
+            proposalItems[idx].qty = currentQty;
+            proposalItems[idx].unitPrice = currentPrice;
+            saveProposalState();
+            
+            const newTotal = currentQty * currentPrice;
+            tdTotal.textContent = `$${newTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            updateGrandTotalsCardOnly();
+        };
+
+        qtyInp.addEventListener("input", updateTotals);
+        unitInp.addEventListener("input", (e) => {
+            proposalItems[idx].unit = e.target.value;
+            saveProposalState();
+        });
+        
+        tdQty.appendChild(qtyInp);
+        tdQty.appendChild(document.createTextNode(" "));
+        tdQty.appendChild(unitInp);
+        row.appendChild(tdQty);
+        
+        // 4. Unit Price (Editable)
+        const tdPrice = document.createElement("td");
+        tdPrice.style.textAlign = "right";
+        
+        const priceContainer = document.createElement("div");
+        priceContainer.style.display = "flex";
+        priceContainer.style.alignItems = "center";
+        priceContainer.style.justifyContent = "flex-end";
+        
+        const dollarSpan = document.createElement("span");
+        dollarSpan.textContent = "$";
+        dollarSpan.style.marginRight = "2px";
+        priceContainer.appendChild(dollarSpan);
+        
+        const priceInp = document.createElement("input");
+        priceInp.type = "number";
+        priceInp.step = "0.01";
+        priceInp.min = "0";
+        priceInp.value = item.unitPrice;
+        priceInp.className = "table-cell-input";
+        priceInp.style.width = "85px";
+        priceInp.style.textAlign = "right";
+        priceInp.addEventListener("input", updateTotals);
+        
+        priceContainer.appendChild(priceInp);
+        tdPrice.appendChild(priceContainer);
+        row.appendChild(tdPrice);
+        
+        // 5. Total Price
+        const tdTotal = document.createElement("td");
+        tdTotal.style.textAlign = "right";
+        tdTotal.textContent = `$${itemTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        row.appendChild(tdTotal);
+        
+        // 6. Delete Action
+        const tdActions = document.createElement("td");
+        tdActions.style.textAlign = "center";
+        tdActions.className = "hide-print-col";
+        
+        const delBtn = document.createElement("button");
+        delBtn.className = "project-btn-main btn-delete";
+        delBtn.style.padding = "0.2rem 0.4rem";
+        delBtn.style.margin = "0";
+        delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        delBtn.addEventListener("click", () => {
+            deleteProposalItem(idx);
+        });
+        
+        tdActions.appendChild(delBtn);
+        row.appendChild(tdActions);
+        
+        tbody.appendChild(row);
+    });
+    
+    updateGrandTotalsCardOnly();
 }
 
 function printProposal() {
@@ -753,8 +1070,7 @@ function getCentralAnnexHTML(projectName) {
     return `
         <div class="print-page central-specs-annex" style="page-break-before: always; break-before: page; margin-top: 40px; zoom: 75%;">
             <div style="border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 20px;">
-                <h2 style="margin: 0; font-size: 1.4rem; color: #1e293b;">TEKLİF EKİ: MERSİ SİSTEM TEKNİK SPESİFİKASYONLARI</h2>
-                <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #64748b;">Proje Ref: ${projectName} - Malzeme ve Kurulum Detayları</p>
+                <h2 style="margin: 0; font-size: 1.4rem; color: #1e293b;">TEKLİF EKİ: MERKEZİ SİSTEM TEKNİK SPESİFİKASYONLARI</h2>
             </div>
             
             <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
@@ -842,7 +1158,6 @@ function getPnomatikAnnexHTML(projectName) {
         <div class="print-page central-specs-annex" style="page-break-before: always; break-before: page; margin-top: 40px; zoom: 75%;">
             <div style="border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 20px;">
                 <h2 style="margin: 0; font-size: 1.4rem; color: #1e293b;">TEKLİF EKİ: PNÖMATİK TAŞIMA TEKNİK SPESİFİKASYONLARI</h2>
-                <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #64748b;">Proje Ref: ${projectName} - Taşıma Kapasitesi ve Optimal Güç Seçimi</p>
             </div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
@@ -954,6 +1269,9 @@ function buildProposalPrintElement() {
     const annexCentralProject = document.getElementById("annexCentralProject").value;
     const annexPnomatikProject = document.getElementById("annexPnomatikProject").value;
     
+    const showDesc = document.getElementById("showProposalDescription").checked;
+    const descText = document.getElementById("proposalDescription").value.trim();
+    
     const printOverlay = document.createElement("div");
     printOverlay.style.background = "#fff";
     printOverlay.style.color = "#000";
@@ -1046,35 +1364,44 @@ function buildProposalPrintElement() {
     
     printOverlay.innerHTML = `
         <div class="print-page">
-            <div class="print-header" style="border-bottom: 2px solid #1e3a8a; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <img src="bft_logo.png" alt="BFT Logo" style="height: 65px; width: auto; object-fit: contain; display: block;" />
-                    <div>
-                        <h1 style="margin: 0; font-size: 1.15rem; color: #1e3a8a; font-weight: 800; letter-spacing: 0.5px;">BFT BEFATEK MAKİNA İMALAT VE OTOMASYON</h1>
-                        <h2 style="margin: 0 0 6px 0; font-size: 1.0rem; color: #1e3a8a; font-weight: 800; letter-spacing: 0.5px;">SANAYİ TİCARET LİMİTED ŞİRKETİ</h2>
-                        <p style="margin: 2px 0; font-size: 0.72rem; color: #475569; line-height: 1.35;">Fevzi Çakmak Mah. Gülistan Cad. Atiker-3 San. Sit. 8.Blok No:29/H Karatay/KONYA</p>
-                        <p style="margin: 2px 0; font-size: 0.72rem; color: #475569;">Vergi Dairesi: Selçuk - 1681090669 | E-posta: muhasebe@bft.com.tr</p>
-                    </div>
+            <div class="print-header" style="border-bottom: 2px solid #1e3a8a; padding-bottom: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <img src="bft_logo.png" alt="BFT Logo" style="height: 60px; width: auto; object-fit: contain; display: block;" />
                 </div>
                 <div style="text-align: right; min-width: 160px;">
-                    <h3 style="margin: 0; font-size: 1.25rem; color: #0f172a; font-weight: 700; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; text-transform: uppercase;">${title}</h3>
-                    <p style="margin: 6px 0 0 0; font-size: 0.8rem; font-weight: 600;">Tarih: ${dateStr}</p>
+                    <h3 style="margin: 0; font-size: 1.20rem; color: #0f172a; font-weight: 700; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; text-transform: uppercase;">${title}</h3>
+                    <p style="margin: 4px 0 0 0; font-size: 0.78rem; font-weight: 600;">Tarih: ${dateStr}</p>
                     ${kurHTML}
                 </div>
             </div>
             
-            <div class="print-meta-grid" style="display: grid; grid-template-columns: 1fr; margin-bottom: 20px; font-size: 0.8rem;">
-                <div style="border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; background-color: #f8fafc; line-height: 1.55;">
-                    <span style="font-size: 0.72rem; color: #64748b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display: block; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 6px;">Müşteri / Teklif Sunulan Firma</span>
-                    <h3 style="margin: 0 0 6px 0; color: #0f172a; font-size: 1.05rem; font-weight: 700;">${company}</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px;">
-                        <div><strong>Yetkili Kişi:</strong> ${contact}</div>
-                        <div><strong>E-posta Adresi:</strong> ${clientEmail}</div>
-                        <div><strong>Vergi Dairesi / No:</strong> ${clientTaxOffice} / ${clientTaxNo}</div>
-                        <div><strong>Adres:</strong> ${clientAddress}</div>
-                    </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; font-size: 0.75rem;">
+                <!-- Column 1: Befatek (Provider) -->
+                <div style="border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; background-color: #f8fafc; line-height: 1.45; text-align: left;">
+                    <span style="font-size: 0.68rem; color: #64748b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display: block; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 6px;">Teklifi Sunan Firma</span>
+                    <h3 style="margin: 0 0 2px 0; color: #1e3a8a; font-size: 0.82rem; font-weight: bold;">BFT BEFATEK MAKİNA İMALAT VE OTOMASYON</h3>
+                    <h4 style="margin: 0 0 4px 0; color: #1e3a8a; font-size: 0.75rem; font-weight: bold;">SANAYİ TİCARET LİMİTED ŞİRKETİ</h4>
+                    <p style="margin: 2px 0; font-size: 0.7rem; color: #475569;">Fevzi Çakmak Mah. Gülistan Cad. Atiker-3 San. Sit. 8.Blok No:29/H Karatay/KONYA</p>
+                    <p style="margin: 2px 0; font-size: 0.7rem; color: #475569;"><strong>VD / No:</strong> Selçuk - 1681090669</p>
+                    <p style="margin: 2px 0; font-size: 0.7rem; color: #475569;"><strong>E-posta:</strong> muhasebe@bft.com.tr</p>
+                </div>
+                <!-- Column 2: Müşteri (Customer) -->
+                <div style="border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; background-color: #f8fafc; line-height: 1.45; text-align: left;">
+                    <span style="font-size: 0.68rem; color: #64748b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display: block; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 6px;">Müşteri / Teklif Sunulan Firma</span>
+                    <h3 style="margin: 0 0 6px 0; color: #0f172a; font-size: 0.85rem; font-weight: bold;">${company}</h3>
+                    <p style="margin: 2px 0; font-size: 0.7rem; color: #475569;"><strong>Yetkili Kişi:</strong> ${contact}</p>
+                    <p style="margin: 2px 0; font-size: 0.7rem; color: #475569;"><strong>VD / No:</strong> ${clientTaxOffice} / ${clientTaxNo}</p>
+                    <p style="margin: 2px 0; font-size: 0.7rem; color: #475569;"><strong>E-posta:</strong> ${clientEmail}</p>
+                    <p style="margin: 2px 0; font-size: 0.7rem; color: #475569;"><strong>Adres:</strong> ${clientAddress}</p>
                 </div>
             </div>
+            
+            ${showDesc && descText ? `
+            <div style="border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; background-color: #ffffff; margin-bottom: 15px; font-size: 0.75rem; text-align: left; line-height: 1.45;">
+                <span style="font-size: 0.68rem; color: #64748b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display: block; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 6px;">Ürün / Proje Açıklaması</span>
+                <div style="white-space: pre-wrap; color: #334155;">${descText}</div>
+            </div>
+            ` : ''}
             
             <div class="print-table-container">
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem;">
@@ -1130,14 +1457,12 @@ function buildProposalPrintElement() {
                 </div>
             </div>
             
-            <div style="margin-top: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: center; font-size: 0.85rem;">
+            <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: center; font-size: 0.85rem;">
                 <div>
-                    <p style="margin-bottom: 50px;">Müşteri Onay / İmza</p>
-                    <div style="border-top: 1px solid #94a3b8; width: 200px; margin: 0 auto;"></div>
+                    <p style="margin-bottom: 50px; font-weight: 600;">Müşteri Onay / İmza</p>
                 </div>
                 <div>
-                    <p style="margin-bottom: 50px;">Teklifi Sunan / İmza</p>
-                    <div style="border-top: 1px solid #94a3b8; width: 200px; margin: 0 auto;"></div>
+                    <p style="margin-bottom: 50px; font-weight: 600;">Teklifi Sunan / İmza</p>
                 </div>
             </div>
         </div>
@@ -1210,7 +1535,9 @@ function saveCurrentProposalTemplate() {
         showVAT: document.getElementById("showVATPrice").checked,
         vatRate: parseFloat(document.getElementById("vatRate").value) || 20,
         annexCentral: document.getElementById("annexCentralProject").value,
-        annexPnomatik: document.getElementById("annexPnomatikProject").value
+        annexPnomatik: document.getElementById("annexPnomatikProject").value,
+        description: document.getElementById("proposalDescription").value,
+        showDescription: document.getElementById("showProposalDescription").checked
     };
 
     localStorage.setItem("t_proposals", JSON.stringify(proposals));
@@ -1219,6 +1546,57 @@ function saveCurrentProposalTemplate() {
     document.getElementById("savedProposalsSelect").value = name;
     toggleProposalDeleteButtonState();
     alert(`"${name}" teklifi başarıyla kaydedildi.`);
+}
+
+function saveCurrentProposalTemplateSilent() {
+    const nameInput = document.getElementById("proposalSaveName");
+    if (!nameInput) return;
+    const name = nameInput.value.trim();
+    if (!name) return;
+
+    const proposals = JSON.parse(localStorage.getItem("t_proposals")) || {};
+    
+    proposals[name] = {
+        name: name,
+        companyInfo: {
+            title: document.getElementById("proposalTitle").value,
+            company: document.getElementById("clientCompany").value,
+            contact: document.getElementById("contactPerson").value,
+            date: document.getElementById("proposalDate").value,
+            email: document.getElementById("clientEmail").value,
+            taxOffice: document.getElementById("clientTaxOffice").value,
+            taxNo: document.getElementById("clientTaxNo").value,
+            address: document.getElementById("clientAddress").value,
+            termsValidity: document.getElementById("termsValidity").value,
+            termsPayment: document.getElementById("termsPayment").value,
+            termsDelivery: document.getElementById("termsDelivery").value,
+            termsShipping: document.getElementById("termsShipping").value,
+            noteBankExchange: document.getElementById("noteBankExchange").value,
+            noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
+            noteForceMajeure: document.getElementById("noteForceMajeure").value
+        },
+        items: proposalItems,
+        exchangeRate: parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate,
+        showTL: document.getElementById("showTLPrice").checked,
+        showVAT: document.getElementById("showVATPrice").checked,
+        vatRate: parseFloat(document.getElementById("vatRate").value) || 20,
+        annexCentral: document.getElementById("annexCentralProject").value,
+        annexPnomatik: document.getElementById("annexPnomatikProject").value,
+        description: document.getElementById("proposalDescription").value,
+        showDescription: document.getElementById("showProposalDescription").checked
+    };
+
+    localStorage.setItem("t_proposals", JSON.stringify(proposals));
+    
+    const select = document.getElementById("savedProposalsSelect");
+    if (select) {
+        const prevVal = select.value;
+        loadSavedProposalsList();
+        if (prevVal !== name) {
+            select.value = name;
+            toggleProposalDeleteButtonState();
+        }
+    }
 }
 
 function loadSelectedProposalTemplate() {
@@ -1277,6 +1655,16 @@ function loadSelectedProposalTemplate() {
     document.getElementById("annexCentralProject").value = prop.annexCentral || "";
     document.getElementById("annexPnomatikProject").value = prop.annexPnomatik || "";
 
+    const descriptionText = prop.description || "";
+    const showDescriptionVal = prop.showDescription !== false;
+    document.getElementById("proposalDescription").value = descriptionText;
+    document.getElementById("showProposalDescription").checked = showDescriptionVal;
+    localStorage.setItem("t_proposal_description", descriptionText);
+    localStorage.setItem("t_show_proposal_description", showDescriptionVal);
+    document.getElementById("newDescName").value = "";
+    document.getElementById("descLibrarySelect").value = "";
+    document.getElementById("btnDeleteDescFromLib").disabled = true;
+
     toggleProposalDeleteButtonState();
     renderProposalItems();
     updateProposalSummary();
@@ -1294,6 +1682,15 @@ function resetToNewProposal() {
     document.getElementById("clientTaxNo").value = "";
     document.getElementById("clientAddress").value = "";
     document.getElementById("savedProposalsSelect").value = "";
+    
+    document.getElementById("proposalDescription").value = "";
+    document.getElementById("showProposalDescription").checked = true;
+    document.getElementById("newDescName").value = "";
+    document.getElementById("descLibrarySelect").value = "";
+    document.getElementById("btnDeleteDescFromLib").disabled = true;
+    localStorage.removeItem("t_proposal_description");
+    localStorage.removeItem("t_show_proposal_description");
+    
     toggleProposalDeleteButtonState();
     clearProposal();
 }
@@ -1318,6 +1715,21 @@ function deleteSelectedProposalTemplate() {
     loadSavedProposalsList();
     resetToNewProposal();
     alert(`"${name}" teklifi silindi.`);
+}
+
+function loadDescLibrary() {
+    const select = document.getElementById("descLibrarySelect");
+    if (!select) return;
+    
+    const library = JSON.parse(localStorage.getItem("t_proposal_desc_library")) || {};
+    select.innerHTML = '<option value="">-- Kayıtlı Açıklamalardan Seç --</option>';
+    
+    Object.keys(library).sort().forEach(title => {
+        const opt = document.createElement("option");
+        opt.value = title;
+        opt.textContent = title;
+        select.appendChild(opt);
+    });
 }
 
 
