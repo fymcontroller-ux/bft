@@ -1613,7 +1613,6 @@ function loadSelectedProposalTemplate() {
     document.getElementById("btnDeleteDescFromLib").disabled = true;
 
     toggleProposalDeleteButtonState();
-    renderProposalItems();
     updateProposalSummary();
 }
 
@@ -1645,7 +1644,6 @@ function resetToNewProposal() {
     localStorage.removeItem("t_proposal_items");
     localStorage.removeItem("t_company_info");
     
-    renderProposalItems();
     updateProposalSummary();
 }
 
