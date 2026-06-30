@@ -517,14 +517,17 @@ function renderCatalogViewer() {
                     handleCategoryChange();
                 });
 
-                const descInp = document.createElement("input");
-                descInp.type = "text";
+                const descInp = document.createElement("textarea");
                 descInp.value = prod.description || "";
                 descInp.placeholder = "Teknik Özellik / Açıklama ekle...";
                 descInp.className = "table-cell-input";
                 descInp.style.fontSize = "0.75rem";
                 descInp.style.color = "var(--text-secondary)";
                 descInp.style.width = "100%";
+                descInp.style.height = "55px";
+                descInp.style.resize = "vertical";
+                descInp.style.fontFamily = "inherit";
+                descInp.style.lineHeight = "1.35";
                 descInp.addEventListener("input", (e) => {
                     productCatalog[cat][index].description = e.target.value;
                     localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
@@ -1396,13 +1399,6 @@ function buildProposalPrintElement() {
                 </div>
             </div>
             
-            ${showDesc && descText ? `
-            <div style="border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; background-color: #ffffff; margin-bottom: 15px; font-size: 0.75rem; text-align: left; line-height: 1.45;">
-                <span style="font-size: 0.68rem; color: #64748b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display: block; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 6px;">Ürün / Proje Açıklaması</span>
-                <div style="white-space: pre-wrap; color: #334155;">${descText}</div>
-            </div>
-            ` : ''}
-            
             <div class="print-table-container">
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem;">
                     <thead>
@@ -1425,6 +1421,13 @@ function buildProposalPrintElement() {
                     ${finalSummaryHTML}
                 </div>
             </div>
+
+            ${showDesc && descText ? `
+            <div style="border: 1.5px solid #0f172a; padding: 10px; border-radius: 6px; background-color: #ffffff; margin-bottom: 20px; font-size: 0.70rem; text-align: left; line-height: 1.45; page-break-inside: avoid; break-inside: avoid;">
+                <span style="font-size: 0.68rem; color: #000000; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display: block; border-bottom: 1.5px solid #0f172a; padding-bottom: 4px; margin-bottom: 6px;">Ürün / Proje Açıklaması</span>
+                <div style="white-space: pre-wrap; color: #000000;">${descText}</div>
+            </div>
+            ` : ''}
 
             <!-- NOTLAR TABLOSU VE AÇIKLAMALAR -->
             <div style="margin-top: 15px; margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid;">
