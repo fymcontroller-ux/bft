@@ -667,67 +667,130 @@ function initModelEditor() {
     // Set model capacity input value
     document.getElementById("modelCapacityInput").value = model.machineCount;
 
-    // Render prescription list
-    const itemsListContainer = document.getElementById("modelEditItemsList");
-    itemsListContainer.innerHTML = "";
+    // Render table
+    renderRecipeItemsTable();
 
-    model.items.forEach((item, idx) => {
-        const row = document.createElement("div");
-        row.className = "price-input-row";
-        row.style.marginBottom = "0.5rem";
+    initModelEditDropdown();
+}
 
-        const lbl = document.createElement("label");
-        lbl.textContent = item.name;
-        lbl.title = item.name;
-        lbl.style.fontSize = "0.8rem";
+function renderRecipeItemsTable() {
+    const selectedModelKey = document.getElementById("modelSelect").value;
+    const model = models[selectedModelKey];
+    if (!model) return;
 
-        const rightDiv = document.createElement("div");
-        rightDiv.style.display = "flex";
-        rightDiv.style.alignItems = "center";
-        rightDiv.style.gap = "0.4rem";
+    const tbody = document.getElementById("modelEditItemsTableBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
 
-        const inputContainer = document.createElement("div");
-        inputContainer.className = "input-container";
-        inputContainer.style.width = "75px";
-        inputContainer.style.padding = "0.25rem 0.4rem";
+    const searchVal = (document.getElementById("recipeSearchInput")?.value || "").toLowerCase().trim();
+
+    let count = 0;
+    model.items.forEach((item, originalIdx) => {
+        if (searchVal && !item.name.toLowerCase().includes(searchVal)) {
+            return;
+        }
+
+        count++;
+        const priceUSD = getMaterialUSDPrice(item.name);
+        const rowTotalUSD = item.qty * priceUSD;
+
+        const row = document.createElement("tr");
+        row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+
+        // 1. Index
+        const tdIdx = document.createElement("td");
+        tdIdx.style.textAlign = "center";
+        tdIdx.style.padding = "0.5rem";
+        tdIdx.style.color = "var(--text-muted)";
+        tdIdx.textContent = count;
+        row.appendChild(tdIdx);
+
+        // 2. Name
+        const tdName = document.createElement("td");
+        tdName.style.textAlign = "left";
+        tdName.style.padding = "0.5rem";
+        tdName.style.fontWeight = "500";
+        tdName.textContent = item.name;
+        row.appendChild(tdName);
+
+        // 3. Unit Price USD
+        const tdUnitPrice = document.createElement("td");
+        tdUnitPrice.style.textAlign = "right";
+        tdUnitPrice.style.padding = "0.5rem";
+        tdUnitPrice.style.fontFamily = "var(--font-mono)";
+        tdUnitPrice.textContent = `$${priceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`;
+        row.appendChild(tdUnitPrice);
+
+        // 4. Quantity Input
+        const tdQty = document.createElement("td");
+        tdQty.style.textAlign = "center";
+        tdQty.style.padding = "0.5rem";
+
+        const qtyContainer = document.createElement("div");
+        qtyContainer.className = "input-container";
+        qtyContainer.style.width = "75px";
+        qtyContainer.style.margin = "0 auto";
+        qtyContainer.style.padding = "0.15rem 0.35rem";
 
         const qtyInp = document.createElement("input");
         qtyInp.type = "number";
-        qtyInp.step = "0.1";
-        qtyInp.min = "0.1";
+        qtyInp.step = "any";
+        qtyInp.min = "0.01";
         qtyInp.value = item.qty;
         qtyInp.style.fontSize = "0.8rem";
+        qtyInp.style.textAlign = "center";
 
-        qtyInp.addEventListener("input", (e) => {
-            const val = parseFloat(e.target.value) || 0.1;
-            model.items[idx].qty = val;
+        const updateTotals = () => {
+            const val = parseFloat(qtyInp.value) || 0.0;
+            model.items[originalIdx].qty = val;
             savePricesAndExpenses();
             calculate();
-        });
 
-        inputContainer.appendChild(qtyInp);
-        rightDiv.appendChild(inputContainer);
+            const newTotalUSD = val * priceUSD;
+            tdRowTotal.textContent = `$${newTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        };
+        qtyInp.addEventListener("input", updateTotals);
 
-        // Delete button
+        qtyContainer.appendChild(qtyInp);
+        tdQty.appendChild(qtyContainer);
+        row.appendChild(tdQty);
+
+        // 5. Row Total USD
+        const tdRowTotal = document.createElement("td");
+        tdRowTotal.style.textAlign = "right";
+        tdRowTotal.style.padding = "0.5rem";
+        tdRowTotal.style.fontFamily = "var(--font-mono)";
+        tdRowTotal.style.fontWeight = "600";
+        tdRowTotal.textContent = `$${rowTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        row.appendChild(tdRowTotal);
+
+        // 6. Delete Action
+        const tdAction = document.createElement("td");
+        tdAction.style.textAlign = "center";
+        tdAction.style.padding = "0.5rem";
+
         const delBtn = document.createElement("button");
         delBtn.className = "project-btn-main btn-delete";
         delBtn.style.padding = "0.25rem 0.4rem";
         delBtn.style.marginTop = "0";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
         delBtn.addEventListener("click", () => {
-            model.items.splice(idx, 1);
+            model.items.splice(originalIdx, 1);
             savePricesAndExpenses();
-            initModelEditor();
+            renderRecipeItemsTable();
             calculate();
         });
-        rightDiv.appendChild(delBtn);
+        tdAction.appendChild(delBtn);
+        row.appendChild(tdAction);
 
-        row.appendChild(lbl);
-        row.appendChild(rightDiv);
-        itemsListContainer.appendChild(row);
+        tbody.appendChild(row);
     });
 
-    initModelEditDropdown();
+    if (count === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Arama kriterine uygun malzeme bulunamadı.</td>`;
+        tbody.appendChild(row);
+    }
 }
 
 function initModelEditDropdown() {
@@ -755,6 +818,8 @@ function setupEventListeners() {
     const modelModal = document.getElementById("modelEditorModal");
 
     function openModelModal() {
+        const searchInput = document.getElementById("recipeSearchInput");
+        if (searchInput) searchInput.value = "";
         initModelEditor();
         modelModal.classList.add("open");
         document.body.style.overflow = "hidden";
@@ -769,6 +834,7 @@ function setupEventListeners() {
 
     document.getElementById("btnCloseModelEdit").addEventListener("click", closeModelModal);
     document.getElementById("btnSaveCloseModelEdit").addEventListener("click", closeModelModal);
+    document.getElementById("recipeSearchInput").addEventListener("input", renderRecipeItemsTable);
 
     // Overlay dışına tıklayınca kapat
     modelModal.addEventListener("click", (e) => {

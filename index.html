@@ -1308,46 +1308,75 @@
     <!-- ===== YÜKLEYİCİ MODALS ===== -->
     <!-- Model prescription Editor Modal -->
     <div class="modal-overlay" id="modelEditorModal">
-        <div class="modal-box">
+        <div class="modal-box" style="max-width: 1100px; width: 95vw;">
             <div class="modal-header">
                 <h2><i class="fa-solid fa-gears"></i> Model Reçete İçerik Editörü</h2>
                 <button class="modal-close-btn" id="btnCloseModelEdit">&times;</button>
             </div>
-            <div class="modal-body-grid">
-                <div>
-                    <span class="modal-section-title">Model Genel Bilgisi</span>
-                    <div class="form-group" style="grid-template-columns: 1.5fr 1fr; margin-bottom: 1.5rem;">
-                        <label for="modelCapacityInput" style="font-size: 0.85rem;">İşletme Model Kapasitesi</label>
-                        <div class="input-container" style="padding: 0.35rem 0.5rem;">
-                            <input type="number" id="modelCapacityInput" value="20" min="1" max="200" style="font-size: 0.85rem;">
-                            <span class="unit">Adet</span>
+            <div class="modal-body-grid" style="grid-template-columns: 320px 1fr; gap: 2rem; align-items: stretch;">
+                <!-- Left Column: Controls & Adding items -->
+                <div style="background: rgba(255,255,255,0.01); border-right: 1px solid var(--border-color); padding-right: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <span class="modal-section-title">Model Genel Bilgisi</span>
+                        <div class="form-group" style="grid-template-columns: 1fr; gap: 0.25rem; margin-bottom: 1.5rem;">
+                            <label for="modelCapacityInput" style="font-size: 0.85rem; text-align: left;">İşletme Model Kapasitesi (Makine Sayısı)</label>
+                            <div class="input-container" style="padding: 0.35rem 0.5rem; width: 100%;">
+                                <input type="number" id="modelCapacityInput" value="20" min="1" max="200" style="font-size: 0.85rem; text-align: left;">
+                                <span class="unit">Adet</span>
+                            </div>
+                        </div>
+                        
+                        <span class="modal-section-title" style="margin-top: 1rem;">Reçeteye Parça Ekle</span>
+                        <div class="form-group" style="grid-template-columns: 1fr; gap: 0.25rem; margin-bottom: 1rem;">
+                            <label for="modelAddMaterialSelect" style="font-size: 0.8rem; text-align: left;">Eklenecek Malzeme / Parça</label>
+                            <div class="input-container" style="padding: 0.35rem 0.5rem; width: 100%;">
+                                <select id="modelAddMaterialSelect" style="text-align: left; text-align-last: left; font-size: 0.8rem; width: 100%;"></select>
+                            </div>
+                        </div>
+                        <div class="form-group" style="grid-template-columns: 1fr; gap: 0.25rem; margin-bottom: 1.5rem;">
+                            <label for="modelAddMaterialQty" style="font-size: 0.8rem; text-align: left;">Miktar / Metraj</label>
+                            <div class="input-container" style="padding: 0.35rem 0.5rem; width: 100%;">
+                                <input type="number" id="modelAddMaterialQty" value="1.0" min="0.1" step="0.1" style="font-size: 0.85rem; text-align: left;">
+                                <span class="unit">Miktar</span>
+                            </div>
                         </div>
                     </div>
-                    <span class="modal-section-title" style="margin-top: 1.5rem;">Yeni Malzeme Ekle</span>
-                    <div class="form-group" style="grid-template-columns: 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <label for="modelAddMaterialSelect" style="font-size: 0.8rem; text-align: left;">Eklenecek Parça</label>
-                        <div class="input-container" style="padding: 0.35rem 0.5rem;">
-                            <select id="modelAddMaterialSelect" style="text-align: left; text-align-last: left; font-size: 0.8rem;"></select>
-                        </div>
-                    </div>
-                    <div class="form-group" style="grid-template-columns: 1.5fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
-                        <label for="modelAddMaterialQty" style="font-size: 0.8rem;">Miktar / Metraj</label>
-                        <div class="input-container" style="padding: 0.35rem 0.5rem;">
-                            <input type="number" id="modelAddMaterialQty" value="1.0" min="0.1" step="0.1" style="font-size: 0.85rem;">
-                            <span class="unit">Miktar</span>
-                        </div>
-                    </div>
-                    <button type="button" class="project-btn-main btn-save" id="btnModelAddMaterialSubmit" style="width: 100%; font-size: 0.85rem; padding: 0.5rem;"><i class="fa-solid fa-plus"></i> Reçeteye Ekle</button>
+                    <button type="button" class="project-btn-main btn-save" id="btnModelAddMaterialSubmit" style="width: 100%; font-size: 0.85rem; padding: 0.6rem; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 2rem;">
+                        <i class="fa-solid fa-plus"></i> Reçeteye Ekle
+                    </button>
                 </div>
-                <div>
-                    <span class="modal-section-title">Model Parça Listesi</span>
-                    <div class="modal-recipe-list" id="modelEditItemsList">
-                        <!-- Dynamically filled -->
+
+                <!-- Right Column: Table & Search -->
+                <div style="display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem;">
+                        <span class="modal-section-title" style="margin: 0; border: none; padding: 0;">Reçetedeki Parçalar</span>
+                        <div class="input-container" style="width: 250px; padding: 0.35rem 0.5rem; border-color: rgba(99, 102, 241, 0.25);">
+                            <input type="text" id="recipeSearchInput" placeholder="Parça adı ara..." style="font-size: 0.85rem; text-align: left;">
+                            <span class="unit"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 12px; background: rgba(0,0,0,0.2);">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;" class="project-table-styled">
+                            <thead>
+                                <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color);">
+                                    <th style="width: 5%; text-align: center; padding: 0.6rem;">#</th>
+                                    <th style="width: 45%; text-align: left; padding: 0.6rem;">Parça / Malzeme Adı</th>
+                                    <th style="width: 15%; text-align: right; padding: 0.6rem;">Birim Fiyat ($)</th>
+                                    <th style="width: 15%; text-align: center; padding: 0.6rem;">Miktar</th>
+                                    <th style="width: 15%; text-align: right; padding: 0.6rem;">Toplam ($)</th>
+                                    <th style="width: 5%; text-align: center; padding: 0.6rem;">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modelEditItemsTableBody">
+                                <!-- Dynamically filled -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="project-btn-main btn-save" id="btnSaveCloseModelEdit" style="padding: 0.6rem 1.5rem;">Değişiklikleri Tamamla</button>
+                <button class="project-btn-main btn-save" id="btnSaveCloseModelEdit" style="padding: 0.6rem 1.5rem;">Değişiklikleri Kaydet ve Kapat</button>
             </div>
         </div>
     </div>
