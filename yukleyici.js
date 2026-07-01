@@ -805,6 +805,28 @@ function setupEventListeners() {
         if (e.target === newModelModal) closeNewModelModal();
     });
 
+    // Delete selected model handler
+    document.getElementById("btnDeleteModel").addEventListener("click", () => {
+        const selectedModelKey = document.getElementById("modelSelect").value;
+        if (!selectedModelKey) return;
+
+        // Prevent deleting default models
+        if (defaultModels[selectedModelKey] !== undefined) {
+            alert("Sistem varsayılan modelleri silinemez. Sadece kendi eklediğiniz özel modelleri silebilirsiniz.");
+            return;
+        }
+
+        if (confirm(`"${selectedModelKey}" modelini tamamen silmek istediğinize emin misiniz?`)) {
+            delete models[selectedModelKey];
+            savePricesAndExpenses();
+            loadPricesAndExpenses(); // Reload list
+            initModelEditor();
+            calculate();
+            initExpenseEditor();
+            alert(`"${selectedModelKey}" modeli başarıyla silindi.`);
+        }
+    });
+
     // Submit new model
     document.getElementById("btnNewModelSubmit").addEventListener("click", () => {
         const modelName = document.getElementById("newModelNameInput").value.trim().toUpperCase();
