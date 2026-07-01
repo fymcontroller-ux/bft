@@ -664,7 +664,9 @@ function initModelEditor() {
     const model = models[selectedModelKey];
     if (!model) return;
 
-    // Set model capacity input value
+    // Set model name and capacity input values
+    const renameInput = document.getElementById("modelRenameInput");
+    if (renameInput) renameInput.value = selectedModelKey;
     document.getElementById("modelCapacityInput").value = model.machineCount;
 
     // Render table and checklist
@@ -918,6 +920,31 @@ function setupEventListeners() {
     document.getElementById("btnSaveCloseModelEdit").addEventListener("click", closeModelModal);
     document.getElementById("recipeSearchInput").addEventListener("input", renderRecipeItemsTable);
     document.getElementById("librarySearchInput").addEventListener("input", renderLibraryItems);
+
+    document.getElementById("modelRenameInput").addEventListener("change", (e) => {
+        const newName = e.target.value.trim().toUpperCase();
+        const oldName = document.getElementById("modelSelect").value;
+        if (!newName || newName === oldName) return;
+
+        if (models[newName]) {
+            alert("Bu model adı zaten kullanımda!");
+            e.target.value = oldName;
+            return;
+        }
+
+        // Rename key in models
+        models[newName] = models[oldName];
+        delete models[oldName];
+
+        savePricesAndExpenses();
+        loadPricesAndExpenses(); // Re-populate list and keep newName selected
+        
+        document.getElementById("modelSelect").value = newName;
+        
+        calculate();
+        initModelEditor();
+        initExpenseEditor();
+    });
 
     // Overlay dışına tıklayınca kapat
     modelModal.addEventListener("click", (e) => {
