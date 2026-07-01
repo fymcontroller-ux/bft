@@ -459,25 +459,28 @@ function initExpenseEditor() {
         const nameCell = createEditableTextCell(p.name, (val) => { p.name = val; saveAndRecalcExpenses(); });
         row.appendChild(nameCell);
 
-        const netCell = createEditableCell(p.netSalary, (val) => { p.netSalary = val; saveAndRecalcExpenses(); });
-        const sskCell = createEditableCell(p.ssk, (val) => { p.ssk = val; saveAndRecalcExpenses(); });
-        const bagkurCell = createEditableCell(p.bagkur, (val) => { p.bagkur = val; saveAndRecalcExpenses(); });
-        const yemekCell = createEditableCell(p.yemek, (val) => { p.yemek = val; saveAndRecalcExpenses(); });
-        const yolCell = createEditableCell(p.yol, (val) => { p.yol = val; saveAndRecalcExpenses(); });
+        const sumCell = document.createElement("td");
+        sumCell.style.textAlign = "right";
+        sumCell.style.color = "var(--text-primary)";
+        sumCell.style.fontWeight = "600";
+
+        const updateRowTotal = () => {
+            const sumVal = p.netSalary + p.ssk + p.bagkur + p.yemek + p.yol;
+            sumCell.textContent = `$${sumVal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        };
+        updateRowTotal();
+
+        const netCell = createEditableCell(p.netSalary, (val) => { p.netSalary = val; updateRowTotal(); saveAndRecalcExpenses(); });
+        const sskCell = createEditableCell(p.ssk, (val) => { p.ssk = val; updateRowTotal(); saveAndRecalcExpenses(); });
+        const bagkurCell = createEditableCell(p.bagkur, (val) => { p.bagkur = val; updateRowTotal(); saveAndRecalcExpenses(); });
+        const yemekCell = createEditableCell(p.yemek, (val) => { p.yemek = val; updateRowTotal(); saveAndRecalcExpenses(); });
+        const yolCell = createEditableCell(p.yol, (val) => { p.yol = val; updateRowTotal(); saveAndRecalcExpenses(); });
         
         row.appendChild(netCell);
         row.appendChild(sskCell);
         row.appendChild(bagkurCell);
         row.appendChild(yemekCell);
         row.appendChild(yolCell);
-
-        // Sum column
-        const sumVal = p.netSalary + p.ssk + p.bagkur + p.yemek + p.yol;
-        const sumCell = document.createElement("td");
-        sumCell.textContent = `$${sumVal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        sumCell.style.textAlign = "right";
-        sumCell.style.color = "var(--text-primary)";
-        sumCell.style.fontWeight = "600";
         row.appendChild(sumCell);
 
         // Actions
