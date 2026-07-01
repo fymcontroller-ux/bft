@@ -667,10 +667,9 @@ function initModelEditor() {
     // Set model capacity input value
     document.getElementById("modelCapacityInput").value = model.machineCount;
 
-    // Render table
+    // Render table and checklist
     renderRecipeItemsTable();
-
-    initModelEditDropdown();
+    renderLibraryItems();
 }
 
 function renderRecipeItemsTable() {
@@ -778,6 +777,7 @@ function renderRecipeItemsTable() {
             model.items.splice(originalIdx, 1);
             savePricesAndExpenses();
             renderRecipeItemsTable();
+            renderLibraryItems();
             calculate();
         });
         tdAction.appendChild(delBtn);
@@ -793,18 +793,98 @@ function renderRecipeItemsTable() {
     }
 }
 
-function initModelEditDropdown() {
-    const select = document.getElementById("modelAddMaterialSelect");
-    select.innerHTML = "";
+function renderLibraryItems() {
+    const selectedModelKey = document.getElementById("modelSelect").value;
+    const model = models[selectedModelKey];
+    if (!model) return;
 
-    // List all materials sorted alphabetically
+    const container = document.getElementById("libraryItemList");
+    if (!container) return;
+
+    // Save scroll position
+    const scrollTop = container.scrollTop;
+
+    container.innerHTML = "";
+
+    const searchVal = (document.getElementById("librarySearchInput")?.value || "").toLowerCase().trim();
+
+    // Sort materials alphabetically
     const sorted = [...materials].sort((a, b) => a.name.localeCompare(b.name));
+
+    let visibleCount = 0;
+
     sorted.forEach(m => {
-        const opt = document.createElement("option");
-        opt.value = m.name;
-        opt.textContent = m.name;
-        select.appendChild(opt);
+        if (searchVal && !m.name.toLowerCase().includes(searchVal)) {
+            return;
+        }
+
+        visibleCount++;
+
+        const isChecked = model.items.some(item => item.name === m.name);
+
+        const row = document.createElement("div");
+        row.style.display = "flex";
+        row.style.alignItems = "center";
+        row.style.gap = "0.5rem";
+        row.style.padding = "0.4rem 0.25rem";
+        row.style.borderBottom = "1px solid rgba(255,255,255,0.02)";
+
+        const chk = document.createElement("input");
+        chk.type = "checkbox";
+        chk.checked = isChecked;
+        chk.style.cursor = "pointer";
+        chk.style.width = "16px";
+        chk.style.height = "16px";
+
+        chk.addEventListener("change", (e) => {
+            if (e.target.checked) {
+                if (!model.items.some(item => item.name === m.name)) {
+                    model.items.push({ name: m.name, qty: 1.0 });
+                }
+            } else {
+                const idx = model.items.findIndex(item => item.name === m.name);
+                if (idx !== -1) {
+                    model.items.splice(idx, 1);
+                }
+            }
+            savePricesAndExpenses();
+            calculate();
+            renderRecipeItemsTable();
+            renderLibraryItems();
+        });
+
+        const label = document.createElement("label");
+        label.style.flex = "1";
+        label.style.fontSize = "0.8rem";
+        label.style.cursor = "pointer";
+        label.style.textAlign = "left";
+        label.style.color = isChecked ? "var(--accent-indigo)" : "var(--text-secondary)";
+        label.style.fontWeight = isChecked ? "600" : "400";
+        label.textContent = m.name;
+        
+        label.addEventListener("click", () => {
+            chk.checked = !chk.checked;
+            chk.dispatchEvent(new Event("change"));
+        });
+
+        const priceSpan = document.createElement("span");
+        priceSpan.style.fontSize = "0.75rem";
+        priceSpan.style.fontFamily = "var(--font-mono)";
+        priceSpan.style.color = "var(--text-muted)";
+        priceSpan.textContent = `$${m.priceUSD.toFixed(2)}`;
+
+        row.appendChild(chk);
+        row.appendChild(label);
+        row.appendChild(priceSpan);
+        container.appendChild(row);
     });
+
+    const countText = document.getElementById("libraryCountText");
+    if (countText) {
+        countText.textContent = `${visibleCount} parça`;
+    }
+
+    container.scrollTop = scrollTop;
 }
 
 function setupEventListeners() {
@@ -818,8 +898,10 @@ function setupEventListeners() {
     const modelModal = document.getElementById("modelEditorModal");
 
     function openModelModal() {
-        const searchInput = document.getElementById("recipeSearchInput");
-        if (searchInput) searchInput.value = "";
+        const recipeSearchInput = document.getElementById("recipeSearchInput");
+        if (recipeSearchInput) recipeSearchInput.value = "";
+        const librarySearchInput = document.getElementById("librarySearchInput");
+        if (librarySearchInput) librarySearchInput.value = "";
         initModelEditor();
         modelModal.classList.add("open");
         document.body.style.overflow = "hidden";
@@ -835,6 +917,7 @@ function setupEventListeners() {
     document.getElementById("btnCloseModelEdit").addEventListener("click", closeModelModal);
     document.getElementById("btnSaveCloseModelEdit").addEventListener("click", closeModelModal);
     document.getElementById("recipeSearchInput").addEventListener("input", renderRecipeItemsTable);
+    document.getElementById("librarySearchInput").addEventListener("input", renderLibraryItems);
 
     // Overlay dışına tıklayınca kapat
     modelModal.addEventListener("click", (e) => {
@@ -941,25 +1024,6 @@ function setupEventListeners() {
         initExpenseEditor();
     });
 
-    // Add material to recipe submit handler
-    document.getElementById("btnModelAddMaterialSubmit").addEventListener("click", () => {
-        const selectedModelKey = document.getElementById("modelSelect").value;
-        const model = models[selectedModelKey];
-        const mName = document.getElementById("modelAddMaterialSelect").value;
-        const qty = parseFloat(document.getElementById("modelAddMaterialQty").value) || 1.0;
-
-        if (model.items.some(item => item.name === mName)) {
-            alert("Bu malzeme bu reçetede zaten ekli!");
-            return;
-        }
-
-        model.items.push({ name: mName, qty: qty });
-        savePricesAndExpenses();
-        initModelEditor();
-        calculate();
-        document.getElementById("modelAddMaterialQty").value = "";
-    });
-
     // New Group Panel handlers
     const btnAddNewGroup = document.getElementById("btnAddNewGroup");
     const newGroupFormContainer = document.getElementById("newGroupFormContainer");
@@ -989,7 +1053,6 @@ function setupEventListeners() {
         initPriceEditor();
         newGroupFormContainer.style.display = "none";
         document.getElementById("newGroupNameInput").value = "";
-        initModelEditDropdown();
     });
 
     // Add new shop expense submit

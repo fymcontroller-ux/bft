@@ -1308,64 +1308,62 @@
     <!-- ===== YÜKLEYİCİ MODALS ===== -->
     <!-- Model prescription Editor Modal -->
     <div class="modal-overlay" id="modelEditorModal">
-        <div class="modal-box" style="max-width: 1100px; width: 95vw;">
-            <div class="modal-header">
+        <div class="modal-box" style="max-width: 1200px; width: 95vw; height: 85vh; display: flex; flex-direction: column; padding: 2rem 2.5rem 1.5rem 2.5rem;">
+            <div class="modal-header" style="margin-bottom: 1.5rem; padding-bottom: 1rem;">
                 <h2><i class="fa-solid fa-gears"></i> Model Reçete İçerik Editörü</h2>
                 <button class="modal-close-btn" id="btnCloseModelEdit">&times;</button>
             </div>
-            <div class="modal-body-grid" style="grid-template-columns: 320px 1fr; gap: 2rem; align-items: stretch;">
-                <!-- Left Column: Controls & Adding items -->
-                <div style="background: rgba(255,255,255,0.01); border-right: 1px solid var(--border-color); padding-right: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
+            <div class="modal-body-grid" style="grid-template-columns: 420px 1fr; gap: 2rem; align-items: stretch; flex: 1; min-height: 0; margin-bottom: 1rem;">
+                
+                <!-- Left Column: Library / All Parts with Checkboxes -->
+                <div style="background: rgba(255,255,255,0.01); border-right: 1px solid var(--border-color); padding-right: 1.5rem; display: flex; flex-direction: column; height: 100%; min-height: 0;">
+                    <div style="margin-bottom: 1rem;">
                         <span class="modal-section-title">Model Genel Bilgisi</span>
-                        <div class="form-group" style="grid-template-columns: 1fr; gap: 0.25rem; margin-bottom: 1.5rem;">
-                            <label for="modelCapacityInput" style="font-size: 0.85rem; text-align: left;">İşletme Model Kapasitesi (Makine Sayısı)</label>
-                            <div class="input-container" style="padding: 0.35rem 0.5rem; width: 100%;">
+                        <div class="form-group" style="grid-template-columns: 1.8fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <label for="modelCapacityInput" style="font-size: 0.85rem; text-align: left;">Model Kapasitesi</label>
+                            <div class="input-container" style="padding: 0.25rem 0.5rem; width: 100%;">
                                 <input type="number" id="modelCapacityInput" value="20" min="1" max="200" style="font-size: 0.85rem; text-align: left;">
                                 <span class="unit">Adet</span>
                             </div>
                         </div>
-                        
-                        <span class="modal-section-title" style="margin-top: 1rem;">Reçeteye Parça Ekle</span>
-                        <div class="form-group" style="grid-template-columns: 1fr; gap: 0.25rem; margin-bottom: 1rem;">
-                            <label for="modelAddMaterialSelect" style="font-size: 0.8rem; text-align: left;">Eklenecek Malzeme / Parça</label>
-                            <div class="input-container" style="padding: 0.35rem 0.5rem; width: 100%;">
-                                <select id="modelAddMaterialSelect" style="text-align: left; text-align-last: left; font-size: 0.8rem; width: 100%;"></select>
-                            </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span class="modal-section-title" style="margin: 0; border: none; padding: 0;">Parça Ekle / Çıkar</span>
+                            <span id="libraryCountText" style="font-size: 0.75rem; color: var(--text-muted);">0 parça</span>
                         </div>
-                        <div class="form-group" style="grid-template-columns: 1fr; gap: 0.25rem; margin-bottom: 1.5rem;">
-                            <label for="modelAddMaterialQty" style="font-size: 0.8rem; text-align: left;">Miktar / Metraj</label>
-                            <div class="input-container" style="padding: 0.35rem 0.5rem; width: 100%;">
-                                <input type="number" id="modelAddMaterialQty" value="1.0" min="0.1" step="0.1" style="font-size: 0.85rem; text-align: left;">
-                                <span class="unit">Miktar</span>
-                            </div>
+                        <div class="input-container" style="width: 100%; padding: 0.25rem 0.5rem; margin-bottom: 0.5rem; border-color: rgba(99, 102, 241, 0.2);">
+                            <input type="text" id="librarySearchInput" placeholder="Kütüphanede ara..." style="font-size: 0.8rem; text-align: left;">
+                            <span class="unit"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        </div>
+                        
+                        <div id="libraryItemList" style="flex: 1; overflow-y: auto; padding-right: 0.25rem; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; background: rgba(0,0,0,0.15); padding: 0.5rem;">
+                            <!-- Dynamically loaded list of checkboxes -->
                         </div>
                     </div>
-                    <button type="button" class="project-btn-main btn-save" id="btnModelAddMaterialSubmit" style="width: 100%; font-size: 0.85rem; padding: 0.6rem; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 2rem;">
-                        <i class="fa-solid fa-plus"></i> Reçeteye Ekle
-                    </button>
                 </div>
 
-                <!-- Right Column: Table & Search -->
-                <div style="display: flex; flex-direction: column;">
+                <!-- Right Column: Active Recipe Table -->
+                <div style="display: flex; flex-direction: column; height: 100%; min-height: 0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem;">
-                        <span class="modal-section-title" style="margin: 0; border: none; padding: 0;">Reçetedeki Parçalar</span>
-                        <div class="input-container" style="width: 250px; padding: 0.35rem 0.5rem; border-color: rgba(99, 102, 241, 0.25);">
-                            <input type="text" id="recipeSearchInput" placeholder="Parça adı ara..." style="font-size: 0.85rem; text-align: left;">
+                        <span class="modal-section-title" style="margin: 0; border: none; padding: 0;">Aktif Reçete İçeriği</span>
+                        <div class="input-container" style="width: 250px; padding: 0.25rem 0.5rem; border-color: rgba(99, 102, 241, 0.25);">
+                            <input type="text" id="recipeSearchInput" placeholder="Reçetede ara..." style="font-size: 0.85rem; text-align: left;">
                             <span class="unit"><i class="fa-solid fa-magnifying-glass"></i></span>
                         </div>
                     </div>
                     
-                    <div class="table-container" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 12px; background: rgba(0,0,0,0.2);">
+                    <div class="table-container" style="flex: 1; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 12px; background: rgba(0,0,0,0.2);">
                         <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;" class="project-table-styled">
                             <thead>
-                                <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color);">
-                                    <th style="width: 5%; text-align: center; padding: 0.6rem;">#</th>
-                                    <th style="width: 45%; text-align: left; padding: 0.6rem;">Parça / Malzeme Adı</th>
-                                    <th style="width: 15%; text-align: right; padding: 0.6rem;">Birim Fiyat ($)</th>
-                                    <th style="width: 15%; text-align: center; padding: 0.6rem;">Miktar</th>
-                                    <th style="width: 15%; text-align: right; padding: 0.6rem;">Toplam ($)</th>
-                                    <th style="width: 5%; text-align: center; padding: 0.6rem;">İşlem</th>
+                                <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1;">
+                                    <th style="width: 5%; text-align: center; padding: 0.6rem; background: #12141d;">#</th>
+                                    <th style="width: 45%; text-align: left; padding: 0.6rem; background: #12141d;">Parça / Malzeme Adı</th>
+                                    <th style="width: 15%; text-align: right; padding: 0.6rem; background: #12141d;">Birim Fiyat ($)</th>
+                                    <th style="width: 15%; text-align: center; padding: 0.6rem; background: #12141d;">Miktar</th>
+                                    <th style="width: 15%; text-align: right; padding: 0.6rem; background: #12141d;">Toplam ($)</th>
+                                    <th style="width: 5%; text-align: center; padding: 0.6rem; background: #12141d;">İşlem</th>
                                 </tr>
                             </thead>
                             <tbody id="modelEditItemsTableBody">
@@ -1375,7 +1373,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="margin-top: 0.5rem; padding-top: 0.75rem;">
                 <button class="project-btn-main btn-save" id="btnSaveCloseModelEdit" style="padding: 0.6rem 1.5rem;">Değişiklikleri Kaydet ve Kapat</button>
             </div>
         </div>
