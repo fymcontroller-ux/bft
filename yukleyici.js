@@ -571,7 +571,7 @@ function initExpenseEditor() {
         });
         rightContainer.appendChild(delBtn);
 
-        row.appendChild(lbl);
+        row.appendChild(nameInp);
         row.appendChild(rightContainer);
         shopList.appendChild(row);
     });
