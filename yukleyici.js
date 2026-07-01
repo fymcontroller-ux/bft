@@ -959,12 +959,6 @@ function setupEventListeners() {
         const selectedModelKey = document.getElementById("modelSelect").value;
         if (!selectedModelKey) return;
 
-        // Prevent deleting default models
-        if (defaultModels[selectedModelKey] !== undefined) {
-            alert("Sistem varsayılan modelleri silinemez. Sadece kendi eklediğiniz özel modelleri silebilirsiniz.");
-            return;
-        }
-
         if (confirm(`"${selectedModelKey}" modelini tamamen silmek istediğinize emin misiniz?`)) {
             delete models[selectedModelKey];
             savePricesAndExpenses();
