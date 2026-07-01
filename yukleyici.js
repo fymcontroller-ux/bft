@@ -456,10 +456,7 @@ function initExpenseEditor() {
     personnel.forEach((p, idx) => {
         const row = document.createElement("tr");
         
-        const nameCell = document.createElement("td");
-        nameCell.textContent = p.name;
-        nameCell.style.textAlign = "left";
-        nameCell.style.fontWeight = "500";
+        const nameCell = createEditableTextCell(p.name, (val) => { p.name = val; saveAndRecalcExpenses(); });
         row.appendChild(nameCell);
 
         const netCell = createEditableCell(p.netSalary, (val) => { p.netSalary = val; saveAndRecalcExpenses(); });
@@ -512,8 +509,24 @@ function initExpenseEditor() {
         const row = document.createElement("div");
         row.className = "price-input-row";
         
-        const lbl = document.createElement("label");
-        lbl.textContent = exp.name;
+        const nameInp = document.createElement("input");
+        nameInp.type = "text";
+        nameInp.value = exp.name;
+        nameInp.style.fontSize = "0.88rem";
+        nameInp.style.color = "var(--text-secondary)";
+        nameInp.style.flex = "1";
+        nameInp.style.minWidth = "160px";
+        nameInp.style.background = "transparent";
+        nameInp.style.border = "none";
+        nameInp.style.borderBottom = "1px dashed rgba(255,255,255,0.15)";
+        nameInp.style.outline = "none";
+        nameInp.style.padding = "0.25rem 0";
+        nameInp.style.textAlign = "left";
+        nameInp.style.fontFamily = "inherit";
+        nameInp.addEventListener("input", (e) => {
+            shopExpenses[idx].name = e.target.value;
+            saveAndRecalcExpenses();
+        });
         
         const rightContainer = document.createElement("div");
         rightContainer.style.display = "flex";
@@ -588,6 +601,30 @@ function createEditableCell(val, onUpdate) {
     inp.addEventListener("input", (e) => {
         const value = parseFloat(e.target.value) || 0.0;
         onUpdate(value);
+    });
+
+    td.appendChild(inp);
+    return td;
+}
+
+function createEditableTextCell(val, onUpdate) {
+    const td = document.createElement("td");
+    const inp = document.createElement("input");
+    inp.type = "text";
+    inp.value = val;
+    inp.style.width = "100%";
+    inp.style.padding = "0.25rem";
+    inp.style.background = "transparent";
+    inp.style.border = "none";
+    inp.style.color = "var(--text-primary)";
+    inp.style.textAlign = "left";
+    inp.style.fontWeight = "500";
+    inp.style.outline = "none";
+
+    inp.addEventListener("focus", () => inp.parentElement.style.background = "rgba(255,255,255,0.03)");
+    inp.addEventListener("blur", () => inp.parentElement.style.background = "transparent");
+    inp.addEventListener("input", (e) => {
+        onUpdate(e.target.value);
     });
 
     td.appendChild(inp);
