@@ -1148,6 +1148,14 @@ function setupEventListeners() {
         savePricesAndExpenses();
         calculate();
     });
+
+    document.getElementById("quickAddCategorySelect").addEventListener("change", () => {
+        const selectedModelKey = document.getElementById("modelSelect").value;
+        const model = models[selectedModelKey];
+        if (model) {
+            renderQuickAddMaterialsOnly(model);
+        }
+    });
 }
 
 // Helper to look up USD price in materials list
@@ -1332,18 +1340,48 @@ function calculate() {
 }
 
 function initQuickAddDropdown(model) {
-    const select = document.getElementById("quickAddMaterialSelect");
-    if (!select) return;
-    select.innerHTML = "";
+    const categorySelect = document.getElementById("quickAddCategorySelect");
+    if (!categorySelect) return;
+
+    // Save active category selection
+    const activeCategory = categorySelect.value;
+
+    // Populate categories dynamically
+    categorySelect.innerHTML = '<option value="">-- Tüm Gruplar --</option>';
+    const groups = [...new Set(materials.map(m => m.group).filter(Boolean))].sort();
+    groups.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g;
+        opt.textContent = g;
+        categorySelect.appendChild(opt);
+    });
+
+    if (groups.includes(activeCategory)) {
+        categorySelect.value = activeCategory;
+    }
+
+    renderQuickAddMaterialsOnly(model);
+}
+
+function renderQuickAddMaterialsOnly(model) {
+    const categorySelect = document.getElementById("quickAddCategorySelect");
+    const materialSelect = document.getElementById("quickAddMaterialSelect");
+    if (!categorySelect || !materialSelect) return;
+
+    const selectedGroup = categorySelect.value;
+    materialSelect.innerHTML = "";
 
     // Default option
     const placeholder = document.createElement("option");
     placeholder.value = "";
     placeholder.textContent = "-- Reçeteye eklemek için bir parça seçin --";
-    select.appendChild(placeholder);
+    materialSelect.appendChild(placeholder);
 
-    // Filter available library items not in active model items
-    const available = materials.filter(m => !model.items.some(item => item.name === m.name));
+    // Filter by group (category) & exclude already added items
+    let available = materials.filter(m => !model.items.some(item => item.name === m.name));
+    if (selectedGroup) {
+        available = available.filter(m => m.group === selectedGroup);
+    }
 
     // Sort alphabetically
     available.sort((a, b) => a.name.localeCompare(b.name));
@@ -1352,7 +1390,7 @@ function initQuickAddDropdown(model) {
         const opt = document.createElement("option");
         opt.value = m.name;
         opt.textContent = `${m.name} ($${m.priceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
-        select.appendChild(opt);
+        materialSelect.appendChild(opt);
     });
 }
 
