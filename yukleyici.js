@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initPriceEditor();
     initExpenseEditor();
-    initModelEditor();
     setupEventListeners();
     calculate();
 });
@@ -658,309 +657,20 @@ function updateExpenseSummaryDisplay() {
     document.getElementById("expSummaryTotal").textContent = `$${totalWithExtra.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-// --- MODEL COMPONENT prescription EDITOR ---
-function initModelEditor() {
-    const selectedModelKey = document.getElementById("modelSelect").value;
-    const model = models[selectedModelKey];
-    if (!model) return;
 
-    // Set model name and capacity input values
-    const renameInput = document.getElementById("modelRenameInput");
-    if (renameInput) renameInput.value = selectedModelKey;
-    document.getElementById("modelCapacityInput").value = model.machineCount;
-
-    // Render table and checklist
-    renderRecipeItemsTable();
-    renderLibraryItems();
-}
-
-function renderRecipeItemsTable() {
-    const selectedModelKey = document.getElementById("modelSelect").value;
-    const model = models[selectedModelKey];
-    if (!model) return;
-
-    const tbody = document.getElementById("modelEditItemsTableBody");
-    if (!tbody) return;
-    tbody.innerHTML = "";
-
-    const searchVal = (document.getElementById("recipeSearchInput")?.value || "").toLowerCase().trim();
-
-    let count = 0;
-    model.items.forEach((item, originalIdx) => {
-        if (searchVal && !item.name.toLowerCase().includes(searchVal)) {
-            return;
-        }
-
-        count++;
-        const priceUSD = getMaterialUSDPrice(item.name);
-        const rowTotalUSD = item.qty * priceUSD;
-
-        const row = document.createElement("tr");
-        row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
-
-        // 1. Index
-        const tdIdx = document.createElement("td");
-        tdIdx.style.textAlign = "center";
-        tdIdx.style.padding = "0.5rem";
-        tdIdx.style.color = "var(--text-muted)";
-        tdIdx.textContent = count;
-        row.appendChild(tdIdx);
-
-        // 2. Name
-        const tdName = document.createElement("td");
-        tdName.style.textAlign = "left";
-        tdName.style.padding = "0.5rem";
-        tdName.style.fontWeight = "500";
-        tdName.textContent = item.name;
-        row.appendChild(tdName);
-
-        // 3. Unit Price USD
-        const tdUnitPrice = document.createElement("td");
-        tdUnitPrice.style.textAlign = "right";
-        tdUnitPrice.style.padding = "0.5rem";
-        tdUnitPrice.style.fontFamily = "var(--font-mono)";
-        tdUnitPrice.textContent = `$${priceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`;
-        row.appendChild(tdUnitPrice);
-
-        // 4. Quantity Input
-        const tdQty = document.createElement("td");
-        tdQty.style.textAlign = "center";
-        tdQty.style.padding = "0.5rem";
-
-        const qtyContainer = document.createElement("div");
-        qtyContainer.className = "input-container";
-        qtyContainer.style.width = "75px";
-        qtyContainer.style.margin = "0 auto";
-        qtyContainer.style.padding = "0.15rem 0.35rem";
-
-        const qtyInp = document.createElement("input");
-        qtyInp.type = "number";
-        qtyInp.step = "any";
-        qtyInp.min = "0.01";
-        qtyInp.value = item.qty;
-        qtyInp.style.fontSize = "0.8rem";
-        qtyInp.style.textAlign = "center";
-
-        const updateTotals = () => {
-            const val = parseFloat(qtyInp.value) || 0.0;
-            model.items[originalIdx].qty = val;
-            savePricesAndExpenses();
-            calculate();
-
-            const newTotalUSD = val * priceUSD;
-            tdRowTotal.textContent = `$${newTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        };
-        qtyInp.addEventListener("input", updateTotals);
-
-        qtyContainer.appendChild(qtyInp);
-        tdQty.appendChild(qtyContainer);
-        row.appendChild(tdQty);
-
-        // 5. Row Total USD
-        const tdRowTotal = document.createElement("td");
-        tdRowTotal.style.textAlign = "right";
-        tdRowTotal.style.padding = "0.5rem";
-        tdRowTotal.style.fontFamily = "var(--font-mono)";
-        tdRowTotal.style.fontWeight = "600";
-        tdRowTotal.textContent = `$${rowTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        row.appendChild(tdRowTotal);
-
-        // 6. Delete Action
-        const tdAction = document.createElement("td");
-        tdAction.style.textAlign = "center";
-        tdAction.style.padding = "0.5rem";
-
-        const delBtn = document.createElement("button");
-        delBtn.className = "project-btn-main btn-delete";
-        delBtn.style.padding = "0.25rem 0.4rem";
-        delBtn.style.marginTop = "0";
-        delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-        delBtn.addEventListener("click", () => {
-            model.items.splice(originalIdx, 1);
-            savePricesAndExpenses();
-            renderRecipeItemsTable();
-            renderLibraryItems();
-            calculate();
-        });
-        tdAction.appendChild(delBtn);
-        row.appendChild(tdAction);
-
-        tbody.appendChild(row);
-    });
-
-    if (count === 0) {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Arama kriterine uygun malzeme bulunamadı.</td>`;
-        tbody.appendChild(row);
-    }
-}
-
-function renderLibraryItems() {
-    const selectedModelKey = document.getElementById("modelSelect").value;
-    const model = models[selectedModelKey];
-    if (!model) return;
-
-    const container = document.getElementById("libraryItemList");
-    if (!container) return;
-
-    // Save scroll position
-    const scrollTop = container.scrollTop;
-
-    container.innerHTML = "";
-
-    const searchVal = (document.getElementById("librarySearchInput")?.value || "").toLowerCase().trim();
-
-    // Sort materials alphabetically
-    const sorted = [...materials].sort((a, b) => a.name.localeCompare(b.name));
-
-    let visibleCount = 0;
-
-    sorted.forEach(m => {
-        if (searchVal && !m.name.toLowerCase().includes(searchVal)) {
-            return;
-        }
-
-        visibleCount++;
-
-        const isChecked = model.items.some(item => item.name === m.name);
-
-        const row = document.createElement("div");
-        row.style.display = "flex";
-        row.style.alignItems = "center";
-        row.style.gap = "0.5rem";
-        row.style.padding = "0.4rem 0.25rem";
-        row.style.borderBottom = "1px solid rgba(255,255,255,0.02)";
-
-        const chk = document.createElement("input");
-        chk.type = "checkbox";
-        chk.checked = isChecked;
-        chk.style.cursor = "pointer";
-        chk.style.width = "16px";
-        chk.style.height = "16px";
-
-        chk.addEventListener("change", (e) => {
-            if (e.target.checked) {
-                if (!model.items.some(item => item.name === m.name)) {
-                    model.items.push({ name: m.name, qty: 1.0 });
-                }
-            } else {
-                const idx = model.items.findIndex(item => item.name === m.name);
-                if (idx !== -1) {
-                    model.items.splice(idx, 1);
-                }
-            }
-            savePricesAndExpenses();
-            calculate();
-            renderRecipeItemsTable();
-            renderLibraryItems();
-        });
-
-        const label = document.createElement("label");
-        label.style.flex = "1";
-        label.style.fontSize = "0.8rem";
-        label.style.cursor = "pointer";
-        label.style.textAlign = "left";
-        label.style.color = isChecked ? "var(--accent-indigo)" : "var(--text-secondary)";
-        label.style.fontWeight = isChecked ? "600" : "400";
-        label.textContent = m.name;
-        
-        label.addEventListener("click", () => {
-            chk.checked = !chk.checked;
-            chk.dispatchEvent(new Event("change"));
-        });
-
-        const priceSpan = document.createElement("span");
-        priceSpan.style.fontSize = "0.75rem";
-        priceSpan.style.fontFamily = "var(--font-mono)";
-        priceSpan.style.color = "var(--text-muted)";
-        priceSpan.textContent = `$${m.priceUSD.toFixed(2)}`;
-
-        row.appendChild(chk);
-        row.appendChild(label);
-        row.appendChild(priceSpan);
-        container.appendChild(row);
-    });
-
-    const countText = document.getElementById("libraryCountText");
-    if (countText) {
-        countText.textContent = `${visibleCount} parça`;
-    }
-
-    container.scrollTop = scrollTop;
-}
 
 function setupEventListeners() {
     document.getElementById("modelSelect").addEventListener("change", () => {
-        initModelEditor();
         calculate();
     });
 
-    // Modeli Düzenle modal toggle
-    const btnEditModel = document.getElementById("btnEditModel");
-    const modelModal = document.getElementById("modelEditorModal");
-
-    function openModelModal() {
-        const recipeSearchInput = document.getElementById("recipeSearchInput");
-        if (recipeSearchInput) recipeSearchInput.value = "";
-        const librarySearchInput = document.getElementById("librarySearchInput");
-        if (librarySearchInput) librarySearchInput.value = "";
-        initModelEditor();
-        modelModal.classList.add("open");
-        document.body.style.overflow = "hidden";
-    }
-
-    function closeModelModal() {
-        modelModal.classList.remove("open");
-        document.body.style.overflow = "";
-    }
-
-    btnEditModel.addEventListener("click", openModelModal);
-
-    document.getElementById("btnCloseModelEdit").addEventListener("click", closeModelModal);
-    document.getElementById("btnSaveCloseModelEdit").addEventListener("click", closeModelModal);
-    document.getElementById("recipeSearchInput").addEventListener("input", renderRecipeItemsTable);
-    document.getElementById("librarySearchInput").addEventListener("input", renderLibraryItems);
-
-    document.getElementById("modelRenameInput").addEventListener("change", (e) => {
-        const newName = e.target.value.trim().toUpperCase();
-        const oldName = document.getElementById("modelSelect").value;
-        if (!newName || newName === oldName) return;
-
-        if (models[newName]) {
-            alert("Bu model adı zaten kullanımda!");
-            e.target.value = oldName;
-            return;
-        }
-
-        // Rename key in models
-        models[newName] = models[oldName];
-        delete models[oldName];
-
-        savePricesAndExpenses();
-        loadPricesAndExpenses(); // Re-populate list and keep newName selected
-        
-        document.getElementById("modelSelect").value = newName;
-        
-        calculate();
-        initModelEditor();
-        initExpenseEditor();
-    });
-
-    // Overlay dışına tıklayınca kapat
-    modelModal.addEventListener("click", (e) => {
-        if (e.target === modelModal) closeModelModal();
-    });
-
-    // ESC tuşu ile kapat
     // Yeni Model Ekle modal toggle - önce tanımla, sonra kullan
     const btnAddNewModel = document.getElementById("btnAddNewModel");
     const newModelModal = document.getElementById("newModelModal");
 
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modelModal.classList.contains("open")) closeModelModal();
         if (e.key === "Escape" && newModelModal.classList.contains("open")) closeNewModelModal();
     });
-
 
     function openNewModelModal() {
         newModelModal.classList.add("open");
@@ -990,7 +700,6 @@ function setupEventListeners() {
             delete models[selectedModelKey];
             savePricesAndExpenses();
             loadPricesAndExpenses(); // Reload list
-            initModelEditor();
             calculate();
             initExpenseEditor();
             alert(`"${selectedModelKey}" modeli başarıyla silindi.`);
@@ -1029,7 +738,6 @@ function setupEventListeners() {
         modelSelect.value = modelName;
 
         // Trigger change events
-        initModelEditor();
         calculate();
 
         closeNewModelModal();
@@ -1174,6 +882,10 @@ function calculate() {
     const selectedModelKey = document.getElementById("modelSelect").value;
     const model = models[selectedModelKey];
     if (!model) return;
+
+    // Sync model capacity input value
+    const capInp = document.getElementById("modelCapacityInput");
+    if (capInp) capInp.value = model.machineCount;
 
     // 1. Calculate expenses (natively in USD)
     let totalPersonnel = 0;
