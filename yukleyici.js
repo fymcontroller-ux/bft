@@ -1178,19 +1178,126 @@ function calculate() {
 
         subtotalUSD += totalUSD;
 
-        // Formats for quantity unit
         const nameLower = item.name.toLowerCase();
-        const qtyFormatted = (nameLower.includes("kablo") || nameLower.includes("hortum")) ? `${item.qty} m` : `${item.qty} Adet`;
+        const unitText = (nameLower.includes("kablo") || nameLower.includes("hortum")) ? "m" : "Adet";
 
         const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${item.name}</td>
-            <td>${qtyFormatted}</td>
-            <td>${details.supplier}</td>
-            <td>$${priceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}</td>
-            <td>$${totalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-            <td>${details.updateDate}</td>
-        `;
+
+        // 1. Name
+        const tdName = document.createElement("td");
+        tdName.textContent = item.name;
+        row.appendChild(tdName);
+
+        // 2. Quantity input
+        const tdQty = document.createElement("td");
+        tdQty.style.textAlign = "center";
+
+        const qtyContainer = document.createElement("div");
+        qtyContainer.className = "input-container";
+        qtyContainer.style.width = "95px";
+        qtyContainer.style.padding = "0.15rem 0.35rem";
+        qtyContainer.style.margin = "0 auto";
+        qtyContainer.style.display = "flex";
+        qtyContainer.style.alignItems = "center";
+
+        const qtyInp = document.createElement("input");
+        qtyInp.type = "number";
+        qtyInp.step = "any";
+        qtyInp.min = "0.01";
+        qtyInp.value = item.qty;
+        qtyInp.style.fontSize = "0.85rem";
+        qtyInp.style.textAlign = "center";
+        qtyInp.style.border = "none";
+        qtyInp.style.background = "transparent";
+        qtyInp.style.color = "inherit";
+        qtyInp.style.width = "55px";
+
+        qtyInp.addEventListener("input", (e) => {
+            const val = parseFloat(e.target.value) || 0.0;
+            item.qty = val;
+
+            const newTotalUSD = val * priceUSD;
+            tdRowTotal.textContent = `$${newTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+            // Recalculate subtotal & grand totals
+            let tempSubtotal = 0.0;
+            model.items.forEach(x => {
+                const p = getMaterialUSDPrice(x.name);
+                tempSubtotal += x.qty * p;
+            });
+
+            const tempOperating = monthlyExpensesTotal / machineCount;
+            const tempExtra = tempSubtotal * 0.10;
+            const tempGrand = tempSubtotal + tempExtra + tempOperating;
+
+            document.getElementById("summarySubtotalUSD").textContent = `$${tempSubtotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById("summaryGrandTotalUSD").textContent = `$${tempGrand.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+            savePricesAndExpenses();
+        });
+
+        qtyInp.addEventListener("blur", () => {
+            calculate();
+        });
+
+        const unitSpan = document.createElement("span");
+        unitSpan.className = "unit";
+        unitSpan.style.fontSize = "0.75rem";
+        unitSpan.style.color = "var(--text-muted)";
+        unitSpan.style.marginLeft = "3px";
+        unitSpan.textContent = unitText;
+
+        qtyContainer.appendChild(qtyInp);
+        qtyContainer.appendChild(unitSpan);
+        tdQty.appendChild(qtyContainer);
+        row.appendChild(tdQty);
+
+        // 3. Supplier
+        const tdSupplier = document.createElement("td");
+        tdSupplier.textContent = details.supplier;
+        row.appendChild(tdSupplier);
+
+        // 4. Unit Price
+        const tdUnitPrice = document.createElement("td");
+        tdUnitPrice.style.textAlign = "right";
+        tdUnitPrice.style.fontFamily = "var(--font-mono)";
+        tdUnitPrice.textContent = `$${priceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`;
+        row.appendChild(tdUnitPrice);
+
+        // 5. Total Price
+        const tdRowTotal = document.createElement("td");
+        tdRowTotal.style.textAlign = "right";
+        tdRowTotal.style.fontFamily = "var(--font-mono)";
+        tdRowTotal.style.fontWeight = "600";
+        tdRowTotal.textContent = `$${totalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        row.appendChild(tdRowTotal);
+
+        // 6. Update Date
+        const tdDate = document.createElement("td");
+        tdDate.textContent = details.updateDate;
+        row.appendChild(tdDate);
+
+        // 7. Delete button
+        const tdAction = document.createElement("td");
+        tdAction.style.textAlign = "center";
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "project-btn-main btn-delete";
+        delBtn.style.padding = "0.25rem 0.4rem";
+        delBtn.style.marginTop = "0";
+        delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        delBtn.addEventListener("click", () => {
+            const idx = model.items.findIndex(x => x.name === item.name);
+            if (idx !== -1) {
+                model.items.splice(idx, 1);
+                savePricesAndExpenses();
+                calculate();
+            }
+        });
+
+        tdAction.appendChild(delBtn);
+        row.appendChild(tdAction);
+
         tbody.appendChild(row);
     });
 
