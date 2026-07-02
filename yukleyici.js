@@ -14,6 +14,17 @@ document.addEventListener("DOMContentLoaded", () => {
     calculate();
 });
 
+function getMaterialUnit(name) {
+    const units = JSON.parse(localStorage.getItem("l_material_units")) || {};
+    return units[name] || "Adet";
+}
+
+function saveMaterialUnit(name, unit) {
+    const units = JSON.parse(localStorage.getItem("l_material_units")) || {};
+    units[name] = unit;
+    localStorage.setItem("l_material_units", JSON.stringify(units));
+}
+
 // Load values from LocalStorage or fall back to defaults
 function loadPricesAndExpenses() {
     personnel = JSON.parse(localStorage.getItem("l_personnel")) || JSON.parse(JSON.stringify(defaultPersonnel));
@@ -916,8 +927,7 @@ function calculate() {
 
         subtotalUSD += totalUSD;
 
-        const nameLower = item.name.toLowerCase();
-        const unitText = (nameLower.includes("kablo") || nameLower.includes("hortum")) ? "m" : "Adet";
+        const unitText = getMaterialUnit(item.name);
 
         const row = document.createElement("tr");
 
@@ -978,15 +988,36 @@ function calculate() {
             calculate();
         });
 
-        const unitSpan = document.createElement("span");
-        unitSpan.className = "unit";
-        unitSpan.style.fontSize = "0.75rem";
-        unitSpan.style.color = "var(--text-muted)";
-        unitSpan.style.marginLeft = "3px";
-        unitSpan.textContent = unitText;
+        const unitSel = document.createElement("select");
+        unitSel.style.fontSize = "0.75rem";
+        unitSel.style.background = "transparent";
+        unitSel.style.border = "none";
+        unitSel.style.color = "var(--text-muted)";
+        unitSel.style.cursor = "pointer";
+        unitSel.style.marginLeft = "3px";
+        unitSel.style.padding = "0";
+        unitSel.style.outline = "none";
+        unitSel.style.width = "50px";
+
+        const optAdet = document.createElement("option");
+        optAdet.value = "Adet";
+        optAdet.textContent = "Adet";
+        unitSel.appendChild(optAdet);
+
+        const optM = document.createElement("option");
+        optM.value = "m";
+        optM.textContent = "Metre";
+        unitSel.appendChild(optM);
+
+        unitSel.value = unitText;
+
+        unitSel.addEventListener("change", (e) => {
+            saveMaterialUnit(item.name, e.target.value);
+            calculate();
+        });
 
         qtyContainer.appendChild(qtyInp);
-        qtyContainer.appendChild(unitSpan);
+        qtyContainer.appendChild(unitSel);
         tdQty.appendChild(qtyContainer);
         row.appendChild(tdQty);
 

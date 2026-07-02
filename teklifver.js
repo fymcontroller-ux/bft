@@ -24,7 +24,16 @@ const defaultCatalog = {
         { name: "Contalı Boru Kelepçesi", price: 8.50 }
     ]
 };
+function getMaterialUnit(name) {
+    const units = JSON.parse(localStorage.getItem("l_material_units")) || {};
+    return units[name] || "Adet";
+}
 
+function saveMaterialUnit(name, unit) {
+    const units = JSON.parse(localStorage.getItem("l_material_units")) || {};
+    units[name] = unit;
+    localStorage.setItem("l_material_units", JSON.stringify(units));
+}
 document.addEventListener("DOMContentLoaded", () => {
     initTeklifVer();
 });
@@ -664,6 +673,7 @@ function addCustomItem() {
     document.getElementById("customItemDesc").value = "";
     document.getElementById("customItemQty").value = "1";
     document.getElementById("customItemPrice").value = "0.00";
+    document.getElementById("customItemUnit").value = "Adet";
     
     saveProposalState();
     updateProposalSummary();
@@ -809,13 +819,24 @@ function updateProposalSummary() {
         qtyInp.style.width = "65px";
         qtyInp.style.textAlign = "center";
         
-        const unitInp = document.createElement("input");
-        unitInp.type = "text";
-        unitInp.value = item.unit || "Adet";
-        unitInp.className = "table-cell-input";
-        unitInp.style.width = "55px";
-        unitInp.style.textAlign = "center";
-        unitInp.style.color = "var(--text-secondary)";
+        const unitSel = document.createElement("select");
+        unitSel.className = "table-cell-input";
+        unitSel.style.width = "65px";
+        unitSel.style.fontSize = "0.8rem";
+        unitSel.style.textAlign = "center";
+        unitSel.style.color = "var(--text-secondary)";
+        
+        const optAdet = document.createElement("option");
+        optAdet.value = "Adet";
+        optAdet.textContent = "Adet";
+        unitSel.appendChild(optAdet);
+
+        const optM = document.createElement("option");
+        optM.value = "m";
+        optM.textContent = "Metre";
+        unitSel.appendChild(optM);
+
+        unitSel.value = item.unit || "Adet";
         
         const updateTotals = () => {
             const currentQty = parseFloat(qtyInp.value) || 0;
@@ -830,14 +851,14 @@ function updateProposalSummary() {
         };
 
         qtyInp.addEventListener("input", updateTotals);
-        unitInp.addEventListener("input", (e) => {
+        unitSel.addEventListener("change", (e) => {
             proposalItems[idx].unit = e.target.value;
             saveProposalState();
         });
         
         tdQty.appendChild(qtyInp);
         tdQty.appendChild(document.createTextNode(" "));
-        tdQty.appendChild(unitInp);
+        tdQty.appendChild(unitSel);
         row.appendChild(tdQty);
         
         // 4. Unit Price (Editable)
@@ -1060,7 +1081,8 @@ function getCentralAnnexHTML(projectName) {
         
         sec.items.forEach(item => {
             if (!item.name) return;
-            const qtyFormatted = item.isMeter ? `${item.qty.toFixed(1)} m` : `${item.qty} Adet`;
+            const currentUnit = getMaterialUnit(item.name);
+            const qtyFormatted = currentUnit === "m" ? `${item.qty.toFixed(1)} m` : `${item.qty} ${currentUnit}`;
             tbodyHTML += `
                 <tr>
                     <td style="border: 1px solid #e2e8f0; padding: 5px; width: 5%; text-align: center;">•</td>

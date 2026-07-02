@@ -102,6 +102,17 @@ document.addEventListener("DOMContentLoaded", () => {
     calculate();
 });
 
+function getMaterialUnit(name) {
+    const units = JSON.parse(localStorage.getItem("l_material_units")) || {};
+    return units[name] || "Adet";
+}
+
+function saveMaterialUnit(name, unit) {
+    const units = JSON.parse(localStorage.getItem("l_material_units")) || {};
+    units[name] = unit;
+    localStorage.setItem("l_material_units", JSON.stringify(units));
+}
+
 // Load prices from LocalStorage or fallback to defaults
 function loadPrices() {
     screens = JSON.parse(localStorage.getItem("m_screens")) || JSON.parse(JSON.stringify(defaultScreens));
@@ -1417,7 +1428,7 @@ function calculate() {
 
         // Add Section Item Rows
         sec.items.forEach(item => {
-            const qtyFormatted = item.isMeter ? `${item.qty.toFixed(1)} m` : `${item.qty} Adet`;
+            const currentUnit = getMaterialUnit(item.name);
             const totalCost = item.qty * item.unitPrice;
             sectionSum += totalCost;
             
@@ -1426,12 +1437,63 @@ function calculate() {
             }
 
             const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${item.name}</td>
-                <td>${qtyFormatted}</td>
-                <td>$${item.unitPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                <td>$${totalCost.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-            `;
+            
+            // 1. Description
+            const tdName = document.createElement("td");
+            tdName.textContent = item.name;
+            row.appendChild(tdName);
+
+            // 2. Quantity + Unit Select
+            const tdQty = document.createElement("td");
+            tdQty.style.textAlign = "center";
+            
+            const qtySpan = document.createElement("span");
+            qtySpan.textContent = currentUnit === "m" ? item.qty.toFixed(1) : item.qty;
+            qtySpan.style.marginRight = "6px";
+            
+            const unitSel = document.createElement("select");
+            unitSel.style.fontSize = "0.75rem";
+            unitSel.style.background = "transparent";
+            unitSel.style.border = "none";
+            unitSel.style.color = "var(--text-muted)";
+            unitSel.style.cursor = "pointer";
+            unitSel.style.outline = "none";
+
+            const optAdet = document.createElement("option");
+            optAdet.value = "Adet";
+            optAdet.textContent = "Adet";
+            unitSel.appendChild(optAdet);
+
+            const optM = document.createElement("option");
+            optM.value = "m";
+            optM.textContent = "Metre";
+            unitSel.appendChild(optM);
+
+            unitSel.value = currentUnit;
+
+            unitSel.addEventListener("change", (e) => {
+                saveMaterialUnit(item.name, e.target.value);
+                calculate();
+            });
+
+            tdQty.appendChild(qtySpan);
+            tdQty.appendChild(unitSel);
+            row.appendChild(tdQty);
+
+            // 3. Unit Price
+            const tdPrice = document.createElement("td");
+            tdPrice.style.textAlign = "right";
+            tdPrice.style.fontFamily = "var(--font-mono)";
+            tdPrice.textContent = `$${item.unitPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            row.appendChild(tdPrice);
+
+            // 4. Total Price
+            const tdTotal = document.createElement("td");
+            tdTotal.style.textAlign = "right";
+            tdTotal.style.fontFamily = "var(--font-mono)";
+            tdTotal.textContent = `$${totalCost.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            row.appendChild(tdTotal);
+
             tbody.appendChild(row);
         });
 
