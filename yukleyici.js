@@ -1130,6 +1130,24 @@ function setupEventListeners() {
 
     document.getElementById("resetPricesBtn").addEventListener("click", resetPrices);
     document.getElementById("resetExpensesBtn").addEventListener("click", resetExpenses);
+
+    // Quick Add Material submit handler
+    document.getElementById("btnQuickAddSubmit").addEventListener("click", () => {
+        const selectedModelKey = document.getElementById("modelSelect").value;
+        const model = models[selectedModelKey];
+        if (!model) return;
+
+        const select = document.getElementById("quickAddMaterialSelect");
+        const mName = select.value;
+        if (!mName) {
+            alert("Lütfen reçeteye eklemek için listeden bir malzeme seçin!");
+            return;
+        }
+
+        model.items.push({ name: mName, qty: 1.0 });
+        savePricesAndExpenses();
+        calculate();
+    });
 }
 
 // Helper to look up USD price in materials list
@@ -1309,6 +1327,33 @@ function calculate() {
     document.getElementById("summarySubtotalUSD").textContent = `$${subtotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     document.getElementById("summaryOperatingUSD").textContent = `$${operatingCostPerMachine.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     document.getElementById("summaryGrandTotalUSD").textContent = `$${grandTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    initQuickAddDropdown(model);
+}
+
+function initQuickAddDropdown(model) {
+    const select = document.getElementById("quickAddMaterialSelect");
+    if (!select) return;
+    select.innerHTML = "";
+
+    // Default option
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "-- Reçeteye eklemek için bir parça seçin --";
+    select.appendChild(placeholder);
+
+    // Filter available library items not in active model items
+    const available = materials.filter(m => !model.items.some(item => item.name === m.name));
+
+    // Sort alphabetically
+    available.sort((a, b) => a.name.localeCompare(b.name));
+
+    available.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m.name;
+        opt.textContent = `${m.name} ($${m.priceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
+        select.appendChild(opt);
+    });
 }
 
 })();

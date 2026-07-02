@@ -230,6 +230,21 @@
                                     </tbody>
                                 </table>
                             </div>
+                            
+                            <!-- Quick Add Material Bar -->
+                            <div class="quick-add-container" style="display: flex; gap: 1rem; align-items: center; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px dashed var(--border-color); flex-wrap: wrap;">
+                                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-cart-plus" style="color: var(--accent-indigo);"></i> Reçeteye Yeni Parça Ekle:
+                                </span>
+                                <div class="input-container" style="flex: 1; min-width: 250px; padding: 0.35rem 0.5rem; border-color: rgba(99, 102, 241, 0.25);">
+                                    <select id="quickAddMaterialSelect" style="text-align: left; text-align-last: left; font-size: 0.85rem; width: 100%;">
+                                        <!-- Loaded dynamically -->
+                                    </select>
+                                </div>
+                                <button type="button" class="project-btn-main btn-save" id="btnQuickAddSubmit" style="padding: 0.5rem 1.5rem; font-size: 0.85rem; margin-top: 0; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-plus"></i> Reçeteye Ekle
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
