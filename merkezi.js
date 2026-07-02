@@ -1445,39 +1445,53 @@ function calculate() {
 
             // 2. Quantity + Unit Select
             const tdQty = document.createElement("td");
-            tdQty.style.textAlign = "center";
+            tdQty.style.display = "flex";
+            tdQty.style.alignItems = "center";
+            tdQty.style.justifyContent = "center";
+            tdQty.style.gap = "0.5rem";
             
             const qtySpan = document.createElement("span");
             qtySpan.textContent = currentUnit === "m" ? item.qty.toFixed(1) : item.qty;
-            qtySpan.style.marginRight = "6px";
             
-            const unitSel = document.createElement("select");
-            unitSel.style.fontSize = "0.75rem";
-            unitSel.style.background = "transparent";
-            unitSel.style.border = "none";
-            unitSel.style.color = "var(--text-muted)";
-            unitSel.style.cursor = "pointer";
-            unitSel.style.outline = "none";
+            const unitBadge = document.createElement("span");
+            unitBadge.style.fontSize = "0.75rem";
+            unitBadge.style.padding = "0.2rem 0.4rem";
+            unitBadge.style.borderRadius = "4px";
+            unitBadge.style.cursor = "pointer";
+            unitBadge.style.userSelect = "none";
+            unitBadge.style.fontWeight = "600";
+            unitBadge.style.display = "inline-block";
+            unitBadge.style.minWidth = "50px";
+            unitBadge.style.textAlign = "center";
+            unitBadge.style.transition = "all 0.2s ease";
 
-            const optAdet = document.createElement("option");
-            optAdet.value = "Adet";
-            optAdet.textContent = "Adet";
-            unitSel.appendChild(optAdet);
+            if (currentUnit === "m") {
+                unitBadge.style.background = "rgba(99, 102, 241, 0.12)";
+                unitBadge.style.border = "1px solid rgba(99, 102, 241, 0.25)";
+                unitBadge.style.color = "#c7d2fe";
+                unitBadge.textContent = "Metre";
+            } else {
+                unitBadge.style.background = "rgba(255, 255, 255, 0.03)";
+                unitBadge.style.border = "1px solid rgba(255, 255, 255, 0.08)";
+                unitBadge.style.color = "var(--text-secondary)";
+                unitBadge.textContent = "Adet";
+            }
 
-            const optM = document.createElement("option");
-            optM.value = "m";
-            optM.textContent = "Metre";
-            unitSel.appendChild(optM);
+            unitBadge.addEventListener("mouseenter", () => {
+                unitBadge.style.filter = "brightness(1.2)";
+            });
+            unitBadge.addEventListener("mouseleave", () => {
+                unitBadge.style.filter = "none";
+            });
 
-            unitSel.value = currentUnit;
-
-            unitSel.addEventListener("change", (e) => {
-                saveMaterialUnit(item.name, e.target.value);
+            unitBadge.addEventListener("click", () => {
+                const nextUnit = (currentUnit === "m") ? "Adet" : "m";
+                saveMaterialUnit(item.name, nextUnit);
                 calculate();
             });
 
             tdQty.appendChild(qtySpan);
-            tdQty.appendChild(unitSel);
+            tdQty.appendChild(unitBadge);
             row.appendChild(tdQty);
 
             // 3. Unit Price
