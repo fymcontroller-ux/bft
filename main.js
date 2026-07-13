@@ -1,7 +1,7 @@
 // Portal Orchestration & Navigation Logic
 
 // Force cache busting once for v3 transition to clear old service worker cache
-if (!localStorage.getItem('sw_version_reset_v3')) {
+if (!localStorage.getItem('sw_version_reset_v4')) {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(registrations => {
             let promises = [];
@@ -16,24 +16,24 @@ if (!localStorage.getItem('sw_version_reset_v3')) {
                             cachePromises.push(caches.delete(name));
                         }
                         Promise.all(cachePromises).then(() => {
-                            localStorage.setItem('sw_version_reset_v3', 'true');
+                            localStorage.setItem('sw_version_reset_v4', 'true');
                             window.location.reload(true);
                         });
                     }).catch(() => {
-                        localStorage.setItem('sw_version_reset_v3', 'true');
+                        localStorage.setItem('sw_version_reset_v4', 'true');
                         window.location.reload(true);
                     });
                 } else {
-                    localStorage.setItem('sw_version_reset_v3', 'true');
+                    localStorage.setItem('sw_version_reset_v4', 'true');
                     window.location.reload(true);
                 }
             });
         }).catch(() => {
-            localStorage.setItem('sw_version_reset_v3', 'true');
+            localStorage.setItem('sw_version_reset_v4', 'true');
             window.location.reload(true);
         });
     } else {
-        localStorage.setItem('sw_version_reset_v3', 'true');
+        localStorage.setItem('sw_version_reset_v4', 'true');
     }
 }
 

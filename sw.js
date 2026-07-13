@@ -1,4 +1,4 @@
-const CACHE_NAME = "fy-portal-v3";
+const CACHE_NAME = "fy-portal-v4";
 const ASSETS = [
     "index.html",
     "styles.css",

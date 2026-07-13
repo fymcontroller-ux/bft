@@ -297,7 +297,7 @@ function setupEventListeners() {
     
     const projNameInp = document.getElementById("projectNamePnomatik");
     if (projNameInp) {
-        projNameInp.addEventListener("input", () => {
+        projNameInp.addEventListener("change", () => {
             calculate();
             saveCurrentProjectPnomatikSilent();
         });

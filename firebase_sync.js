@@ -38,6 +38,9 @@
     ];
 
     let isSyncing = false; // Flag to prevent circular sync loop
+    let isPullingFromCloud = false;
+    let hasPendingUpload = false;
+    const myClientId = Math.random().toString(36).substring(2) + Date.now().toString(36);
     let autoUploadTimeout = null;
     let unsubscribeSnapshot = null;
 
@@ -47,14 +50,14 @@
 
     localStorage.setItem = function(key, value) {
         originalSetItem.apply(this, arguments);
-        if (!isSyncing && storageKeys.includes(key)) {
+        if (!isPullingFromCloud && storageKeys.includes(key)) {
             scheduleAutoUpload();
         }
     };
 
     localStorage.removeItem = function(key) {
         originalRemoveItem.apply(this, arguments);
-        if (!isSyncing && storageKeys.includes(key)) {
+        if (!isPullingFromCloud && storageKeys.includes(key)) {
             scheduleAutoUpload();
         }
     };
@@ -168,6 +171,7 @@
             isSyncing = true;
             const payload = {
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastWriterClientId: myClientId,
                 data: {}
             };
 
@@ -297,11 +301,17 @@
             updateStatusFn("Projeler siliniyor...");
 
             isSyncing = true;
-            localStorage.setItem("m_projects", "{}");
-            localStorage.setItem("p_projects", "{}");
+            isPullingFromCloud = true;
+            try {
+                localStorage.setItem("m_projects", "{}");
+                localStorage.setItem("p_projects", "{}");
+            } finally {
+                isPullingFromCloud = false;
+            }
 
             const payload = {
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastWriterClientId: myClientId,
                 data: {}
             };
 
@@ -367,11 +377,16 @@
 
     // Helper: Silent background upload
     async function silentUpload(companyCode) {
-        if (isSyncing) return;
+        if (isSyncing) {
+            hasPendingUpload = true;
+            return;
+        }
         isSyncing = true;
+        hasPendingUpload = false;
 
         const payload = {
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastWriterClientId: myClientId,
             data: {}
         };
 
@@ -400,6 +415,10 @@
             if (modalStatusEl) modalStatusEl.textContent = errMsg;
         } finally {
             isSyncing = false;
+            if (hasPendingUpload) {
+                hasPendingUpload = false;
+                scheduleAutoUpload();
+            }
         }
     }
 
@@ -420,6 +439,11 @@
 
                 const remotePayload = doc.data();
                 if (!remotePayload || !remotePayload.data) return;
+
+                // Ignore updates that were written by this client
+                if (remotePayload.lastWriterClientId === myClientId) {
+                    return;
+                }
 
                 // Compare remote data keys with local localStorage
                 let hasChanges = false;
@@ -445,19 +469,24 @@
 
                 if (hasChanges) {
                     isSyncing = true;
+                    isPullingFromCloud = true;
                     
-                    // Copy remote data into localStorage
-                    storageKeys.forEach(key => {
-                        const remoteVal = remotePayload.data[key];
-                        if (remoteVal !== null && remoteVal !== undefined) {
-                            localStorage.setItem(key, remoteVal);
-                        } else {
-                            // Only remove from local storage if explicitly set to null/empty in remote
-                            if (remoteVal !== undefined) {
-                                localStorage.removeItem(key);
+                    try {
+                        // Copy remote data into localStorage
+                        storageKeys.forEach(key => {
+                            const remoteVal = remotePayload.data[key];
+                            if (remoteVal !== null && remoteVal !== undefined) {
+                                localStorage.setItem(key, remoteVal);
+                            } else {
+                                // Only remove from local storage if explicitly set to null/empty in remote
+                                if (remoteVal !== undefined) {
+                                    localStorage.removeItem(key);
+                                }
                             }
-                        }
-                    });
+                        });
+                    } finally {
+                        isPullingFromCloud = false;
+                    }
 
                     const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
                     const successMsg = `Yeni bulut verisi uygulandı: ${nowStr}`;

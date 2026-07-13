@@ -1160,7 +1160,7 @@ function setupEventListeners() {
         "stationCount", "materialCount", "pumpCount", "machineDistance", 
         "longestDistance", "wallToMachineCable", "controlCableLength", 
         "wallToMachineHose", "screenSelect", "driverSelect", "pumpSelect", 
-        "pipeSelect", "laborRatio", "projectName"
+        "pipeSelect", "laborRatio"
     ];
 
     inputs.forEach(id => {
@@ -1176,6 +1176,13 @@ function setupEventListeners() {
             });
         }
     });
+
+    const projNameEl = document.getElementById("projectName");
+    if (projNameEl) {
+        projNameEl.addEventListener("change", () => {
+            saveCurrentProjectSilent();
+        });
+    }
     document.getElementById("exportBtnMerkeziRapor").addEventListener("click", () => {
         const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
         const projName = document.getElementById("projectName").value.trim() || "Merkezi Sistem Projesi";

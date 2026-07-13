@@ -138,7 +138,7 @@ function initTeklifVer() {
 
     document.getElementById("annexCentralProject").addEventListener("change", saveCurrentProposalTemplateSilent);
     document.getElementById("annexPnomatikProject").addEventListener("change", saveCurrentProposalTemplateSilent);
-    document.getElementById("proposalSaveName").addEventListener("input", saveCurrentProposalTemplateSilent);
+    document.getElementById("proposalSaveName").addEventListener("change", saveCurrentProposalTemplateSilent);
 
     // Load proposal from localStorage if exists
     proposalItems = JSON.parse(localStorage.getItem("t_proposal_items")) || [];
