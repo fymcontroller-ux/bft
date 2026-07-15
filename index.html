@@ -178,10 +178,16 @@
                                     </div>
                                 </div>
                                 <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                                    <button type="button" class="project-btn-main" id="btnAddNewModel" style="background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.2); color: #c7d2fe; flex: 1; min-width: 100px;">
+                                    <button type="button" class="project-btn-main" id="btnAddNewModel" style="background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.2); color: #c7d2fe; flex: 1; min-width: 80px;">
                                         <i class="fa-solid fa-plus"></i> Ekle
                                     </button>
-                                    <button type="button" class="project-btn-main btn-delete" id="btnDeleteModel" style="flex: 1; min-width: 100px;">
+                                    <button type="button" class="project-btn-main" id="btnCopyModel" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); color: #a7f3d0; flex: 1; min-width: 80px;">
+                                        <i class="fa-solid fa-copy"></i> Kopyala
+                                    </button>
+                                    <button type="button" class="project-btn-main" id="btnRenameModel" style="background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.2); color: #fde68a; flex: 1; min-width: 80px;">
+                                        <i class="fa-solid fa-pen-to-square"></i> Revize
+                                    </button>
+                                    <button type="button" class="project-btn-main btn-delete" id="btnDeleteModel" style="flex: 1; min-width: 80px;">
                                         <i class="fa-solid fa-trash-can"></i> Sil
                                     </button>
                                 </div>
@@ -1360,6 +1366,48 @@
             </div>
             <div class="modal-footer" style="margin-top: 1.5rem; padding-top: 1rem;">
                 <button class="project-btn-main btn-save" id="btnNewModelSubmit" style="padding: 0.5rem 1rem;">Model Oluştur</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Kopyala Modal -->
+    <div class="modal-overlay" id="copyModelModal">
+        <div class="modal-box" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-copy"></i> Modeli Kopyala</h2>
+                <button class="modal-close-btn" id="btnCloseCopyModel">&times;</button>
+            </div>
+            <div class="modal-body-grid" style="grid-template-columns: 1fr; gap: 1rem;">
+                <div class="form-group" style="grid-template-columns: 1.2fr 1fr; gap: 0.5rem; margin-bottom: 0;">
+                    <label for="copyModelNewNameInput">Yeni Model Adı</label>
+                    <div class="input-container" style="padding: 0.35rem 0.5rem;">
+                        <input type="text" id="copyModelNewNameInput" placeholder="Örn: MY502_KOPYA" style="text-align: left; font-size: 0.85rem;">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top: 1.5rem; padding-top: 1rem;">
+                <button class="project-btn-main btn-save" id="btnCopyModelSubmit" style="padding: 0.5rem 1rem;">Kopyasını Oluştur</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model İsmi Değiştir Modal -->
+    <div class="modal-overlay" id="renameModelModal">
+        <div class="modal-box" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-pen-to-square"></i> Model İsmi Revize Et</h2>
+                <button class="modal-close-btn" id="btnCloseRenameModel">&times;</button>
+            </div>
+            <div class="modal-body-grid" style="grid-template-columns: 1fr; gap: 1rem;">
+                <div class="form-group" style="grid-template-columns: 1.2fr 1fr; gap: 0.5rem; margin-bottom: 0;">
+                    <label for="renameModelNameInput">Yeni Model Adı</label>
+                    <div class="input-container" style="padding: 0.35rem 0.5rem;">
+                        <input type="text" id="renameModelNameInput" placeholder="Örn: MY600" style="text-align: left; font-size: 0.85rem;">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top: 1.5rem; padding-top: 1rem;">
+                <button class="project-btn-main btn-save" id="btnRenameModelSubmit" style="padding: 0.5rem 1rem;">İsmi Güncelle</button>
             </div>
         </div>
     </div>

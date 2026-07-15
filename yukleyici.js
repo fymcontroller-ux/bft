@@ -680,7 +680,11 @@ function setupEventListeners() {
     const newModelModal = document.getElementById("newModelModal");
 
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && newModelModal.classList.contains("open")) closeNewModelModal();
+        if (e.key === "Escape") {
+            if (newModelModal.classList.contains("open")) closeNewModelModal();
+            if (copyModelModal.classList.contains("open")) closeCopyModelModal();
+            if (renameModelModal.classList.contains("open")) closeRenameModelModal();
+        }
     });
 
     function openNewModelModal() {
@@ -700,6 +704,50 @@ function setupEventListeners() {
 
     newModelModal.addEventListener("click", (e) => {
         if (e.target === newModelModal) closeNewModelModal();
+    });
+
+    // Copy Model Modal Helpers & Event Listeners
+    const copyModelModal = document.getElementById("copyModelModal");
+
+    function openCopyModelModal() {
+        const selectedModelKey = document.getElementById("modelSelect").value;
+        document.getElementById("copyModelNewNameInput").value = selectedModelKey + "_KOPYA";
+        copyModelModal.classList.add("open");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeCopyModelModal() {
+        copyModelModal.classList.remove("open");
+        document.body.style.overflow = "";
+        document.getElementById("copyModelNewNameInput").value = "";
+    }
+
+    document.getElementById("btnCopyModel").addEventListener("click", openCopyModelModal);
+    document.getElementById("btnCloseCopyModel").addEventListener("click", closeCopyModelModal);
+    copyModelModal.addEventListener("click", (e) => {
+        if (e.target === copyModelModal) closeCopyModelModal();
+    });
+
+    // Rename Model Modal Helpers & Event Listeners
+    const renameModelModal = document.getElementById("renameModelModal");
+
+    function openRenameModelModal() {
+        const selectedModelKey = document.getElementById("modelSelect").value;
+        document.getElementById("renameModelNameInput").value = selectedModelKey;
+        renameModelModal.classList.add("open");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeRenameModelModal() {
+        renameModelModal.classList.remove("open");
+        document.body.style.overflow = "";
+        document.getElementById("renameModelNameInput").value = "";
+    }
+
+    document.getElementById("btnRenameModel").addEventListener("click", openRenameModelModal);
+    document.getElementById("btnCloseRenameModel").addEventListener("click", closeRenameModelModal);
+    renameModelModal.addEventListener("click", (e) => {
+        if (e.target === renameModelModal) closeRenameModelModal();
     });
 
     // Delete selected model handler
@@ -752,6 +800,75 @@ function setupEventListeners() {
         calculate();
 
         closeNewModelModal();
+    });
+
+    // Submit copy model
+    document.getElementById("btnCopyModelSubmit").addEventListener("click", () => {
+        const selectedModelKey = document.getElementById("modelSelect").value;
+        if (!selectedModelKey) return;
+
+        const newName = document.getElementById("copyModelNewNameInput").value.trim().toUpperCase();
+        if (!newName) {
+            alert("Lütfen yeni bir model adı girin.");
+            return;
+        }
+
+        if (models[newName]) {
+            alert("Bu model adı zaten kullanımda!");
+            return;
+        }
+
+        const oldModel = models[selectedModelKey];
+        models[newName] = {
+            machineCount: oldModel.machineCount,
+            items: oldModel.items.map(item => ({ ...item }))
+        };
+
+        savePricesAndExpenses();
+
+        // Update Select Option list
+        document.getElementById("modelSelect").value = newName;
+        loadPricesAndExpenses();
+        calculate();
+
+        closeCopyModelModal();
+        alert(`"${selectedModelKey}" modeli başarıyla "${newName}" olarak kopyalandı.`);
+    });
+
+    // Submit rename model
+    document.getElementById("btnRenameModelSubmit").addEventListener("click", () => {
+        const selectedModelKey = document.getElementById("modelSelect").value;
+        if (!selectedModelKey) return;
+
+        const newName = document.getElementById("renameModelNameInput").value.trim().toUpperCase();
+        if (!newName) {
+            alert("Lütfen yeni bir model adı girin.");
+            return;
+        }
+
+        if (newName === selectedModelKey) {
+            closeRenameModelModal();
+            return;
+        }
+
+        if (models[newName]) {
+            alert("Bu model adı zaten kullanımda!");
+            return;
+        }
+
+        // Rename key in models object
+        models[newName] = models[selectedModelKey];
+        delete models[selectedModelKey];
+
+        savePricesAndExpenses();
+
+        // Update Select Option list
+        document.getElementById("modelSelect").value = newName;
+        loadPricesAndExpenses();
+        calculate();
+
+        closeRenameModelModal();
+        alert(`Model ismi başarıyla "${newName}" olarak güncellendi.`);
     });
 
     // Model capacity input handler
