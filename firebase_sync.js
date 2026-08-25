@@ -558,6 +558,13 @@
                     const modalStatusEl = document.getElementById("modalSyncStatus");
                     if (statusEl) statusEl.textContent = successMsg;
                     if (modalStatusEl) modalStatusEl.textContent = successMsg;
+
+                    if (window.showToast) {
+                        window.showToast("☁️ Buluttaki güncel veriler eşitlendi! Ekran yenileniyor...", "info");
+                    }
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1200);
                 }
             }, err => {
                 console.error("Firestore onSnapshot error:", err);
