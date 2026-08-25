@@ -62,8 +62,8 @@ function savePricesAndExpenses() {
 }
 
 // Reset prices to starter defaults
-function resetPrices() {
-    if (confirm("Tüm malzeme verilerini orijinal fabrika ayarlarına döndürmek istediğinize emin misiniz?")) {
+async function resetPrices() {
+    if (await window.showCustomConfirm("Tüm malzeme verilerini orijinal fabrika ayarlarına döndürmek istediğinize emin misiniz?", "Fabrika Ayarlarına Sıfırla")) {
         localStorage.removeItem("l_materials");
         materials = JSON.parse(JSON.stringify(defaultMaterials));
         savePricesAndExpenses();
@@ -74,8 +74,8 @@ function resetPrices() {
 }
 
 // Reset expenses to starter defaults
-function resetExpenses() {
-    if (confirm("Tüm personel ve dükkan giderlerini fabrika ayarlarına sıfırlamak istediğinize emin misiniz?")) {
+async function resetExpenses() {
+    if (await window.showCustomConfirm("Tüm personel ve dükkan giderlerini fabrika ayarlarına sıfırlamak istediğinize emin misiniz?", "Fabrika Ayarlarına Sıfırla")) {
         localStorage.removeItem("l_personnel");
         localStorage.removeItem("l_shopExpenses");
         personnel = JSON.parse(JSON.stringify(defaultPersonnel));
@@ -164,8 +164,8 @@ function initPriceEditor() {
         delGrpBtn.style.padding = "0.25rem 0.5rem";
         delGrpBtn.style.fontSize = "0.75rem";
         delGrpBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Grubu Sil';
-        delGrpBtn.addEventListener("click", () => {
-            if (confirm(`"${groupName}" grubunu ve içindeki tüm malzemeleri silmek istediğinize emin misiniz?`)) {
+        delGrpBtn.addEventListener("click", async () => {
+            if (await window.showCustomConfirm(`"${groupName}" grubunu ve içindeki tüm malzemeleri silmek istediğinize emin misiniz?`)) {
                 materials = materials.filter(m => m.group !== groupName);
                 savePricesAndExpenses();
                 initPriceEditor();
@@ -347,8 +347,8 @@ function initPriceEditor() {
             delItemBtn.style.padding = "0.4rem 0.5rem";
             delItemBtn.style.marginTop = "0";
             delItemBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-            delItemBtn.addEventListener("click", () => {
-                if (confirm(`"${item.name}" malzemesini tamamen silmek istediğinize emin misiniz?`)) {
+            delItemBtn.addEventListener("click", async () => {
+                if (await window.showCustomConfirm(`"${item.name}" malzemesini tamamen silmek istediğinize emin misiniz?`)) {
                     materials = materials.filter(m => m.name !== item.name);
                     savePricesAndExpenses();
                     initPriceEditor();
@@ -501,8 +501,8 @@ function initExpenseEditor() {
         delBtn.style.padding = "0.25rem 0.5rem";
         delBtn.style.marginTop = "0";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-        delBtn.addEventListener("click", () => {
-            if (confirm(`"${p.name}" personelini silmek istediğinize emin misiniz?`)) {
+        delBtn.addEventListener("click", async () => {
+            if (await window.showCustomConfirm(`"${p.name}" personelini silmek istediğinize emin misiniz?`)) {
                 personnel.splice(idx, 1);
                 saveAndRecalcExpenses();
                 initExpenseEditor();
@@ -575,8 +575,8 @@ function initExpenseEditor() {
         delBtn.style.padding = "0.4rem 0.5rem";
         delBtn.style.marginTop = "0";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-        delBtn.addEventListener("click", () => {
-            if (confirm(`"${exp.name}" giderini tamamen silmek istediğinize emin misiniz?`)) {
+        delBtn.addEventListener("click", async () => {
+            if (await window.showCustomConfirm(`"${exp.name}" giderini tamamen silmek istediğinize emin misiniz?`)) {
                 shopExpenses.splice(idx, 1);
                 saveAndRecalcExpenses();
                 initExpenseEditor();
@@ -751,11 +751,11 @@ function setupEventListeners() {
     });
 
     // Delete selected model handler
-    document.getElementById("btnDeleteModel").addEventListener("click", () => {
+    document.getElementById("btnDeleteModel").addEventListener("click", async () => {
         const selectedModelKey = document.getElementById("modelSelect").value;
         if (!selectedModelKey) return;
 
-        if (confirm(`"${selectedModelKey}" modelini tamamen silmek istediğinize emin misiniz?`)) {
+        if (await window.showCustomConfirm(`"${selectedModelKey}" modelini tamamen silmek istediğinize emin misiniz?`)) {
             delete models[selectedModelKey];
             savePricesAndExpenses();
             loadPricesAndExpenses(); // Reload list

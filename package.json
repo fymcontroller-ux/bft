@@ -1,0 +1,45 @@
+{
+  "name": "bft-yonetim-portali",
+  "version": "1.0.14",
+  "description": "BFT İşletme Yönetimi, Merkezi Sistem ve Pnömatik Hesaplama Portalı",
+  "main": "electron_main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis"
+  },
+  "keywords": [
+    "bft",
+    "portal",
+    "pnomatik",
+    "merkezi-sistem"
+  ],
+  "author": "BFT",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.0"
+  },
+  "build": {
+    "appId": "com.bft.yonetimportali",
+    "productName": "BFT Yönetim Portalı",
+    "files": [
+      "**/*",
+      "!dist/**/*",
+      "!.git/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "bft_logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "BFT Yönetim Portalı",
+      "artifactName": "BFT_Yonetim_Portali_Setup_v${version}.${ext}"
+    }
+  }
+}

@@ -31,6 +31,7 @@
         "t_vat_rate",
         "t_proposals",
         "t_proposal_desc_library",
+        "t_customers",
         "l_personnel",
         "l_shopExpenses",
         "l_materials",
@@ -210,7 +211,7 @@
                 return;
             }
 
-            if (!confirm(`Buluttaki veriler çekildiğinde bu tarayıcıdaki tüm kayıtlar ezilecektir. Devam etmek istiyor musunuz?`)) {
+            if (!await window.showCustomConfirm("Buluttaki veriler çekildiğinde bu tarayıcıdaki tüm kayıtlar ezilecektir. Devam etmek istiyor musunuz?", "Bulut Verilerini İndir")) {
                 return;
             }
 
@@ -293,7 +294,7 @@
                 return;
             }
 
-            if (!confirm("Tüm kayıtlı Merkezi ve Pnömatik projelerini silmek istediğinize emin misiniz? Bu işlem hem tarayıcıdan hem de buluttan verileri kalıcı olarak silecektir! (Yükleyici verileri ve fiyat listeleri korunacaktır.)")) {
+            if (!await window.showCustomConfirm("Tüm kayıtlı Merkezi ve Pnömatik projelerini silmek istediğinize emin misiniz? Bu işlem hem tarayıcıdan hem de buluttan verileri kalıcı olarak silecektir!", "Projeleri Temizle")) {
                 return;
             }
 
@@ -375,6 +376,68 @@
         }, 3000); // 3 seconds after last local storage modification
     }
 
+    // Public Helpers for Exit / Flush Handling
+    window.hasPendingSync = function() {
+        return !!autoUploadTimeout || isSyncing || hasPendingUpload;
+    };
+
+    window.showExitSavingOverlay = function() {
+        let overlay = document.getElementById("exitSavingOverlay");
+        if (!overlay) {
+            overlay = document.createElement("div");
+            overlay.id = "exitSavingOverlay";
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0; left: 0; width: 100vw; height: 100vh;
+                background: rgba(10, 11, 16, 0.92);
+                backdrop-filter: blur(8px);
+                z-index: 999999;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: #ffffff;
+                font-family: system-ui, -apple-system, sans-serif;
+            `;
+            overlay.innerHTML = `
+                <div style="background: rgba(30, 32, 48, 0.95); border: 1px solid rgba(99, 102, 241, 0.3); padding: 2.2rem 3rem; border-radius: 16px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; gap: 1.25rem;">
+                    <div style="font-size: 2.8rem; color: #6366f1;">
+                        <i class="fa-solid fa-cloud-arrow-up fa-spin"></i>
+                    </div>
+                    <div style="font-size: 1.25rem; font-weight: 600; color: #f8fafc;">
+                        Değişiklikleriniz buluta kaydediliyor...
+                    </div>
+                    <div style="font-size: 0.9rem; color: #94a3b8;">
+                        Lütfen bekleyiniz, işlem tamamlanınca program otomatik kapanacaktır.
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+        overlay.style.display = "flex";
+    };
+
+    window.flushPendingSync = async function() {
+        if (window.hasPendingSync()) {
+            window.showExitSavingOverlay();
+        }
+        if (autoUploadTimeout) {
+            clearTimeout(autoUploadTimeout);
+            autoUploadTimeout = null;
+        }
+        const companyCode = (localStorage.getItem("t_sync_company_code") || "").trim().toLowerCase();
+        if (companyCode) {
+            await silentUpload(companyCode);
+        }
+    };
+
+    // Trigger instant upload on window beforeunload
+    window.addEventListener("beforeunload", (e) => {
+        if (window.hasPendingSync()) {
+            window.flushPendingSync();
+        }
+    });
+
     // Helper: Silent background upload
     async function silentUpload(companyCode) {
         if (isSyncing) {
@@ -451,15 +514,14 @@
                     const localVal = localStorage.getItem(key);
                     const remoteVal = remotePayload.data[key];
                     
-                    // If a key doesn't exist in remote cloud data, don't trigger sync pull.
-                    // This prevents infinite reload loops on new keys or missing cloud keys.
-                    if (remoteVal === undefined) {
+                    // If a key doesn't exist or is null in cloud data yet, don't trigger sync pull.
+                    // This prevents infinite reload loops when new keys like t_customers are added.
+                    if (remoteVal === undefined || remoteVal === null) {
                         continue;
                     }
 
-                    // Normalize both null and undefined to null to prevent false mismatch reload loops
-                    const normLocal = (localVal === null || localVal === undefined) ? null : localVal;
-                    const normRemote = (remoteVal === null || remoteVal === undefined) ? null : remoteVal;
+                    const normLocal = (localVal === null || localVal === undefined) ? "" : localVal;
+                    const normRemote = remoteVal;
 
                     if (normLocal !== normRemote) {
                         hasChanges = true;
@@ -489,22 +551,104 @@
                     }
 
                     const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
-                    const successMsg = `Yeni bulut verisi uygulandı: ${nowStr}`;
+                    const successMsg = `Buluttan yeni veri çekildi: ${nowStr}`;
                     localStorage.setItem("t_sync_last_status", successMsg);
 
-                    // Show visual feedback before reloading
                     const statusEl = document.getElementById("syncStatus");
                     const modalStatusEl = document.getElementById("modalSyncStatus");
-                    const reloadMsg = "Buluttan yeni veriler çekildi, sayfa yenileniyor...";
-                    if (statusEl) statusEl.textContent = reloadMsg;
-                    if (modalStatusEl) modalStatusEl.textContent = reloadMsg;
-
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1200);
+                    if (statusEl) statusEl.textContent = successMsg;
+                    if (modalStatusEl) modalStatusEl.textContent = successMsg;
                 }
             }, err => {
                 console.error("Firestore onSnapshot error:", err);
             });
     }
+
+    // ==========================================
+    // AUTOMATIC APP VERSION UPDATER MODULE
+    // ==========================================
+    const CURRENT_APP_VERSION = "1.0.14";
+
+    function isNewerVersion(current, remote) {
+        if (!current || !remote) return false;
+        const c = current.replace(/^v/, '').split('.').map(Number);
+        const r = remote.replace(/^v/, '').split('.').map(Number);
+        for (let i = 0; i < Math.max(c.length, r.length); i++) {
+            const cNum = c[i] || 0;
+            const rNum = r[i] || 0;
+            if (rNum > cNum) return true;
+            if (rNum < cNum) return false;
+        }
+        return false;
+    }
+
+    async function checkAppVersionUpdate() {
+        // Set current badge version UI
+        const badgeEl = document.getElementById("appVersionBadge");
+        if (badgeEl) badgeEl.textContent = `v${CURRENT_APP_VERSION}`;
+
+        try {
+            const doc = await db.collection("portal_data").doc("app_version").get();
+            if (!doc.exists) return;
+
+            const data = doc.data();
+            if (!data || !data.version) return;
+
+            const remoteVersion = data.version;
+            const downloadUrl = data.downloadUrl;
+
+            const btnUpdate = document.getElementById("btnUpdateApp");
+            const btnText = document.getElementById("btnUpdateAppText");
+
+            if (isNewerVersion(CURRENT_APP_VERSION, remoteVersion) && downloadUrl) {
+                if (btnUpdate && btnText) {
+                    btnText.textContent = `Yeni Sürüm Var (v${remoteVersion})`;
+                    btnUpdate.style.display = "flex";
+                    btnUpdate.onclick = () => handleAppUpdateClick(remoteVersion, downloadUrl, data.releaseNotes);
+                }
+            } else {
+                if (btnUpdate) btnUpdate.style.display = "none";
+            }
+        } catch (err) {
+            console.error("App version check error:", err);
+        }
+    }
+
+    async function handleAppUpdateClick(remoteVersion, downloadUrl, releaseNotes) {
+        const msg = `Yeni sürüm (v${remoteVersion}) yayınlandı!${releaseNotes ? '\n\nYenilikler: ' + releaseNotes : ''}\n\nİndirip otomatik güncellemek istiyor musunuz?`;
+        
+        const confirmed = window.showCustomConfirm 
+            ? await window.showCustomConfirm(msg, `Güncelleme: v${remoteVersion}`)
+            : confirm(msg);
+
+        if (!confirmed) return;
+
+        if (window.showToast) {
+            window.showToast(`v${remoteVersion} indiriliyor ve kuruluyor... Lütfen bekleyiniz.`, "info");
+        }
+
+        // Check if running inside Electron app
+        if (typeof window.require !== 'undefined') {
+            try {
+                const { ipcRenderer } = window.require('electron');
+                const result = await ipcRenderer.invoke('download-and-install-update', downloadUrl);
+                if (result && !result.success) {
+                    if (window.showToast) window.showToast("Güncelleme hatası: " + result.error, "error");
+                    else alert("Güncelleme hatası: " + result.error);
+                }
+            } catch (err) {
+                console.error("Electron IPC update error:", err);
+                window.open(downloadUrl, "_blank");
+            }
+        } else {
+            // Running in regular browser
+            window.open(downloadUrl, "_blank");
+        }
+    }
+
+    // Trigger version check on startup and every 20 minutes
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(checkAppVersionUpdate, 1500);
+        setInterval(checkAppVersionUpdate, 20 * 60 * 1000);
+    });
 })();

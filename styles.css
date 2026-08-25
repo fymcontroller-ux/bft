@@ -79,6 +79,11 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
+.sidebar-logo button,
+.sidebar-logo button * {
+    -webkit-text-fill-color: initial;
+}
+
 .sidebar-logo i {
     color: var(--accent-indigo);
     filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
@@ -343,14 +348,24 @@ label {
     padding-right: 0.5rem;
 }
 
+select {
+    color-scheme: dark !important;
+}
+
 .input-container select {
     text-align-last: right;
     cursor: pointer;
 }
 
-.input-container select option {
-    background: #11131a;
-    color: var(--text-primary);
+select option {
+    background-color: #161924 !important;
+    color: #f1f5f9 !important;
+    padding: 8px 12px !important;
+}
+
+select option:checked, select option:hover {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
 }
 
 .unit {
@@ -1937,6 +1952,12 @@ label {
 }
 .table-cell-input[type=number] {
     -moz-appearance: textfield;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
 

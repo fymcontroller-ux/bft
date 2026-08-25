@@ -165,6 +165,26 @@ function initTeklifVer() {
         if (savedInfo.noteForceMajeure) document.getElementById("noteForceMajeure").value = savedInfo.noteForceMajeure;
     }
 
+    // Load customer directory dropdown
+    loadCustomerDropdown(savedInfo ? savedInfo.company : "");
+
+    const customerSelectEl = document.getElementById("customerSelect");
+    if (customerSelectEl) {
+        customerSelectEl.addEventListener("change", handleCustomerSelectChange);
+    }
+
+    const btnDeleteCustEl = document.getElementById("btnDeleteCustomer");
+    if (btnDeleteCustEl) {
+        btnDeleteCustEl.addEventListener("click", deleteSelectedCustomer);
+    }
+
+    // Bind customer field blur listeners for clean auto-save/update without keypress clutter
+    const customerInputIds = ["clientCompany", "contactPerson", "clientEmail", "clientTaxOffice", "clientTaxNo", "clientAddress"];
+    customerInputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("blur", autoSaveOrUpdateCustomer);
+    });
+
     // Bind company input change listeners to persist state
     const companyInputs = [
         "proposalTitle", "clientCompany", "contactPerson", "proposalDate",
@@ -232,10 +252,10 @@ function initTeklifVer() {
         alert(`"${title}" açıklaması başarıyla hafızaya kaydedildi.`);
     });
 
-    document.getElementById("btnDeleteDescFromLib").addEventListener("click", () => {
+    document.getElementById("btnDeleteDescFromLib").addEventListener("click", async () => {
         const title = document.getElementById("descLibrarySelect").value;
         if (!title) return;
-        if (!confirm(`"${title}" açıklamasını hafızadan silmek istediğinize emin misiniz?`)) return;
+        if (!await window.showCustomConfirm(`"${title}" açıklamasını hafızadan silmek istediğinize emin misiniz?`)) return;
 
         const library = JSON.parse(localStorage.getItem("t_proposal_desc_library")) || {};
         delete library[title];
@@ -279,6 +299,160 @@ function saveCompanyInfoState() {
     };
     localStorage.setItem("t_company_info", JSON.stringify(info));
     saveCurrentProposalTemplateSilent();
+}
+
+// Müşteri Cari Yönetimi (Customer Directory Management)
+function cleanUpGarbageCustomers(customers) {
+    if (!customers) return {};
+    const keys = Object.keys(customers);
+    
+    keys.forEach(key => {
+        // Remove single character or empty entries
+        if (key.trim().length < 2) {
+            delete customers[key];
+            return;
+        }
+        
+        const item = customers[key];
+        const hasDetails = item.contact || item.email || item.taxNo || item.address;
+        
+        // If an entry has no details and is a prefix of another longer entry, remove the partial prefix
+        if (!hasDetails) {
+            const isPrefixOfLonger = keys.some(otherKey => 
+                otherKey !== key && 
+                otherKey.toLowerCase().startsWith(key.toLowerCase())
+            );
+            if (isPrefixOfLonger) {
+                delete customers[key];
+            }
+        }
+    });
+
+    return customers;
+}
+
+function loadCustomerDropdown(selectedName = "") {
+    const select = document.getElementById("customerSelect");
+    if (!select) return;
+    
+    let customers = JSON.parse(localStorage.getItem("t_customers")) || {};
+    
+    // Clean up partial typing artifacts
+    customers = cleanUpGarbageCustomers(customers);
+    localStorage.setItem("t_customers", JSON.stringify(customers));
+
+    const currentVal = select.value;
+    select.innerHTML = '<option value="">-- Kayıtlı Müşteri Seçin --</option>';
+
+    Object.keys(customers).sort((a, b) => a.localeCompare(b, "tr")).forEach(compName => {
+        const opt = document.createElement("option");
+        opt.value = compName;
+        opt.textContent = compName;
+        select.appendChild(opt);
+    });
+
+    const targetVal = selectedName || currentVal;
+    if (targetVal && customers[targetVal]) {
+        select.value = targetVal;
+    }
+}
+
+function handleCustomerSelectChange() {
+    const select = document.getElementById("customerSelect");
+    if (!select) return;
+
+    const selectedName = select.value;
+    const customers = JSON.parse(localStorage.getItem("t_customers")) || {};
+
+    if (!selectedName || !customers[selectedName]) {
+        document.getElementById("clientCompany").value = "";
+        document.getElementById("contactPerson").value = "";
+        document.getElementById("clientEmail").value = "";
+        document.getElementById("clientTaxOffice").value = "";
+        document.getElementById("clientTaxNo").value = "";
+        document.getElementById("clientAddress").value = "";
+    } else {
+        const c = customers[selectedName];
+        document.getElementById("clientCompany").value = c.company || "";
+        document.getElementById("contactPerson").value = c.contact || "";
+        document.getElementById("clientEmail").value = c.email || "";
+        document.getElementById("clientTaxOffice").value = c.taxOffice || "";
+        document.getElementById("clientTaxNo").value = c.taxNo || "";
+        document.getElementById("clientAddress").value = c.address || "";
+    }
+    
+    // Save company info state without re-triggering customer overwrite
+    const info = {
+        title: document.getElementById("proposalTitle").value,
+        company: document.getElementById("clientCompany").value,
+        contact: document.getElementById("contactPerson").value,
+        date: document.getElementById("proposalDate").value,
+        email: document.getElementById("clientEmail").value,
+        taxOffice: document.getElementById("clientTaxOffice").value,
+        taxNo: document.getElementById("clientTaxNo").value,
+        address: document.getElementById("clientAddress").value,
+        termsValidity: document.getElementById("termsValidity").value,
+        termsPayment: document.getElementById("termsPayment").value,
+        termsDelivery: document.getElementById("termsDelivery").value,
+        termsShipping: document.getElementById("termsShipping").value,
+        noteBankExchange: document.getElementById("noteBankExchange").value,
+        noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
+        noteForceMajeure: document.getElementById("noteForceMajeure").value
+    };
+    localStorage.setItem("t_company_info", JSON.stringify(info));
+    saveCurrentProposalTemplateSilent();
+}
+
+function autoSaveOrUpdateCustomer() {
+    const companyName = document.getElementById("clientCompany").value.trim();
+    if (!companyName || companyName.length < 2) return;
+
+    let customers = JSON.parse(localStorage.getItem("t_customers")) || {};
+    
+    customers[companyName] = {
+        company: companyName,
+        contact: document.getElementById("contactPerson").value.trim(),
+        email: document.getElementById("clientEmail").value.trim(),
+        taxOffice: document.getElementById("clientTaxOffice").value.trim(),
+        taxNo: document.getElementById("clientTaxNo").value.trim(),
+        address: document.getElementById("clientAddress").value.trim()
+    };
+
+    customers = cleanUpGarbageCustomers(customers);
+
+    localStorage.setItem("t_customers", JSON.stringify(customers));
+    loadCustomerDropdown(companyName);
+}
+
+async function deleteSelectedCustomer() {
+    const select = document.getElementById("customerSelect");
+    let name = select ? select.value : "";
+    if (!name) {
+        name = document.getElementById("clientCompany").value.trim();
+    }
+    if (!name) {
+        alert("Lütfen önce silmek istediğiniz kayıtlı müşteriyi seçin.");
+        return;
+    }
+
+    if (!await window.showCustomConfirm(`"${name}" müşterisini cari veritabanından silmek istediğinize emin misiniz?`, "Müşteri Cari Sil")) {
+        return;
+    }
+
+    const customers = JSON.parse(localStorage.getItem("t_customers")) || {};
+    delete customers[name];
+    localStorage.setItem("t_customers", JSON.stringify(customers));
+
+    document.getElementById("clientCompany").value = "";
+    document.getElementById("contactPerson").value = "";
+    document.getElementById("clientEmail").value = "";
+    document.getElementById("clientTaxOffice").value = "";
+    document.getElementById("clientTaxNo").value = "";
+    document.getElementById("clientAddress").value = "";
+
+    saveCompanyInfoState();
+    loadCustomerDropdown("");
+    alert(`"${name}" cari kaydı silindi.`);
 }
 
 function populateAnnexCentralDropdown() {
@@ -403,8 +577,8 @@ function addCatalogCategory() {
     renderCatalogViewer();
 }
 
-function deleteCatalogCategory(categoryName) {
-    if (confirm(`"${categoryName}" kategorisini ve içindeki tüm ürünleri silmek istediğinize emin misiniz?`)) {
+async function deleteCatalogCategory(categoryName) {
+    if (await window.showCustomConfirm(`"${categoryName}" kategorisini ve içindeki tüm ürünleri silmek istediğinize emin misiniz?`)) {
         delete productCatalog[categoryName];
         localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
         updateCatalogDropdowns();
@@ -448,8 +622,8 @@ function addCatalogProduct() {
     renderCatalogViewer();
 }
 
-function deleteCatalogProduct(categoryName, productName) {
-    if (confirm(`"${productName}" ürününü silmek istediğinize emin misiniz?`)) {
+async function deleteCatalogProduct(categoryName, productName) {
+    if (await window.showCustomConfirm(`"${productName}" ürününü silmek istediğinize emin misiniz?`)) {
         productCatalog[categoryName] = productCatalog[categoryName].filter(p => p.name !== productName);
         localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
         renderCatalogViewer();
@@ -690,8 +864,8 @@ function deleteProposalItem(idx) {
     updateProposalSummary();
 }
 
-function clearProposal() {
-    if (confirm("Teklif kalemlerini sıfırlamak istediğinize emin misiniz?")) {
+async function clearProposal() {
+    if (await window.showCustomConfirm("Teklif kalemlerini sıfırlamak istediğinize emin misiniz?", "Teklifi Sıfırla")) {
         proposalItems = [];
         saveProposalState();
         updateProposalSummary();
@@ -1157,18 +1331,23 @@ function getPnomatikAnnexHTML(projectName) {
     const result = data.findRecommendedBlower(Q_m3hour, deltaP_mbar, proj.selectedPhase || "3AC");
     let blowerHTML = "";
     if (result && result.recommended) {
-        const rec = result.recommended;
-        const usagePercent = Math.round((Q_m3hour / rec.availFlow) * 100.0);
+        const allMatches = [result.recommended, ...result.alternatives];
+        let chosen = result.recommended;
+        if (proj.selectedBlowerModel) {
+            const found = allMatches.find(item => item.model.name === proj.selectedBlowerModel);
+            if (found) chosen = found;
+        }
+        const usagePercent = Math.round((Q_m3hour / chosen.availFlow) * 100.0);
         blowerHTML = `
             <div style="margin-top: 15px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc;">
                 <h4 style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 0.9rem;"><i class="fa-solid fa-wind"></i> Mühendislik Blower Seçimi ve Eşleştirme</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; font-size: 0.8rem;">
-                    <div><strong>Önerilen Model:</strong> ${rec.model.name.split(" (")[0]}</div>
-                    <div><strong>Motor Gücü:</strong> ${rec.model.power} kW</div>
-                    <div><strong>Çalışma Noktası Debi Verimi:</strong> ${rec.availFlow.toFixed(1)} m³/sa</div>
+                    <div><strong>Önerilen Model:</strong> ${chosen.model.name.split(" (")[0]}</div>
+                    <div><strong>Motor Gücü:</strong> ${chosen.model.power} kW</div>
+                    <div><strong>Çalışma Noktası Debi Verimi:</strong> ${chosen.availFlow.toFixed(1)} m³/sa</div>
                     <div><strong>Kapasite Kullanım Oranı:</strong> %${usagePercent}</div>
-                    <div><strong>Model Maks. Debi:</strong> ${rec.model.maxFlow} m³/sa</div>
-                    <div><strong>Model Maks. Sürekli Vakum:</strong> ${rec.model.maxVacuum} mbar</div>
+                    <div><strong>Model Maks. Debi:</strong> ${chosen.model.maxFlow} m³/sa</div>
+                    <div><strong>Model Maks. Sürekli Vakum:</strong> ${chosen.model.maxVacuum} mbar</div>
                 </div>
             </div>
         `;
@@ -1663,6 +1842,7 @@ function loadSelectedProposalTemplate() {
             document.getElementById("noteOrderConfirm").value = prop.companyInfo.noteOrderConfirm || "";
             document.getElementById("noteForceMajeure").value = prop.companyInfo.noteForceMajeure || "";
             
+            loadCustomerDropdown(prop.companyInfo.company || "");
             saveCompanyInfoState();
         }
 
@@ -1715,6 +1895,7 @@ function resetToNewProposal() {
         document.getElementById("clientTaxNo").value = "";
         document.getElementById("clientAddress").value = "";
         document.getElementById("savedProposalsSelect").value = "";
+        loadCustomerDropdown("");
         
         document.getElementById("proposalDescription").value = "";
         document.getElementById("showProposalDescription").checked = true;
@@ -1737,7 +1918,7 @@ function resetToNewProposal() {
     }
 }
 
-function deleteSelectedProposalTemplate() {
+async function deleteSelectedProposalTemplate() {
     const select = document.getElementById("savedProposalsSelect");
     const name = select.value;
     if (!name) {
@@ -1745,7 +1926,7 @@ function deleteSelectedProposalTemplate() {
         return;
     }
 
-    if (!confirm(`"${name}" teklifini kalıcı olarak silmek istediğinize emin misiniz?`)) {
+    if (!await window.showCustomConfirm(`"${name}" teklifini kalıcı olarak silmek istediğinize emin misiniz?`)) {
         return;
     }
 

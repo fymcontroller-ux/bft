@@ -34,8 +34,9 @@ const products = [
     { name: "Sabun(rende)", size: "20x5 mm", density: 1100, bulkDensity: 600, velocityRange: "23-27 m/s", beta: 0.08, defaultV: 27 },
 ];
 
-// Global state for blower phase selection
+// Global state for blower phase selection and active blower model
 let selectedPhase = "3AC";
+let activeSelectedBlower = null;
 
 // Blower models coordinates and specs database (based on Vacuum diagrams in Grafikler(Vakum).pdf)
 const blowerModels = [
@@ -452,19 +453,33 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
         noMatchContainer.style.display = "none";
 
         const rec = result.recommended;
-        
+        const allMatches = [rec, ...result.alternatives];
+
+        // Check if previously active or saved blower model is among matches
+        let selectedMatch = null;
+        if (activeSelectedBlower) {
+            selectedMatch = allMatches.find(item => item.model.name === activeSelectedBlower);
+        }
+        if (!selectedMatch) {
+            selectedMatch = rec;
+            activeSelectedBlower = rec.model.name;
+        }
+
+        const activeModel = selectedMatch.model;
+        const activeAvailFlow = selectedMatch.availFlow;
+
         // Update recommended model display (split name to keep primary title clean, e.g. "2RB 730")
-        recBlowerModel.textContent = rec.model.name.split(" (")[0];
-        recBlowerPower.textContent = rec.model.power + " kW";
+        recBlowerModel.textContent = activeModel.name.split(" (")[0];
+        recBlowerPower.textContent = activeModel.power + " kW";
         
         // Capacity utilization %
-        const usagePercent = Math.round((requiredFlow / rec.availFlow) * 100.0);
+        const usagePercent = Math.round((requiredFlow / activeAvailFlow) * 100.0);
         recBlowerUsage.textContent = usagePercent + "%";
-        recBlowerCapacity.textContent = rec.availFlow.toFixed(1) + " m³/sa";
+        recBlowerCapacity.textContent = activeAvailFlow.toFixed(1) + " m³/sa";
         
         // Technical Limits
-        if (recBlowerMaxFlow) recBlowerMaxFlow.textContent = rec.model.maxFlow + " m³/sa";
-        if (recBlowerMaxVacuum) recBlowerMaxVacuum.textContent = rec.model.maxVacuum + " mbar";
+        if (recBlowerMaxFlow) recBlowerMaxFlow.textContent = activeModel.maxFlow + " m³/sa";
+        if (recBlowerMaxVacuum) recBlowerMaxVacuum.textContent = activeModel.maxVacuum + " mbar";
 
         // Update progress bar width and color
         recBlowerProgressBar.style.width = Math.min(usagePercent, 100) + "%";
@@ -480,26 +495,27 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
         recBlowerDesc.innerHTML = `Hesaplanan çalışma noktasına (<strong>${requiredFlow.toFixed(1)} m³/sa @ ${requiredPressure.toFixed(0)} mbar</strong>) en uygun Doğuşsan 2RB yan kanal blower modelidir. <em>(%25 emniyet toleransı uygulanmıştır: <strong>${(requiredPressure * 1.25).toFixed(0)} mbar</strong>)</em>`;
 
         // Update warnings & safety points
-        updateBlowerNotes(rec.model, usagePercent, requiredPressure);
+        updateBlowerNotes(activeModel, usagePercent, requiredPressure);
 
         // Load alternative compatible models (including the recommended model so the user can easily toggle back to it)
-        const allMatches = [rec, ...result.alternatives];
         recBlowerAlternatives.innerHTML = "";
         
         allMatches.forEach(alt => {
             const tag = document.createElement("span");
             tag.className = "alt-tag";
-            const isRec = (alt.model.name === rec.model.name);
+            const isSelected = (alt.model.name === activeModel.name);
             tag.textContent = alt.model.name; // Keep name as is since it already contains kW (e.g. "2RB 730 (4.00 kW)")
             tag.title = `${requiredPressure.toFixed(0)} mbar vakumda maks debisi: ${alt.availFlow.toFixed(1)} m³/sa`;
             
-            if (isRec) {
+            if (isSelected) {
                 tag.style.borderColor = "var(--accent-violet)";
                 tag.style.background = "rgba(139, 92, 246, 0.12)";
             }
             
             // Allow interactive preview of alternative specs upon clicking tag
             tag.addEventListener("click", () => {
+                activeSelectedBlower = alt.model.name;
+
                 // Reset styling for all tags
                 Array.from(recBlowerAlternatives.children).forEach(child => {
                     child.style.borderColor = "";
@@ -531,6 +547,9 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
 
                 // Update dynamic warnings when this alternative is selected
                 updateBlowerNotes(alt.model, altUsage, requiredPressure);
+
+                // Auto-save silently if project already has a name
+                saveCurrentProjectPnomatikSilent();
             });
 
             recBlowerAlternatives.appendChild(tag);
@@ -603,7 +622,8 @@ function saveCurrentProjectPnomatik() {
         elbows: parseInt(document.getElementById("elbows").value) || 3,
         airDensity: parseFloat(document.getElementById("airDensity").value) || 0.8,
         velocityRatio: parseFloat(document.getElementById("velocityRatio").value) || 0.7,
-        selectedPhase: selectedPhase
+        selectedPhase: selectedPhase,
+        selectedBlowerModel: activeSelectedBlower
     };
 
     localStorage.setItem("p_projects", JSON.stringify(projects));
@@ -637,7 +657,8 @@ function saveCurrentProjectPnomatikSilent() {
         elbows: parseInt(document.getElementById("elbows").value) || 3,
         airDensity: parseFloat(document.getElementById("airDensity").value) || 0.8,
         velocityRatio: parseFloat(document.getElementById("velocityRatio").value) || 0.7,
-        selectedPhase: selectedPhase
+        selectedPhase: selectedPhase,
+        selectedBlowerModel: activeSelectedBlower
     };
 
     localStorage.setItem("p_projects", JSON.stringify(projects));
@@ -657,7 +678,7 @@ function saveCurrentProjectPnomatikSilent() {
     }
 }
 
-function deleteSelectedProjectPnomatik() {
+async function deleteSelectedProjectPnomatik() {
     const select = document.getElementById("savedProjectsSelectPnomatik");
     const name = select ? select.value : "";
     if (!name) {
@@ -665,7 +686,7 @@ function deleteSelectedProjectPnomatik() {
         return;
     }
 
-    if (!confirm(`"${name}" projesini silmek istediğinize emin misiniz?`)) {
+    if (!await window.showCustomConfirm(`"${name}" projesini silmek istediğinize emin misiniz?`)) {
         return;
     }
 
@@ -705,6 +726,7 @@ function loadSelectedProjectPnomatik() {
     document.getElementById("velocityRatio").value = p.velocityRatio;
     
     selectedPhase = p.selectedPhase || "3AC";
+    activeSelectedBlower = p.selectedBlowerModel || null;
     const btn3AC = document.getElementById("btn3AC");
     const btn1AC = document.getElementById("btn1AC");
     if (btn3AC && btn1AC) {
@@ -734,6 +756,7 @@ function resetToNewProjectPnomatik() {
     document.getElementById("velocityRatio").value = 0.7;
     
     selectedPhase = "3AC";
+    activeSelectedBlower = null;
     const btn3AC = document.getElementById("btn3AC");
     const btn1AC = document.getElementById("btn1AC");
     if (btn3AC && btn1AC) {

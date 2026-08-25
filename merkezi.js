@@ -340,8 +340,8 @@ function initPriceEditor() {
             delBtn.style.padding = "0.4rem 0.5rem";
             delBtn.style.marginTop = "0";
             delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-            delBtn.addEventListener("click", () => {
-                if (confirm(`"${item.name}" malzemesini silmek istediğinize emin misiniz?`)) {
+            delBtn.addEventListener("click", async () => {
+                if (await window.showCustomConfirm(`"${item.name}" malzemesini silmek istediğinize emin misiniz?`)) {
                     onDelete(idx);
                 }
             });
@@ -667,8 +667,8 @@ function initPriceEditor() {
         delBtn.style.padding = "0.4rem 0.5rem";
         delBtn.style.marginTop = "0";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-        delBtn.addEventListener("click", () => {
-            if (confirm(`"${p.name}" borusunu silmek istediğinize emin misiniz?`)) {
+        delBtn.addEventListener("click", async () => {
+            if (await window.showCustomConfirm(`"${p.name}" borusunu silmek istediğinize emin misiniz?`)) {
                 pipes.splice(masterIdx, 1);
                 savePrices();
                 initSelectors();
@@ -801,8 +801,8 @@ function initPriceEditor() {
         delBtn.style.padding = "0.4rem 0.5rem";
         delBtn.style.marginTop = "0";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-        delBtn.addEventListener("click", () => {
-            if (confirm(`"${p.name}" borusunu silmek istediğinize emin misiniz?`)) {
+        delBtn.addEventListener("click", async () => {
+            if (await window.showCustomConfirm(`"${p.name}" borusunu silmek istediğinize emin misiniz?`)) {
                 pipes.splice(masterIdx, 1);
                 savePrices();
                 initSelectors();
@@ -942,8 +942,8 @@ function initPriceEditor() {
         delBtn.style.padding = "0.4rem 0.5rem";
         delBtn.style.marginTop = "0";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-        delBtn.addEventListener("click", () => {
-            if (confirm(`"${h.name}" hortumunu tüm borulardan temizlemek istediğinize emin misiniz?`)) {
+        delBtn.addEventListener("click", async () => {
+            if (await window.showCustomConfirm(`"${h.name}" hortumunu tüm borulardan temizlemek istediğinize emin misiniz?`)) {
                 for (let i = pipes.length - 1; i >= 0; i--) {
                     if (pipes[i].hose === h.name) {
                         if (pipes[i].name.startsWith("[HORTUM]")) {
@@ -1085,8 +1085,8 @@ function initPriceEditor() {
         delBtn.style.padding = "0.4rem 0.5rem";
         delBtn.style.marginTop = "0";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-        delBtn.addEventListener("click", () => {
-            if (confirm(`"${c.name}" kelepçesini tüm borulardan temizlemek istediğinize emin misiniz?`)) {
+        delBtn.addEventListener("click", async () => {
+            if (await window.showCustomConfirm(`"${c.name}" kelepçesini tüm borulardan temizlemek istediğinize emin misiniz?`)) {
                 for (let i = pipes.length - 1; i >= 0; i--) {
                     if (pipes[i].clamp === c.name) {
                         if (pipes[i].name.startsWith("[KELEPÇE]")) {
@@ -1703,7 +1703,7 @@ function resetToNewProject() {
     calculate();
 }
 
-function deleteSelectedProject() {
+async function deleteSelectedProject() {
     const select = document.getElementById("savedProjectsSelect");
     const name = select.value;
     if (!name) {
@@ -1711,7 +1711,7 @@ function deleteSelectedProject() {
         return;
     }
 
-    if (!confirm(`"${name}" projesini silmek istediğinize emin misiniz?`)) {
+    if (!await window.showCustomConfirm(`"${name}" projesini silmek istediğinize emin misiniz?`)) {
         return;
     }
 
