@@ -248,7 +248,7 @@
                     updateSyncUI(companyCode, successMsg);
 
                     alert(`Veriler buluttan başarıyla indirildi! Portal güncelleniyor...`);
-                    location.reload();
+                    location.reload(true);
                 } else {
                     alert("Kayıtlı veri şablonu hatalı.");
                     isSyncing = false;
@@ -331,7 +331,7 @@
                 updateSyncUI(companyCode, successMsg);
 
                 alert("Tüm Merkezi ve Pnömatik projeleri başarıyla silindi ve bulut eşitlendi.");
-                location.reload();
+                location.reload(true);
             } catch (err) {
                 console.error("Firebase sync project delete error:", err);
                 updateStatusFn("Silme hatası!");
@@ -563,7 +563,7 @@
                         window.showToast("☁️ Buluttaki güncel veriler eşitlendi! Ekran yenileniyor...", "info");
                     }
                     setTimeout(() => {
-                        location.reload();
+                        location.reload(true);
                     }, 1200);
                 }
             }, err => {
