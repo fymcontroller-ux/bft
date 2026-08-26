@@ -84,8 +84,9 @@
             if (modalStatusEl) modalStatusEl.textContent = statusText;
         };
 
-        // Restore saved company code & status
-        const savedCode = localStorage.getItem("t_sync_company_code") || "bft_portal";
+        // Restore saved company code & status (auto-save bft_portal if not set)
+        let savedCode = (localStorage.getItem("t_sync_company_code") || "bft_portal").trim().toLowerCase();
+        localStorage.setItem("t_sync_company_code", savedCode);
         const lastSyncMsg = localStorage.getItem("t_sync_last_status") || "Son Eşleşme: Yapılmadı";
         updateSyncUI(savedCode, lastSyncMsg);
 
@@ -360,7 +361,7 @@
 
     // Helper: Schedule silent auto upload
     function scheduleAutoUpload() {
-        const companyCode = (localStorage.getItem("t_sync_company_code") || "").trim().toLowerCase();
+        const companyCode = (localStorage.getItem("t_sync_company_code") || "bft_portal").trim().toLowerCase();
         if (!companyCode) return;
 
         // Show pending save message
@@ -373,7 +374,7 @@
         clearTimeout(autoUploadTimeout);
         autoUploadTimeout = setTimeout(async () => {
             await silentUpload(companyCode);
-        }, 3000); // 3 seconds after last local storage modification
+        }, 1500); // 1.5 seconds fast auto-upload
     }
 
     // Public Helpers for Exit / Flush Handling
@@ -425,16 +426,23 @@
             clearTimeout(autoUploadTimeout);
             autoUploadTimeout = null;
         }
-        const companyCode = (localStorage.getItem("t_sync_company_code") || "").trim().toLowerCase();
+        const companyCode = (localStorage.getItem("t_sync_company_code") || "bft_portal").trim().toLowerCase();
         if (companyCode) {
             await silentUpload(companyCode);
         }
     };
 
-    // Trigger instant upload on window beforeunload
-    window.addEventListener("beforeunload", (e) => {
+    // Trigger instant upload on window exit / mobile app hide
+    const handleExitUpload = () => {
         if (window.hasPendingSync()) {
             window.flushPendingSync();
+        }
+    };
+    window.addEventListener("beforeunload", handleExitUpload);
+    window.addEventListener("pagehide", handleExitUpload);
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+            handleExitUpload();
         }
     });
 
