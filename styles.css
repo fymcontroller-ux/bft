@@ -1874,8 +1874,8 @@ select option:checked, select option:hover {
     }
 
     /* Yükleyici - Tablo ve Reçete ekleme barı mobilde gizlenir */
-    #calcTabContent .table-container,
-    #calcTabContent .quick-add-container {
+    .table-container,
+    .quick-add-container {
         display: none !important;
     }
 
@@ -1893,6 +1893,11 @@ select option:checked, select option:hover {
         display: none !important;
     }
 
+    /* Teklif - Katalog Yönetimi tabı ve butonu mobilde gizlenir */
+    #manageCatalogTabContent,
+    #btnManageCatalogTab {
+        display: none !important;
+    }
 
     /* Teklif - Genel Bilgiler: 2 sütunlu grid → tek sütun */
     #teklifver-sec .form-section [style*="grid-template-columns: 1fr 1fr"] {
