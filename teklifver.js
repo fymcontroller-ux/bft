@@ -1112,7 +1112,19 @@ function printProposal() {
     }, 1000);
 }
 
-function shareProposalWhatsApp() {
+async function shareProposalWhatsApp() {
+    const printContainer = buildProposalPrintElement();
+    
+    // Ensure all pages have solid white background and black text
+    printContainer.style.background = "#ffffff";
+    printContainer.style.color = "#000000";
+    printContainer.querySelectorAll(".print-page").forEach(p => {
+        p.style.background = "#ffffff";
+        p.style.color = "#000000";
+        p.style.padding = "20px";
+        p.style.display = "block";
+    });
+
     const clientCompany = document.getElementById("clientCompany").value.trim() || "Musteri";
     const proposalTitle = document.getElementById("proposalTitle").value.trim() || "Fiyat Teklifi";
     const dateStr = document.getElementById("proposalDate").value || new Date().toLocaleDateString('tr-TR');
@@ -1120,14 +1132,16 @@ function shareProposalWhatsApp() {
     const grandTotalUSD = grandTotalEl ? grandTotalEl.textContent : "";
     const grandTotalTL = document.getElementById("grandTotalTLCell") ? document.getElementById("grandTotalTLCell").textContent : "";
 
+    const cleanDate = dateStr.replace(/[\/\.]/g, '-');
+    const filename = `${cleanDate}_${clientCompany.replace(/[\s/\\:]+/g, '_')}_Teklif.pdf`;
     const msg = `*BFT MAKİNA - FİYAT TEKLİFİ*\n\n🏢 *Müşteri / Firma:* ${clientCompany}\n📄 *Teklif Başlığı:* ${proposalTitle}\n📅 *Tarih:* ${dateStr}\n💰 *Genel Toplam ($):* ${grandTotalUSD}${grandTotalTL ? `\n🇹🇷 *Genel Toplam (TL):* ${grandTotalTL}` : ''}\n\nResmi PDF teklif dokümanımız ekte bilgilerinize sunulmuştur.`;
 
-    if (window.shareViaWhatsAppAndPrint) {
-        window.shareViaWhatsAppAndPrint({
-            printCallback: () => {
-                printProposal();
-            },
-            messageText: msg
+    if (window.sharePdfViaWhatsApp) {
+        await window.sharePdfViaWhatsApp({
+            element: printContainer,
+            filename: filename,
+            title: `${clientCompany} - ${proposalTitle}`,
+            text: msg
         });
     } else {
         printProposal();

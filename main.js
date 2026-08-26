@@ -258,22 +258,111 @@ function updateDashboardStats() {
 }
 
 // ==========================================
-// WHATSAPP SHARE & NATIVE PDF INTEGRATION
+// WHATSAPP SHARE & FULL PDF INTEGRATION
 // ==========================================
-window.shareViaWhatsAppAndPrint = function({ printCallback, messageText }) {
-    // 1. Önce kusursuz çalışan orijinal PDF / Yazdır penceresini aç
-    if (typeof printCallback === "function") {
-        printCallback();
+window.sharePdfViaWhatsApp = async function({ element, filename, title, text, beforeRender, afterRender }) {
+    if (!element) {
+        console.error("PDF paylaşımı için eleman bulunamadı.");
+        return;
     }
 
-    // 2. WhatsApp üzerinden mesaj ve özet detaylarını hazırla
-    if (messageText) {
-        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(messageText)}`;
-        setTimeout(() => {
-            window.open(waUrl, '_blank');
-            if (window.showToast) {
-                window.showToast("📲 WhatsApp paylaşımı açılıyor...", "success");
+    if (window.showToast) {
+        window.showToast("📄 PDF hazırlanıyor, lütfen bekleyin...", "info", 3500);
+    }
+
+    // Wrap element in standard printable stage
+    const stage = document.createElement("div");
+    stage.className = "pdf-export-stage";
+    stage.appendChild(element.cloneNode(true));
+    document.body.appendChild(stage);
+
+    if (typeof beforeRender === "function") {
+        beforeRender(stage);
+    }
+
+    try {
+        const opt = {
+            margin: [8, 8, 8, 8],
+            filename: filename || 'Belge.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                letterRendering: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                windowWidth: 794
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        if (typeof html2pdf === "undefined") {
+            throw new Error("html2pdf kütüphanesi yüklenemedi.");
+        }
+
+        // Generate PDF as Blob
+        const pdfBlob = await html2pdf().set(opt).from(stage).outputPdf('blob');
+        const pdfFile = new File([pdfBlob], filename || 'Belge.pdf', { type: 'application/pdf' });
+
+        // Remove render stage from screen
+        if (stage && stage.parentNode) {
+            stage.remove();
+        }
+
+        // Share via Web Share API (WhatsApp support on Android/iOS/modern browsers)
+        let shared = false;
+        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+            try {
+                await navigator.share({
+                    files: [pdfFile],
+                    title: title || 'BFT Makina Rapor',
+                    text: text || ''
+                });
+                shared = true;
+                if (window.showToast) {
+                    window.showToast("✅ Belge WhatsApp / Paylaşım menüsüne aktarıldı!", "success");
+                }
+            } catch (shareErr) {
+                if (shareErr.name === 'AbortError') {
+                    // User dismissed share sheet, no error needed
+                    return;
+                }
+                console.warn("Share API error:", shareErr);
             }
-        }, 500);
+        }
+
+        // Fallback for Desktop browser or unsupported share
+        if (!shared) {
+            // 1. Download file directly
+            const url = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename || 'Belge.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+            // 2. Open WhatsApp Web with prefilled message
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text || '')}`;
+            window.open(waUrl, '_blank');
+
+            if (window.showToast) {
+                window.showToast("📥 PDF indirildi ve WhatsApp açıldı.", "info", 5000);
+            }
+        }
+    } catch (err) {
+        console.error("PDF oluşturma hatası:", err);
+        if (stage && stage.parentNode) {
+            stage.remove();
+        }
+        if (window.showToast) {
+            window.showToast("⚠️ PDF oluşturulurken bir hata meydana geldi.", "error");
+        }
+    } finally {
+        if (typeof afterRender === "function") {
+            afterRender();
+        }
     }
 };
