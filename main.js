@@ -172,6 +172,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Switch between portal sections (Dashboard, Yükleyici, Merkezi Sistem, Pnömatik)
 function switchPortalSection(targetSectionId) {
+    if (!targetSectionId) return;
+
+    // Save active section locally so reloads don't reset navigation
+    try {
+        localStorage.setItem("active_portal_section", targetSectionId);
+    } catch(e) {}
+
     // Hide all sections
     const sections = document.querySelectorAll(".portal-section");
     sections.forEach(sec => {
@@ -211,6 +218,12 @@ function initPortalNavigation() {
             switchPortalSection(target);
         });
     });
+
+    // Restore last active section on page load / auto-refresh
+    const savedSection = localStorage.getItem("active_portal_section");
+    if (savedSection && document.getElementById(savedSection)) {
+        switchPortalSection(savedSection);
+    }
 }
 
 // Fetch stats from LocalStorage to display in the main Dashboard overview cards
