@@ -2102,39 +2102,6 @@ select option:checked, select option:hover {
     display: none;
 }
 
-/* WhatsApp PDF Generation Render Stage */
-.pdf-export-stage {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 794px; /* Standard A4 pixel width at 96 DPI */
-    background: #ffffff !important;
-    color: #000000 !important;
-    z-index: 999999;
-    box-sizing: border-box;
-    padding: 24px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-    opacity: 1;
-    pointer-events: none;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
-.pdf-export-stage table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    background: #ffffff !important;
-    color: #000000 !important;
-}
-.pdf-export-stage th, .pdf-export-stage td {
-    color: #000000 !important;
-    border: 1px solid #cbd5e1 !important;
-    background: #ffffff !important;
-}
-.pdf-export-stage th {
-    background: #f1f5f9 !important;
-    font-weight: 700 !important;
-}
-
-
 @media print {
     body.teklif-print-active .portal-container {
         display: none !important;

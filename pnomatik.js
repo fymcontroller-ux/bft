@@ -265,11 +265,6 @@ function setupEventListeners() {
     });
 
     document.getElementById("exportBtnPnomatik").addEventListener("click", exportToPDF);
-    
-    const btnPnomatikWhatsApp = document.getElementById("exportBtnPnomatikWhatsApp");
-    if (btnPnomatikWhatsApp) {
-        btnPnomatikWhatsApp.addEventListener("click", sharePnomatikWhatsApp);
-    }
 
     // Phase Selection click handlers
     const btn3AC = document.getElementById("btn3AC");
@@ -578,116 +573,6 @@ function exportToPDF() {
     setTimeout(() => {
         document.title = originalTitle;
     }, 1000);
-}
-
-function buildPnomatikPrintDocument() {
-    const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
-    const projNameInp = document.getElementById("projectNamePnomatik");
-    const projName = projNameInp ? projNameInp.value.trim() || "Pnomatik Tasarim Projesi" : "Pnomatik Tasarim Projesi";
-
-    const container = document.createElement("div");
-    container.style.cssText = "background: #ffffff; color: #000000; font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px;";
-
-    // Header
-    const headerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: #0f172a; color: #38bdf8; font-weight: 900; font-size: 20px; padding: 6px 14px; border-radius: 6px; letter-spacing: 1px;">BFT</div>
-                <div>
-                    <h2 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a; text-transform: uppercase;">Pnömatik Taşıma Hesap Raporu</h2>
-                    <span style="font-size: 11px; color: #64748b;">BFT MAKİNA PNÖMATİK SİSTEMLERİ</span>
-                </div>
-            </div>
-            <div style="text-align: right;">
-                <div style="font-weight: 700; font-size: 13px; color: #0f172a;">${projName}</div>
-                <div style="font-size: 11px; color: #64748b;">Tarih: ${dateStr}</div>
-            </div>
-        </div>
-    `;
-
-    const product = document.getElementById("productSelect") ? document.getElementById("productSelect").value : "";
-    const capacity = document.getElementById("capacityInput") ? document.getElementById("capacityInput").value : "";
-    const lengthH = document.getElementById("lengthHInput") ? document.getElementById("lengthHInput").value : "";
-    const lengthV = document.getElementById("lengthVInput") ? document.getElementById("lengthVInput").value : "";
-    const elbows = document.getElementById("elbowCountInput") ? document.getElementById("elbowCountInput").value : "";
-    const pipeDiameter = document.getElementById("pipeDiameterSelect") ? document.getElementById("pipeDiameterSelect").value : "";
-
-    const speed = document.getElementById("resAirVelocity") ? document.getElementById("resAirVelocity").textContent : "";
-    const flowM3h = document.getElementById("resAirFlowM3h") ? document.getElementById("resAirFlowM3h").textContent : "";
-    const flowM3min = document.getElementById("resAirFlowM3min") ? document.getElementById("resAirFlowM3min").textContent : "";
-    const totalDp = document.getElementById("resTotalDp") ? document.getElementById("resTotalDp").textContent : "";
-
-    const blowerName = activeSelectedBlower ? activeSelectedBlower.name : (document.getElementById("recBlowerName") ? document.getElementById("recBlowerName").textContent : "Belirtilmedi");
-
-    const bodyHTML = `
-        <div style="margin-bottom: 16px;">
-            <h3 style="font-size: 13px; font-weight: 700; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px;">1. Tasarım Parametreleri</h3>
-            <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 14px;">
-                <tr>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600; width: 25%;">Taşınacak Ürün:</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; width: 25%;">${product}</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600; width: 25%;">Kapasite:</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; width: 25%;">${capacity} kg/saat</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600;">Yatay Mesafe:</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px;">${lengthH} m</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600;">Dikey Mesafe:</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px;">${lengthV} m</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600;">Dirsek Sayısı (90°):</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px;">${elbows} Adet</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600;">Boru Çapı:</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px;">${pipeDiameter} mm</td>
-                </tr>
-            </table>
-
-            <h3 style="font-size: 13px; font-weight: 700; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px;">2. Hesaplama Sonuçları</h3>
-            <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 14px;">
-                <tr>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600; width: 25%;">Hava Hızı:</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; width: 25%;">${speed}</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600; width: 25%;">Toplam Basınç Kaybı:</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; width: 25%; font-weight: 700; color: #0284c7;">${totalDp}</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600;">Gerekli Hava Debisi:</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px;">${flowM3h} (${flowM3min})</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; background: #f8fafc; font-weight: 600;">Seçilen Blower Modeli:</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 6px; font-weight: 700; color: #059669;">${blowerName}</td>
-                </tr>
-            </table>
-        </div>
-    `;
-
-    container.innerHTML = headerHTML + bodyHTML;
-    return container;
-}
-
-async function sharePnomatikWhatsApp() {
-    const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
-    const projNameInp = document.getElementById("projectNamePnomatik");
-    const projName = projNameInp ? projNameInp.value.trim() || "Pnomatik Tasarim Projesi" : "Pnomatik Tasarim Projesi";
-    const product = document.getElementById("productSelect") ? document.getElementById("productSelect").value : "";
-    const blower = activeSelectedBlower ? activeSelectedBlower.name : "Seçilmedi";
-
-    const msg = `*BFT MAKİNA - PNÖMATİK TAŞIMA HESAP RAPORU*\n\n📄 *Proje:* ${projName}\n📅 *Tarih:* ${dateStr}\n📦 *Malzeme:* ${product}\n🌀 *Seçilen Blower:* ${blower}\n\nDetaylı PDF analiz raporu ekte paylaşılmıştır.`;
-
-    const cleanDate = dateStr.replace(/[\/\.]/g, '-');
-    const filename = `${cleanDate}_${projName.replace(/[\s/\\:]+/g, '_')}_Pnomatik_Rapor.pdf`;
-    const docElement = buildPnomatikPrintDocument();
-
-    if (window.sharePdfViaWhatsApp) {
-        await window.sharePdfViaWhatsApp({
-            element: docElement,
-            filename: filename,
-            title: `${projName} - Pnömatik Raporu`,
-            text: msg
-        });
-    } else {
-        exportToPDF();
-    }
 }
 
 // --- PROJECT MANAGEMENT FUNCTIONS ---

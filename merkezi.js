@@ -1213,114 +1213,12 @@ function setupEventListeners() {
         }, 1000);
     });
 
-    const btnMerkeziWhatsApp = document.getElementById("exportBtnMerkeziWhatsApp");
-    if (btnMerkeziWhatsApp) {
-        btnMerkeziWhatsApp.addEventListener("click", shareMerkeziWhatsApp);
-    }
-
     document.getElementById("resetPricesBtnMerkezi").addEventListener("click", resetPrices);
 
     // Project management listeners
     document.getElementById("btnSaveProject").addEventListener("click", saveCurrentProject);
     document.getElementById("btnDeleteProject").addEventListener("click", deleteSelectedProject);
     document.getElementById("savedProjectsSelect").addEventListener("change", loadSelectedProject);
-}
-
-function buildMerkeziPrintDocument(showPrices = true) {
-    const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
-    const projName = document.getElementById("projectName").value.trim() || "Merkezi Sistem Projesi";
-    
-    const container = document.createElement("div");
-    container.style.cssText = "background: #ffffff; color: #000000; font-family: 'Segoe UI', Tahoma, sans-serif; padding: 20px;";
-
-    // Header
-    const headerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: #0f172a; color: #38bdf8; font-weight: 900; font-size: 20px; padding: 6px 14px; border-radius: 6px; letter-spacing: 1px;">BFT</div>
-                <div>
-                    <h2 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a; text-transform: uppercase;">Merkezi Sistem Proje Raporu</h2>
-                    <span style="font-size: 11px; color: #64748b;">BFT MAKİNA OTOMASYON SİSTEMLERİ</span>
-                </div>
-            </div>
-            <div style="text-align: right;">
-                <div style="font-weight: 700; font-size: 13px; color: #0f172a;">${projName}</div>
-                <div style="font-size: 11px; color: #64748b;">Tarih: ${dateStr}</div>
-            </div>
-        </div>
-    `;
-
-    // Extract table
-    const tableEl = document.getElementById("costTableMerkezi");
-    let tableCloned = "";
-    if (tableEl) {
-        const clone = tableEl.cloneNode(true);
-        clone.style.width = "100%";
-        clone.style.borderCollapse = "collapse";
-        clone.style.fontSize = "11px";
-        clone.style.marginBottom = "16px";
-        clone.querySelectorAll("th, td").forEach(c => {
-            c.style.border = "1px solid #cbd5e1";
-            c.style.padding = "4px 6px";
-            c.style.color = "#000000";
-        });
-        clone.querySelectorAll("th").forEach(th => {
-            th.style.background = "#f1f5f9";
-            th.style.fontWeight = "700";
-        });
-        if (!showPrices) {
-            clone.querySelectorAll("tr").forEach(tr => {
-                const cells = tr.children;
-                if (cells.length >= 5) {
-                    cells[3].style.display = "none";
-                    cells[4].style.display = "none";
-                }
-            });
-        }
-        tableCloned = clone.outerHTML;
-    }
-
-    const summaryUSD = document.getElementById("summaryGrandTotalUSDMerkezi") ? document.getElementById("summaryGrandTotalUSDMerkezi").textContent : "";
-    const summaryTL = document.getElementById("summaryGrandTotalTLMerkezi") ? document.getElementById("summaryGrandTotalTLMerkezi").textContent : "";
-
-    let totalsHTML = "";
-    if (showPrices && summaryUSD) {
-        totalsHTML = `
-            <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 16px; min-width: 240px; text-align: right;">
-                    <div style="font-size: 14px; font-weight: 800; color: #0f172a;">GENEL TOPLAM: ${summaryUSD}</div>
-                    ${summaryTL ? `<div style="font-size: 12px; font-weight: 700; color: #475569; margin-top: 4px;">(${summaryTL})</div>` : ''}
-                </div>
-            </div>
-        `;
-    }
-
-    container.innerHTML = headerHTML + tableCloned + totalsHTML;
-    return container;
-}
-
-async function shareMerkeziWhatsApp() {
-    const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
-    const projName = document.getElementById("projectName").value.trim() || "Merkezi Sistem Projesi";
-    const showPrices = document.getElementById("printShowPricesCheck") ? document.getElementById("printShowPricesCheck").checked : true;
-    const totalUSD = document.getElementById("summaryGrandTotalUSDMerkezi") ? document.getElementById("summaryGrandTotalUSDMerkezi").textContent : "";
-
-    const msg = `*BFT MAKİNA - MERKEZİ SİSTEM PROJE RAPORU*\n\n📄 *Proje:* ${projName}\n📅 *Tarih:* ${dateStr}${showPrices && totalUSD ? `\n💰 *Genel Toplam:* ${totalUSD}` : ''}\n\nDetaylı PDF raporu ekte paylaşılmıştır.`;
-
-    const cleanDate = dateStr.replace(/[\/\.]/g, '-');
-    const filename = `${cleanDate}_${projName.replace(/[\s/\\:]+/g, '_')}_Merkezi_Rapor.pdf`;
-    const docElement = buildMerkeziPrintDocument(showPrices);
-
-    if (window.sharePdfViaWhatsApp) {
-        await window.sharePdfViaWhatsApp({
-            element: docElement,
-            filename: filename,
-            title: `${projName} - Merkezi Sistem Raporu`,
-            text: msg
-        });
-    } else {
-        document.getElementById("exportBtnMerkeziRapor").click();
-    }
 }
 
 // Helper to look up name & price by id or fallback to name

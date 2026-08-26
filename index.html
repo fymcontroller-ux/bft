@@ -421,9 +421,6 @@
                         <button class="export-btn" id="exportBtnMerkeziRapor" style="background: linear-gradient(135deg, var(--accent-indigo), rgba(99, 102, 241, 0.8)); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);">
                             <i class="fa-solid fa-file-pdf"></i> Rapor Yazdır / PDF
                         </button>
-                        <button class="export-btn" id="exportBtnMerkeziWhatsApp" style="background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);">
-                            <i class="fa-brands fa-whatsapp"></i> WhatsApp Paylaş
-                        </button>
                         <div class="checkbox-container" style="display: flex; align-items: center; gap: 0.4rem; background: var(--bg-card); border: 1px solid var(--border-color); padding: 0.5rem 0.85rem; border-radius: 12px; height: 42px;">
                             <input type="checkbox" id="printShowPricesCheck" checked style="width: 16px; height: 16px; accent-color: var(--accent-indigo); cursor: pointer;">
                             <label for="printShowPricesCheck" style="color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; user-select: none; font-weight: 500;">Fiyatları Göster</label>
@@ -630,14 +627,9 @@
                         <h2><i class="fa-solid fa-wind" style="color: var(--accent-indigo);"></i> Pnömatik Taşıma Hesaplayıcı</h2>
                         <p>Bulk malzemelerin iletim geometrisi ve Blower vakum hava debi gereksinim analizi.</p>
                     </div>
-                    <div class="header-actions">
-                        <button class="export-btn" id="exportBtnPnomatik">
-                            <i class="fa-solid fa-file-pdf"></i> Rapor Yazdır / PDF
-                        </button>
-                        <button class="export-btn" id="exportBtnPnomatikWhatsApp" style="background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);">
-                            <i class="fa-brands fa-whatsapp"></i> WhatsApp Paylaş
-                        </button>
-                    </div>
+                    <button class="export-btn" id="exportBtnPnomatik">
+                        <i class="fa-solid fa-file-pdf"></i> Rapor Yazdır / PDF
+                    </button>
                 </div>
 
                 <div class="dashboard-grid">
@@ -1281,12 +1273,9 @@
                             <!-- Dynamically filled by JS -->
                         </div>
 
-                        <div class="project-buttons-grid" style="margin-top: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                        <div class="project-buttons-grid" style="margin-top: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                             <button type="button" class="project-btn-main btn-save" id="btnPrintCustomProposal" style="background: linear-gradient(135deg, var(--accent-teal), rgba(20, 184, 166, 0.8));">
                                 <i class="fa-solid fa-print"></i> Teklifi Yazdır / PDF
-                            </button>
-                            <button type="button" class="project-btn-main" id="btnShareWhatsAppTeklif" style="background: linear-gradient(135deg, #25D366, #128C7E); color: #ffffff; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);">
-                                <i class="fa-brands fa-whatsapp"></i> WhatsApp Paylaş
                             </button>
                             <button type="button" class="project-btn-main btn-delete" id="btnClearProposal">
                                 <i class="fa-solid fa-trash"></i> Teklifi Sıfırla
@@ -1482,15 +1471,14 @@
     </div>
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="firebase_sync.js?v=1.0.2"></script>
     <script src="starter_data.js"></script>
     <script src="yukleyici.js?v=1.0.1"></script>
-    <script src="merkezi.js?v=1.0.4"></script>
-    <script src="pnomatik.js?v=1.0.4"></script>
-    <script src="teklifver.js?v=1.0.4"></script>
-    <script src="main.js?v=1.0.4"></script>
+    <script src="merkezi.js"></script>
+    <script src="pnomatik.js"></script>
+    <script src="teklifver.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
