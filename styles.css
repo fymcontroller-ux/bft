@@ -1879,19 +1879,23 @@ select option:checked, select option:hover {
         display: none !important;
     }
 
-    /* Yükleyici - Malzeme Yönetimi ve İşletme Giderleri tabları mobilde gizlenir */
+    /* Yükleyici - Malzeme Yönetimi ve İşletme Giderleri tabları ve butonları mobilde gizlenir */
     #priceTabContent,
-    #expenseTabContent {
+    #expenseTabContent,
+    #btnPriceTab,
+    #btnExpenseTab {
         display: none !important;
     }
 
-    /* Merkezi - Fiyat Listesi Düzenle tabı mobilde gizlenir */
-    #priceTabContentMerkezi {
+    /* Merkezi - Fiyat Listesi Düzenle tabı ve butonu mobilde gizlenir */
+    #priceTabContentMerkezi,
+    #btnPriceTabMerkezi {
         display: none !important;
     }
 
-    /* Teklif - Katalog Yönetimi tabı mobilde gizlenir */
-    #manageCatalogTabContent {
+    /* Teklif - Katalog Yönetimi tabı ve butonu mobilde gizlenir */
+    #manageCatalogTabContent,
+    #btnManageCatalogTab {
         display: none !important;
     }
 
