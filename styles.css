@@ -1893,12 +1893,6 @@ select option:checked, select option:hover {
         display: none !important;
     }
 
-    /* Teklif - Katalog Yönetimi tabı ve butonu mobilde gizlenir */
-    #manageCatalogTabContent,
-    #btnManageCatalogTab {
-        display: none !important;
-    }
-
     /* Teklif - Genel Bilgiler: 2 sütunlu grid → tek sütun */
     #teklifver-sec .form-section [style*="grid-template-columns: 1fr 1fr"] {
         display: flex !important;
@@ -1919,6 +1913,47 @@ select option:checked, select option:hover {
         display: flex !important;
         flex-direction: column !important;
         gap: 1.5rem !important;
+    }
+
+    /* Teklif - Katalog Listesi: Mobilde kart görünümü */
+    #catalogViewerContainer .cost-table, 
+    #catalogViewerContainer .cost-table tbody, 
+    #catalogViewerContainer .cost-table tr, 
+    #catalogViewerContainer .cost-table td {
+        display: block !important;
+        width: 100% !important;
+    }
+    
+    #catalogViewerContainer .cost-table thead {
+        display: none !important; /* Başlıkları gizle */
+    }
+    
+    #catalogViewerContainer .cost-table tr {
+        margin-bottom: 1rem !important;
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 8px !important;
+        padding: 0.75rem !important;
+    }
+    
+    #catalogViewerContainer .cost-table td {
+        border: none !important;
+        padding: 0.25rem 0 !important;
+        text-align: left !important;
+    }
+
+    /* Fiyat giriş kutusu ve butonu düzeltme */
+    #catalogViewerContainer .cost-table td .table-cell-input {
+        width: 100% !important;
+        background: var(--bg-input) !important;
+        border: 1px solid var(--border-color) !important;
+        padding: 0.5rem !important;
+        margin-top: 0.25rem !important;
+    }
+
+    #catalogViewerContainer .cost-table td button {
+        width: 100% !important;
+        margin-top: 0.5rem !important;
     }
 }
 
