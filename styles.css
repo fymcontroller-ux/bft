@@ -1878,6 +1878,44 @@ select option:checked, select option:hover {
     .quick-add-container {
         display: none !important;
     }
+
+    /* Yükleyici - Malzeme Yönetimi ve İşletme Giderleri tabları mobilde gizlenir */
+    #priceTabContent,
+    #expenseTabContent {
+        display: none !important;
+    }
+
+    /* Merkezi - Fiyat Listesi Düzenle tabı mobilde gizlenir */
+    #priceTabContentMerkezi {
+        display: none !important;
+    }
+
+    /* Teklif - Katalog Yönetimi tabı mobilde gizlenir */
+    #manageCatalogTabContent {
+        display: none !important;
+    }
+
+    /* Teklif - Genel Bilgiler: 2 sütunlu grid → tek sütun */
+    #teklifver-sec .form-section [style*="grid-template-columns: 1fr 1fr"] {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    /* Teklif - Notlar paneli: 2 sütun → tek sütun, sağ kenar çizgisi kaldır */
+    #teklifver-sec [style*="border-right: 1px solid var(--border-color)"] {
+        border-right: none !important;
+        padding-right: 0 !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    /* Teklif - Ürün Ekle paneli: 2 sütun → tek sütun, sağ kenar çizgisi kaldır */
+    #teklifver-sec [style*="grid-template-columns: 1fr 1fr; gap: 2rem"] {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.5rem !important;
+    }
 }
 
 /* Hide price columns, subtotal row, and metrics grid when printing in teklif mode */

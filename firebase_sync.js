@@ -582,7 +582,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.18";
+    const CURRENT_APP_VERSION = "1.0.19";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;
