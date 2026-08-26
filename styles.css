@@ -1872,6 +1872,12 @@ select option:checked, select option:hover {
         padding: 1.5rem;
         border-radius: 16px;
     }
+
+    /* Yükleyici - Tablo ve Reçete ekleme barı mobilde gizlenir */
+    .table-container,
+    .quick-add-container {
+        display: none !important;
+    }
 }
 
 /* Hide price columns, subtotal row, and metrics grid when printing in teklif mode */
