@@ -418,10 +418,14 @@
         overlay.style.display = "flex";
     };
 
-    window.flushPendingSync = async function() {
-        if (window.hasPendingSync()) {
-            window.showExitSavingOverlay();
+    window.hideExitSavingOverlay = function() {
+        const overlay = document.getElementById("exitSavingOverlay");
+        if (overlay) {
+            overlay.style.display = "none";
         }
+    };
+
+    window.flushPendingSync = async function() {
         if (autoUploadTimeout) {
             clearTimeout(autoUploadTimeout);
             autoUploadTimeout = null;
@@ -430,6 +434,7 @@
         if (companyCode) {
             await silentUpload(companyCode);
         }
+        window.hideExitSavingOverlay();
     };
 
     // Trigger instant upload on window exit / mobile app hide
@@ -582,7 +587,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.23";
+    const CURRENT_APP_VERSION = "1.0.24";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;
