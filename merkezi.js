@@ -1213,12 +1213,37 @@ function setupEventListeners() {
         }, 1000);
     });
 
+    const btnMerkeziWhatsApp = document.getElementById("exportBtnMerkeziWhatsApp");
+    if (btnMerkeziWhatsApp) {
+        btnMerkeziWhatsApp.addEventListener("click", shareMerkeziWhatsApp);
+    }
+
     document.getElementById("resetPricesBtnMerkezi").addEventListener("click", resetPrices);
 
     // Project management listeners
     document.getElementById("btnSaveProject").addEventListener("click", saveCurrentProject);
     document.getElementById("btnDeleteProject").addEventListener("click", deleteSelectedProject);
     document.getElementById("savedProjectsSelect").addEventListener("change", loadSelectedProject);
+}
+
+function shareMerkeziWhatsApp() {
+    const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
+    const projName = document.getElementById("projectName").value.trim() || "Merkezi Sistem Projesi";
+    const showPrices = document.getElementById("printShowPricesCheck") ? document.getElementById("printShowPricesCheck").checked : true;
+    const totalUSD = document.getElementById("summaryGrandTotalUSDMerkezi") ? document.getElementById("summaryGrandTotalUSDMerkezi").textContent : "";
+
+    const msg = `*BFT MAKİNA - MERKEZİ SİSTEM PROJE RAPORU*\n\n📄 *Proje:* ${projName}\n📅 *Tarih:* ${dateStr}${showPrices && totalUSD ? `\n💰 *Genel Toplam:* ${totalUSD}` : ''}\n\nDetaylı PDF raporu ekte paylaşılmıştır.`;
+
+    if (window.shareViaWhatsAppAndPrint) {
+        window.shareViaWhatsAppAndPrint({
+            printCallback: () => {
+                document.getElementById("exportBtnMerkeziRapor").click();
+            },
+            messageText: msg
+        });
+    } else {
+        document.getElementById("exportBtnMerkeziRapor").click();
+    }
 }
 
 // Helper to look up name & price by id or fallback to name

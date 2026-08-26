@@ -107,6 +107,11 @@ function initTeklifVer() {
     document.getElementById("btnAddCustomItem").addEventListener("click", addCustomItem);
     document.getElementById("btnClearProposal").addEventListener("click", clearProposal);
     document.getElementById("btnPrintCustomProposal").addEventListener("click", printProposal);
+    
+    const btnShareWhatsApp = document.getElementById("btnShareWhatsAppTeklif");
+    if (btnShareWhatsApp) {
+        btnShareWhatsApp.addEventListener("click", shareProposalWhatsApp);
+    }
 
     // Bind catalog management events
     document.getElementById("btnAddNewCatalogCategory").addEventListener("click", addCatalogCategory);
@@ -1105,6 +1110,28 @@ function printProposal() {
         document.body.classList.remove("teklif-print-active");
         printContainer.remove();
     }, 1000);
+}
+
+function shareProposalWhatsApp() {
+    const clientCompany = document.getElementById("clientCompany").value.trim() || "Musteri";
+    const proposalTitle = document.getElementById("proposalTitle").value.trim() || "Fiyat Teklifi";
+    const dateStr = document.getElementById("proposalDate").value || new Date().toLocaleDateString('tr-TR');
+    const grandTotalEl = document.getElementById("grandTotalUSDCell");
+    const grandTotalUSD = grandTotalEl ? grandTotalEl.textContent : "";
+    const grandTotalTL = document.getElementById("grandTotalTLCell") ? document.getElementById("grandTotalTLCell").textContent : "";
+
+    const msg = `*BFT MAKİNA - FİYAT TEKLİFİ*\n\n🏢 *Müşteri / Firma:* ${clientCompany}\n📄 *Teklif Başlığı:* ${proposalTitle}\n📅 *Tarih:* ${dateStr}\n💰 *Genel Toplam ($):* ${grandTotalUSD}${grandTotalTL ? `\n🇹🇷 *Genel Toplam (TL):* ${grandTotalTL}` : ''}\n\nResmi PDF teklif dokümanımız ekte bilgilerinize sunulmuştur.`;
+
+    if (window.shareViaWhatsAppAndPrint) {
+        window.shareViaWhatsAppAndPrint({
+            printCallback: () => {
+                printProposal();
+            },
+            messageText: msg
+        });
+    } else {
+        printProposal();
+    }
 }
 
 function getCentralAnnexHTML(projectName) {

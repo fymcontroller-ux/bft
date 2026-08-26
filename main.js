@@ -256,3 +256,24 @@ function updateDashboardStats() {
         console.error("Dashboard istatistikleri güncellenirken hata oluştu:", e);
     }
 }
+
+// ==========================================
+// WHATSAPP SHARE & NATIVE PDF INTEGRATION
+// ==========================================
+window.shareViaWhatsAppAndPrint = function({ printCallback, messageText }) {
+    // 1. Önce kusursuz çalışan orijinal PDF / Yazdır penceresini aç
+    if (typeof printCallback === "function") {
+        printCallback();
+    }
+
+    // 2. WhatsApp üzerinden mesaj ve özet detaylarını hazırla
+    if (messageText) {
+        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(messageText)}`;
+        setTimeout(() => {
+            window.open(waUrl, '_blank');
+            if (window.showToast) {
+                window.showToast("📲 WhatsApp paylaşımı açılıyor...", "success");
+            }
+        }, 500);
+    }
+};

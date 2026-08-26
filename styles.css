@@ -1879,6 +1879,11 @@ select option:checked, select option:hover {
         display: none !important;
     }
 
+    /* Teklif - Oluşturulan Teklif Kalemleri tablosu kural dışı bırakılır ve mobilde görünür */
+    #createTeklifTabContent .table-container {
+        display: block !important;
+    }
+
     /* Yükleyici - Malzeme Yönetimi ve İşletme Giderleri tabları ve butonları mobilde gizlenir */
     #priceTabContent,
     #expenseTabContent,
@@ -1954,6 +1959,129 @@ select option:checked, select option:hover {
     #catalogViewerContainer .cost-table td button {
         width: 100% !important;
         margin-top: 0.5rem !important;
+    }
+
+    /* Teklif - Oluşturulan Teklif Kalemleri: Mobilde Kart Görünümü */
+    #teklifTable,
+    #teklifTable tbody {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    #teklifTable thead {
+        display: none !important;
+    }
+
+    #teklifTable tr {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.6rem !important;
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    #teklifTable td {
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    /* 1. Sıra No */
+    #teklifTable td:nth-child(1) {
+        display: none !important;
+    }
+
+    /* 2. İsim (Malzeme / Açıklama) */
+    #teklifTable td:nth-child(2) {
+        width: 100% !important;
+    }
+    #teklifTable td:nth-child(2) input {
+        width: 100% !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        background: var(--bg-input) !important;
+        border: 1px solid var(--border-color) !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 8px !important;
+    }
+
+    /* 3. Adet */
+    #teklifTable td:nth-child(3) {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 0.5rem !important;
+    }
+    #teklifTable td:nth-child(3)::before {
+        content: "Miktar / Adet:";
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    #teklifTable td:nth-child(3) input,
+    #teklifTable td:nth-child(3) select {
+        background: var(--bg-input) !important;
+        border: 1px solid var(--border-color) !important;
+        padding: 0.35rem 0.5rem !important;
+        border-radius: 6px !important;
+    }
+
+    /* 4. Birim Fiyat */
+    #teklifTable td:nth-child(4) {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 0.5rem !important;
+    }
+    #teklifTable td:nth-child(4)::before {
+        content: "Birim Fiyat ($):";
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    #teklifTable td:nth-child(4) input {
+        background: var(--bg-input) !important;
+        border: 1px solid var(--border-color) !important;
+        padding: 0.35rem 0.5rem !important;
+        border-radius: 6px !important;
+    }
+
+    /* 5. Toplam Fiyat */
+    #teklifTable td:nth-child(5) {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        border-top: 1px dashed var(--border-color) !important;
+        padding-top: 0.6rem !important;
+        margin-top: 0.25rem !important;
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
+        color: var(--accent-teal) !important;
+    }
+    #teklifTable td:nth-child(5)::before {
+        content: "Toplam Tutar ($):";
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    /* 6. Sil Butonu */
+    #teklifTable td:nth-child(6) {
+        margin-top: 0.25rem !important;
+    }
+    #teklifTable td:nth-child(6) button {
+        width: 100% !important;
+        padding: 0.5rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+    }
+    #teklifTable td:nth-child(6) button::after {
+        content: " Kalemi Sil";
+        font-size: 0.85rem;
     }
 }
 

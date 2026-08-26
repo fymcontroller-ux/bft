@@ -265,6 +265,11 @@ function setupEventListeners() {
     });
 
     document.getElementById("exportBtnPnomatik").addEventListener("click", exportToPDF);
+    
+    const btnPnomatikWhatsApp = document.getElementById("exportBtnPnomatikWhatsApp");
+    if (btnPnomatikWhatsApp) {
+        btnPnomatikWhatsApp.addEventListener("click", sharePnomatikWhatsApp);
+    }
 
     // Phase Selection click handlers
     const btn3AC = document.getElementById("btn3AC");
@@ -573,6 +578,27 @@ function exportToPDF() {
     setTimeout(() => {
         document.title = originalTitle;
     }, 1000);
+}
+
+function sharePnomatikWhatsApp() {
+    const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
+    const projNameInp = document.getElementById("projectNamePnomatik");
+    const projName = projNameInp ? projNameInp.value.trim() || "Pnomatik Tasarim Projesi" : "Pnomatik Tasarim Projesi";
+    const product = document.getElementById("productSelect") ? document.getElementById("productSelect").value : "";
+    const blower = activeSelectedBlower ? activeSelectedBlower.name : "Seçilmedi";
+
+    const msg = `*BFT MAKİNA - PNÖMATİK TAŞIMA HESAP RAPORU*\n\n📄 *Proje:* ${projName}\n📅 *Tarih:* ${dateStr}\n📦 *Malzeme:* ${product}\n🌀 *Seçilen Blower:* ${blower}\n\nDetaylı PDF analiz raporu ekte paylaşılmıştır.`;
+
+    if (window.shareViaWhatsAppAndPrint) {
+        window.shareViaWhatsAppAndPrint({
+            printCallback: () => {
+                exportToPDF();
+            },
+            messageText: msg
+        });
+    } else {
+        exportToPDF();
+    }
 }
 
 // --- PROJECT MANAGEMENT FUNCTIONS ---
