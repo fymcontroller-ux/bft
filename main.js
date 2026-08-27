@@ -150,9 +150,50 @@ window.showCustomConfirm = function(message, title = "Silme Onayı", customConfi
 
 
 
+// --- GLOBAL PRINT SCALE CONTROLLER ---
+window.applyPrintScale = function(scaleVal) {
+    const factor = parseFloat(scaleVal) || 0.8;
+    try {
+        localStorage.setItem("app_print_scale", factor.toString());
+    } catch(e) {}
+
+    document.documentElement.style.setProperty('--print-scale-factor', factor);
+    document.documentElement.style.setProperty('--print-zoom-merkezi', (90 * factor) + '%');
+    document.documentElement.style.setProperty('--print-zoom-yukleyici', (90 * factor) + '%');
+    document.documentElement.style.setProperty('--print-zoom-pnomatik', (70 * factor) + '%');
+    document.documentElement.style.setProperty('--print-zoom-teklif', (90 * factor) + '%');
+    document.documentElement.style.setProperty('--print-zoom-teklif-specs', (75 * factor) + '%');
+
+    // Sync all dropdowns across all sections
+    const scaleSelects = document.querySelectorAll(".print-scale-select");
+    scaleSelects.forEach(select => {
+        if (select.value !== factor.toString()) {
+            select.value = factor.toString();
+        }
+    });
+};
+
+function initPrintScaleController() {
+    let savedScale = localStorage.getItem("app_print_scale");
+    if (!savedScale) {
+        savedScale = "0.8"; // Default to 80%
+    }
+    window.applyPrintScale(savedScale);
+
+    const scaleSelects = document.querySelectorAll(".print-scale-select");
+    scaleSelects.forEach(select => {
+        select.value = savedScale;
+        select.addEventListener("change", (e) => {
+            window.applyPrintScale(e.target.value);
+            window.showToast(`Yazdırma / PDF Ölçeği %${Math.round(parseFloat(e.target.value) * 100)} olarak ayarlandı.`);
+        });
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initPortalNavigation();
     updateDashboardStats();
+    initPrintScaleController();
 
     // Fix Electron / Chromium input focus locking bug on button clicks & inputs
     document.addEventListener("click", (e) => {

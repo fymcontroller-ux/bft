@@ -17,6 +17,12 @@
     --success: #10b981;
     --warning: #f59e0b;
     --error: #ef4444;
+    --print-scale-factor: 0.8;
+    --print-zoom-merkezi: 72%;
+    --print-zoom-yukleyici: 72%;
+    --print-zoom-pnomatik: 56%;
+    --print-zoom-teklif: 72%;
+    --print-zoom-teklif-specs: 60%;
 }
 
 * {
@@ -229,6 +235,43 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
     background: linear-gradient(135deg, #0d9488, var(--accent-teal));
+}
+
+/* Print Scale Dropdown Wrapper */
+.print-scale-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+    height: 42px;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.print-scale-wrapper:hover {
+    border-color: rgba(99, 102, 241, 0.35);
+    background: rgba(18, 20, 29, 0.85);
+}
+
+.print-scale-select {
+    background: transparent;
+    color: var(--text-primary);
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    font-family: inherit;
+}
+
+.print-scale-select option {
+    background: #141622;
+    color: #f3f4f6;
+    font-size: 0.85rem;
 }
 
 .tab-content {
@@ -1469,7 +1512,7 @@ select option:checked, select option:hover {
         padding: 0 !important;
         width: 100% !important;
     }
-    .section-header, .tabs-container, .export-btn, .phase-selector, .project-buttons-grid, .reset-btn {
+    .section-header, .tabs-container, .export-btn, .phase-selector, .project-buttons-grid, .reset-btn, .print-scale-wrapper, .checkbox-container {
         display: none !important;
     }
     .panel-card {
@@ -1520,9 +1563,9 @@ select option:checked, select option:hover {
         color: #000 !important;
     }
 
-    /* Central Section Print Scale (90%) */
+    /* Central Section Print Scale (90% * dynamic factor) */
     #merkezi-sec {
-        zoom: 90% !important;
+        zoom: var(--print-zoom-merkezi, calc(90% * var(--print-scale-factor, 1))) !important;
     }
 
     /* Print Header Styles */
@@ -1682,12 +1725,12 @@ select option:checked, select option:hover {
 
     /* Yükleyici Bölümü Print Scale Optimization */
     #yukleyici-sec {
-        zoom: 90% !important;
+        zoom: var(--print-zoom-yukleyici, calc(90% * var(--print-scale-factor, 1))) !important;
     }
 
-    /* Pnömatik Sayfası Print Layout Styles & 70% Scale */
+    /* Pnömatik Sayfası Print Layout Styles & Dynamic Scale */
     #pnomatik-sec {
-        zoom: 70% !important;
+        zoom: var(--print-zoom-pnomatik, calc(70% * var(--print-scale-factor, 1))) !important;
     }
     #pnomatik-sec .dashboard-grid {
         grid-template-columns: 1fr !important;
@@ -1799,6 +1842,11 @@ select option:checked, select option:hover {
     }
     
     .export-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .print-scale-wrapper {
         width: 100%;
         justify-content: center;
     }
@@ -2122,14 +2170,14 @@ select option:checked, select option:hover {
         page-break-after: always;
         break-after: page;
         padding: 20px !important;
-        zoom: 90% !important;
+        zoom: var(--print-zoom-teklif, calc(90% * var(--print-scale-factor, 1))) !important;
     }
     body.teklif-print-active .print-page:last-child {
         page-break-after: auto;
         break-after: auto;
     }
     body.teklif-print-active .print-page.central-specs-annex {
-        zoom: 75% !important;
+        zoom: var(--print-zoom-teklif-specs, calc(75% * var(--print-scale-factor, 1))) !important;
     }
 }
 
