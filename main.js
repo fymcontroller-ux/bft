@@ -241,14 +241,33 @@ window.openDocumentPreviewModal = function(element, filename, titleText, onPrint
     }
     updatePreviewZoom();
 
+    // Force inline styles for maximum mobile browser compatibility
+    // (some Android/iOS browsers don't pick up class-toggled display:flex)
+    modal.style.display = "flex";
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100vw";
+    modal.style.height = "100vh";
+    modal.style.zIndex = "100000";
     modal.classList.add("open");
+    // Prevent body scroll while modal is open
+    document.body.style.overflow = "hidden";
 };
 
 window.closeDocumentPreviewModal = function() {
     const modal = document.getElementById("pdfPreviewModal");
     if (modal) {
         modal.classList.remove("open");
+        modal.style.display = "";
+        modal.style.position = "";
+        modal.style.top = "";
+        modal.style.left = "";
+        modal.style.width = "";
+        modal.style.height = "";
+        modal.style.zIndex = "";
     }
+    document.body.style.overflow = "";
 };
 
 function updatePreviewZoom() {
