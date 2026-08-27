@@ -1452,10 +1452,14 @@ function calculate() {
 
             // 2. Quantity + Unit Select
             const tdQty = document.createElement("td");
-            tdQty.style.display = "flex";
-            tdQty.style.alignItems = "center";
-            tdQty.style.justifyContent = "center";
-            tdQty.style.gap = "0.5rem";
+            tdQty.style.textAlign = "center";
+            tdQty.style.verticalAlign = "middle";
+            
+            const flexWrap = document.createElement("div");
+            flexWrap.style.display = "inline-flex";
+            flexWrap.style.alignItems = "center";
+            flexWrap.style.justifyContent = "center";
+            flexWrap.style.gap = "0.5rem";
             
             const qtySpan = document.createElement("span");
             qtySpan.textContent = currentUnit === "m" ? item.qty.toFixed(1) : item.qty;
@@ -1497,8 +1501,9 @@ function calculate() {
                 calculate();
             });
 
-            tdQty.appendChild(qtySpan);
-            tdQty.appendChild(unitBadge);
+            flexWrap.appendChild(qtySpan);
+            flexWrap.appendChild(unitBadge);
+            tdQty.appendChild(flexWrap);
             row.appendChild(tdQty);
 
             // 3. Unit Price

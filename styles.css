@@ -237,6 +237,35 @@ body {
     background: linear-gradient(135deg, #0d9488, var(--accent-teal));
 }
 
+.whatsapp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    border: none;
+    color: #ffffff;
+    padding: 0.5rem 1.15rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+    text-decoration: none;
+    height: 42px;
+}
+
+.whatsapp-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    background: linear-gradient(135deg, #20ba5a, #0f7569);
+    color: #ffffff;
+}
+
+.whatsapp-btn i {
+    font-size: 1.1rem;
+}
+
 /* Print Scale Dropdown Wrapper */
 .print-scale-wrapper {
     display: inline-flex;
@@ -1499,6 +1528,11 @@ select option:checked, select option:hover {
 }
 
 /* ===== PRINT OVERLAY OPTIMIZATION ===== */
+@page {
+    size: A4 portrait;
+    margin: 8mm 8mm 8mm 8mm;
+}
+
 @media print {
     body {
         background: #fff !important;
@@ -1512,7 +1546,7 @@ select option:checked, select option:hover {
         padding: 0 !important;
         width: 100% !important;
     }
-    .section-header, .tabs-container, .export-btn, .phase-selector, .project-buttons-grid, .reset-btn, .print-scale-wrapper, .checkbox-container {
+    .section-header, .tabs-container, .export-btn, .whatsapp-btn, .phase-selector, .project-buttons-grid, .reset-btn, .print-scale-wrapper, .checkbox-container, .modal-overlay {
         display: none !important;
     }
     .panel-card {
@@ -1669,11 +1703,45 @@ select option:checked, select option:hover {
 
     /* Adjust font size and padding to fit table in 1-2 pages */
     .cost-table {
+        border-collapse: collapse !important;
         font-size: 0.70rem !important;
         width: 100% !important;
     }
     .cost-table th, .cost-table td {
         padding: 0.22rem 0.4rem !important;
+        vertical-align: middle !important;
+        line-height: 1.25 !important;
+        box-sizing: border-box !important;
+    }
+    .cost-table td:nth-child(2) {
+        display: table-cell !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+    .cost-table td * {
+        vertical-align: middle !important;
+        line-height: 1.25 !important;
+        margin: 0 !important;
+    }
+    .cost-table td .input-container {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        height: auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        vertical-align: middle !important;
+    }
+    .cost-table td input {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        height: auto !important;
+        line-height: inherit !important;
+        font-size: inherit !important;
+        vertical-align: middle !important;
     }
     .cost-table tr.category-row td,
     .cost-table tr.category-row th {
@@ -1747,6 +1815,46 @@ select option:checked, select option:hover {
         flex-direction: column !important;
         gap: 1.5rem !important;
     }
+    #pnomatik-sec .alt-tag {
+        border: 1px solid #cbd5e1 !important;
+        background: #f8fafc !important;
+        color: #334155 !important;
+    }
+    #pnomatik-sec .alt-tag.active {
+        border: 1.5px solid #4338ca !important;
+        background: #4338ca !important;
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+
+    body.printing-clean-pnomatik #pnomatik-sec > *:not(.clean-pnomatik-print-container) {
+        display: none !important;
+    }
+    body.printing-clean-pnomatik #pnomatik-sec > .clean-pnomatik-print-container {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
+    body.printing-clean-pnomatik #pnomatik-sec {
+        zoom: 1 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    body.teklif-print-active > *:not(#printProposalOverlayContainer) {
+        display: none !important;
+    }
+    body.teklif-print-active #printProposalOverlayContainer {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+        background: #ffffff !important;
+        padding: 0 !important;
+    }
+}
+
+.clean-pnomatik-print-container {
+    display: none;
 }
 
 /* ===== MOBILE PORTAL OPTIMIZATION (Bottom Nav) ===== */
@@ -1842,6 +1950,11 @@ select option:checked, select option:hover {
     }
     
     .export-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .whatsapp-btn {
         width: 100%;
         justify-content: center;
     }
@@ -2145,6 +2258,221 @@ select option:checked, select option:hover {
     }
 }
 
+/* ===== PDF EXPORT MODE (Identical to Print Mode for WhatsApp / Direct PDF Export) ===== */
+body.pdf-export-mode {
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+body.pdf-export-mode * {
+    color: #000000 !important;
+    text-shadow: none !important;
+}
+body.pdf-export-mode .portal-sidebar,
+body.pdf-export-mode .section-header,
+body.pdf-export-mode .tabs-container,
+body.pdf-export-mode .export-btn,
+body.pdf-export-mode .whatsapp-btn,
+body.pdf-export-mode .print-scale-wrapper,
+body.pdf-export-mode .checkbox-container,
+body.pdf-export-mode .project-section-card,
+body.pdf-export-mode .phase-selector,
+body.pdf-export-mode .project-buttons-grid,
+body.pdf-export-mode .reset-btn,
+body.pdf-export-mode #laborSection,
+body.pdf-export-mode #specPreviewCard,
+body.pdf-export-mode #paramsCardTitle,
+body.pdf-export-mode #merkezi-sec .dashboard-grid > .panel-card:nth-child(2) > .panel-title {
+    display: none !important;
+}
+body.pdf-export-mode .portal-content {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+body.pdf-export-mode .panel-card {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+body.pdf-export-mode .metric-card,
+body.pdf-export-mode .result-card {
+    background: #fff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+}
+body.pdf-export-mode .teal-text,
+body.pdf-export-mode .indigo-text,
+body.pdf-export-mode .violet-text,
+body.pdf-export-mode .orange-text,
+body.pdf-export-mode .amber-text {
+    color: #000000 !important;
+    text-shadow: none !important;
+    font-weight: 700 !important;
+}
+body.pdf-export-mode .cost-table th {
+    background: #e2e8f0 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    border-bottom: 2px solid #000000 !important;
+}
+body.pdf-export-mode .cost-table td {
+    color: #000000 !important;
+    font-weight: 500 !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+}
+body.pdf-export-mode input,
+body.pdf-export-mode select {
+    border: none !important;
+    background: transparent !important;
+    color: #000000 !important;
+    font-weight: 600 !important;
+    padding: 0 !important;
+    text-align: right !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+body.pdf-export-mode label {
+    color: #111111 !important;
+    font-weight: 600 !important;
+}
+body.pdf-export-mode .input-container {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+body.pdf-export-mode .unit {
+    color: #000000 !important;
+    font-weight: 500 !important;
+}
+body.pdf-export-mode .print-header-merkezi {
+    display: flex !important;
+}
+
+/* Central Section Print Scale */
+body.pdf-export-mode #merkezi-sec {
+    zoom: var(--print-zoom-merkezi, calc(90% * var(--print-scale-factor, 1))) !important;
+}
+
+/* Yükleyici Bölümü Print Scale Optimization */
+body.pdf-export-mode #yukleyici-sec {
+    zoom: var(--print-zoom-yukleyici, calc(90% * var(--print-scale-factor, 1))) !important;
+}
+
+/* Pnömatik Sayfası Print Layout Styles & Dynamic Scale */
+body.pdf-export-mode #pnomatik-sec {
+    zoom: var(--print-zoom-pnomatik, calc(70% * var(--print-scale-factor, 1))) !important;
+}
+body.pdf-export-mode #pnomatik-sec .dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+}
+body.pdf-export-mode #pnomatik-sec .results-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1.2fr !important;
+    gap: 1.5rem !important;
+    width: 100% !important;
+}
+body.pdf-export-mode #pnomatik-sec .results-left-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+}
+
+body.pdf-export-mode #merkezi-sec .dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+}
+body.pdf-export-mode #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1.5rem !important;
+    font-size: 0.65rem !important;
+}
+body.pdf-export-mode #merkezi-sec .dashboard-grid > .panel-card:nth-child(1) .form-section {
+    flex: 1 !important;
+}
+body.pdf-export-mode .cost-table {
+    border-collapse: collapse !important;
+    font-size: 0.70rem !important;
+    width: 100% !important;
+}
+body.pdf-export-mode .cost-table th,
+body.pdf-export-mode .cost-table td {
+    padding: 0.22rem 0.4rem !important;
+    vertical-align: middle !important;
+    line-height: 1.25 !important;
+    box-sizing: border-box !important;
+}
+body.pdf-export-mode .cost-table td * {
+    vertical-align: middle !important;
+    line-height: 1.25 !important;
+    margin: 0 !important;
+}
+body.pdf-export-mode .cost-table tr.category-row td,
+body.pdf-export-mode .cost-table tr.category-row th {
+    padding: 0.18rem 0.4rem !important;
+}
+body.pdf-export-mode .cost-table tr.subtotal-row td {
+    padding: 0.35rem 0.6rem !important;
+}
+body.pdf-export-mode .tables-grid {
+    column-count: 2 !important;
+    column-gap: 0.8rem !important;
+    display: block !important;
+}
+body.pdf-export-mode .tables-grid > .table-container {
+    display: inline-block !important;
+    width: 100% !important;
+    margin-bottom: 0.8rem !important;
+}
+body.pdf-export-mode #merkezi-sec .tables-grid {
+    margin-top: 0 !important;
+}
+body.pdf-export-mode .metrics-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.4rem !important;
+    margin-bottom: 0.5rem !important;
+}
+body.pdf-export-mode .metric-card {
+    padding: 0.4rem !important;
+}
+body.pdf-export-mode .metric-val {
+    font-size: 0.95rem !important;
+}
+body.pdf-export-mode.hide-prices-print .cost-table th:nth-child(3),
+body.pdf-export-mode.hide-prices-print .cost-table td:nth-child(3),
+body.pdf-export-mode.hide-prices-print .cost-table th:nth-child(4),
+body.pdf-export-mode.hide-prices-print .cost-table td:nth-child(4),
+body.pdf-export-mode.hide-prices-print .cost-table tr.subtotal-row,
+body.pdf-export-mode.hide-prices-print .metrics-grid {
+    display: none !important;
+}
+body.pdf-export-mode.teklif-print-active .portal-container {
+    display: none !important;
+}
+body.pdf-export-mode.teklif-print-active .teklif-print-overlay {
+    display: block !important;
+    background: #fff !important;
+    color: #000 !important;
+    width: 100% !important;
+}
+body.pdf-export-mode .print-page {
+    background: #fff !important;
+    color: #000 !important;
+    page-break-after: always;
+    break-after: page;
+    padding: 20px !important;
+    zoom: var(--print-zoom-teklif, calc(90% * var(--print-scale-factor, 1))) !important;
+}
+body.pdf-export-mode .print-page.central-specs-annex {
+    zoom: var(--print-zoom-teklif-specs, calc(75% * var(--print-scale-factor, 1))) !important;
+}
+
 /* ===== TEKLİF VERME (PROPOSAL CREATOR) PRINT STYLING ===== */
 .teklif-print-overlay {
     display: none;
@@ -2218,6 +2546,446 @@ select option:checked, select option:hover {
     70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
     100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
+
+/* ===== 2-STAGE PDF PREVIEW & SHARE MODAL ===== */
+#pdfPreviewModal.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(5, 7, 12, 0.88);
+    backdrop-filter: blur(8px);
+    z-index: 100000 !important; /* Higher than mobile navbar (9999) */
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.preview-modal-box {
+    max-width: 950px;
+    width: 95vw;
+    height: 90vh;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.5rem;
+    background: #0d111a;
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 20px rgba(37, 211, 102, 0.1);
+    overflow: hidden;
+}
+
+.preview-modal-header {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.preview-modal-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.preview-modal-title-wrap h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.preview-step-badge {
+    background: rgba(37, 211, 102, 0.15);
+    border: 1px solid rgba(37, 211, 102, 0.3);
+    color: #4ade80;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.preview-modal-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.preview-scale-group {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    padding: 0.25rem 0.65rem;
+    border-radius: 10px;
+}
+
+.preview-scale-select {
+    background: #0f172a;
+    color: #f8fafc;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 6px;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+}
+
+.preview-scale-select:focus {
+    border-color: var(--accent-indigo);
+}
+
+.preview-zoom-group {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+}
+
+.preview-zoom-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.4rem;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+
+.preview-zoom-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.preview-zoom-level {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 42px;
+    text-align: center;
+}
+
+/* Sheet Wrapper (Dark canvas holding the paper) */
+.preview-sheet-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    background: #080a10;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.preview-sheet-paper {
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 0, 0, 0.6);
+    border-radius: 3px;
+    transform-origin: top center;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 100%;
+}
+
+/* Modal Footer */
+.preview-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.preview-footer-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.preview-step2-badge {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent-indigo);
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.preview-doc-name {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-family: monospace;
+    max-width: 240px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preview-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.preview-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 1.05rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+}
+
+.preview-action-btn.btn-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+.preview-action-btn.btn-cancel:hover {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+.preview-action-btn.btn-print {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.25);
+    color: #c7d2fe;
+}
+.preview-action-btn.btn-print:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: var(--accent-indigo);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.preview-action-btn.btn-download {
+    background: rgba(14, 165, 233, 0.12);
+    border-color: rgba(14, 165, 233, 0.3);
+    color: #7dd3fc;
+}
+.preview-action-btn.btn-download:hover {
+    background: rgba(14, 165, 233, 0.22);
+    border-color: #38bdf8;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.preview-action-btn.btn-whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+.preview-action-btn.btn-whatsapp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+    filter: brightness(1.08);
+}
+
+/* ===== MOBILE OPTIMIZATIONS FOR 2-STAGE PREVIEW MODAL ===== */
+@media (max-width: 768px) {
+    #pdfPreviewModal.modal-overlay {
+        padding: 0;
+        align-items: stretch;
+        justify-content: stretch;
+    }
+
+    .preview-modal-box {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+        padding: 0.65rem 0.75rem;
+        border: none;
+        box-shadow: none;
+    }
+
+    .preview-modal-header {
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .preview-modal-title-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .preview-modal-title-wrap h2 {
+        font-size: 1.05rem;
+    }
+
+    .preview-step-badge {
+        font-size: 0.68rem;
+        padding: 0.18rem 0.5rem;
+    }
+
+    .preview-modal-controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 0.4rem;
+    }
+
+    .preview-scale-group {
+        padding: 0.2rem 0.45rem;
+        gap: 0.3rem;
+        font-size: 0.75rem;
+    }
+
+    .preview-scale-group label {
+        font-size: 0.72rem;
+    }
+
+    .preview-scale-select {
+        padding: 0.15rem 0.35rem;
+        font-size: 0.74rem;
+    }
+
+    .preview-zoom-group {
+        padding: 0.15rem 0.35rem;
+        gap: 0.2rem;
+    }
+
+    .preview-zoom-btn {
+        padding: 0.2rem 0.35rem;
+        font-size: 0.8rem;
+    }
+
+    .preview-zoom-level {
+        font-size: 0.74rem;
+        min-width: 34px;
+    }
+
+    .modal-close-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1.3rem;
+    }
+
+    .preview-sheet-wrapper {
+        padding: 8px 4px;
+        border-radius: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .preview-modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+    }
+
+    .preview-footer-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .preview-step2-badge {
+        font-size: 0.7rem;
+        padding: 0.18rem 0.5rem;
+    }
+
+    .preview-doc-name {
+        font-size: 0.72rem;
+        max-width: 160px;
+    }
+
+    .preview-footer-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .preview-action-btn {
+        padding: 0.6rem 0.5rem;
+        font-size: 0.82rem;
+        justify-content: center;
+        border-radius: 8px;
+        white-space: nowrap;
+    }
+
+    .preview-action-btn:active {
+        transform: scale(0.96);
+    }
+
+    .preview-action-btn.btn-whatsapp {
+        grid-column: span 2;
+        font-size: 0.95rem;
+        font-weight: 700;
+        padding: 0.8rem 1rem;
+        box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+    }
+}
+
+@media (max-width: 480px) {
+    .preview-modal-box {
+        padding: 0.5rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom, 0px)) 0.5rem;
+    }
+
+    .preview-doc-name {
+        max-width: 130px;
+    }
+
+    .preview-action-btn {
+        font-size: 0.78rem;
+        padding: 0.55rem 0.35rem;
+        gap: 0.3rem;
+    }
+
+    .preview-action-btn.btn-whatsapp {
+        font-size: 0.9rem;
+        padding: 0.75rem 0.5rem;
+    }
+}
+
 
 
 

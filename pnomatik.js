@@ -508,6 +508,7 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
             tag.title = `${requiredPressure.toFixed(0)} mbar vakumda maks debisi: ${alt.availFlow.toFixed(1)} m³/sa`;
             
             if (isSelected) {
+                tag.classList.add("active");
                 tag.style.borderColor = "var(--accent-violet)";
                 tag.style.background = "rgba(139, 92, 246, 0.12)";
             }
@@ -518,10 +519,12 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
 
                 // Reset styling for all tags
                 Array.from(recBlowerAlternatives.children).forEach(child => {
+                    child.classList.remove("active");
                     child.style.borderColor = "";
                     child.style.background = "";
                 });
                 // Style the active tag
+                tag.classList.add("active");
                 tag.style.borderColor = "var(--accent-violet)";
                 tag.style.background = "rgba(139, 92, 246, 0.12)";
 
@@ -564,15 +567,34 @@ function updateBlowerSelection(requiredFlow, requiredPressure) {
 function exportToPDF() {
     const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
     const projNameInp = document.getElementById("projectNamePnomatik");
-    const projName = projNameInp ? projNameInp.value.trim() : "";
+    const projName = (projNameInp ? projNameInp.value.trim() : "") || "Pnömatik Taşıma Projesi";
     const originalTitle = document.title;
     
-    document.title = `${dateStr} - ${projName || "Pnomatik Tasarim Projesi"} - Rapor`;
-    window.print();
-    
-    setTimeout(() => {
-        document.title = originalTitle;
-    }, 1000);
+    document.title = `${dateStr} - ${projName} - Rapor`;
+
+    const sec = document.getElementById("pnomatik-sec");
+    const cleanEl = (typeof generateCleanPnomatikPrintElement === "function") 
+        ? generateCleanPnomatikPrintElement() 
+        : null;
+
+    if (cleanEl && sec) {
+        cleanEl.classList.add("clean-pnomatik-print-container");
+        sec.appendChild(cleanEl);
+        document.body.classList.add("printing-clean-pnomatik");
+
+        window.print();
+
+        setTimeout(() => {
+            document.body.classList.remove("printing-clean-pnomatik");
+            cleanEl.remove();
+            document.title = originalTitle;
+        }, 1000);
+    } else {
+        window.print();
+        setTimeout(() => {
+            document.title = originalTitle;
+        }, 1000);
+    }
 }
 
 // --- PROJECT MANAGEMENT FUNCTIONS ---
