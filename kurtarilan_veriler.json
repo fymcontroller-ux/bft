@@ -1,0 +1,2067 @@
+{
+  "t_proposals": {
+    "PETEK PLASTİK (13072026)": {
+      "name": "PETEK PLASTİK (13072026)",
+      "companyInfo": {
+        "title": "Fiyat Teklifi",
+        "company": "PETEK KALIP AMB. MAK. PLASTİK SAN.VE TİC. A.Ş.",
+        "contact": "",
+        "date": "2026-07-13",
+        "email": "",
+        "taxOffice": "SELÇUK",
+        "taxNo": "7290482808",
+        "address": "BÜYÜKKAYACIK OSB MAH. VALİ İHSAN DEDE CAD. İDARİ BİNA NO: 16",
+        "termsValidity": "30.07.2026",
+        "termsPayment": "ÖDEME GÖRÜŞÜLECEKTİR.",
+        "termsDelivery": "ÖN ÖDEMEDEN SONRA 120 İŞGÜNÜ",
+        "termsShipping": "ALICIYA AİTTİR",
+        "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+        "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+        "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+      },
+      "items": [
+        {
+          "desc": "MERKEZİ SİSTEM DEVREYE ALIMI",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 360000
+        },
+        {
+          "desc": "PASLANMAZ BORU METRAJI",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 25
+        },
+        {
+          "desc": "GALVANİZLİ BORU METRAJI",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 15
+        }
+      ],
+      "exchangeRate": 47,
+      "showTL": false,
+      "showVAT": true,
+      "vatRate": 20,
+      "annexCentral": "",
+      "annexPnomatik": "",
+      "description": "MERKEZİ SİSTEM DEVREYE ALIMI:\n*COEX + PE + PET TOPLAM MAKİNE: 55 ADET\n*COEX + PE + PET TOPLAM HAZNE: 193 ADET\n*COEX + PE + PET TOPLAM TEKLİ ÜRÜN SEÇİM BLOĞU: 31 ADET\n*COEX + PE + PET TOPLAM ÇİFTLİ ÜRÜN SEÇİM BLOĞU: 78 ADET\n*COEX + PE + PET TOPLAM ÜÇLÜ ÜRÜN SEÇİM BLOĞU: 36 ADET\n*POMPA: 7 ADET\n*7\" EKRANLI PANO: 55 ADET\n*MERKEZİ ANA PANO: 1 ADET\n*OTOMASYON: 1 ADET\n*MONTAJ İŞÇİLİĞİ\n\nPASLANMAZ VE GALVANİZLİ BORU METRAJI:\n*Ø76,1X2 PASLANMAZ VEYA GALVANİZLİ BORU\n*CONTALI SAÇ KELEPÇE\n*SİSTEM KABLOLAMASI\n*DUVAR BAĞLANTI EKİPMANLARI\n*TESİSAT İŞÇİLİĞİ\n\nNOTLAR:\n*SİSTEM ORJİNAL HAMMADDE İLE ÇALIŞACAK ŞEKİLDE TASARLANACAKTIR. UZUN HATLARDA KIRMA (ÇAPAK) ÇEKTİRİLMEYECEKTİR.\n*KIRMA (ÇAPAK) MAKİNE BAŞINDA SEYYAR OLARAK BESLENECEKTİR.\n*FİYATLARA BESLEME SİLOLARI DAHİL DEĞİLDİR.\n*FİYATLARA MAKİNE ÜSTÜNDEKİ DEPO KAPAKLARI DAHİL DEĞİLDİR.\n*ANA BESLEME ENERJİ KABLOLALARI FİYATA DAHİL DEĞİLDİR.\n*FABRİKA İÇERİSİNDE KULLANILACAK OLAN ARAÇLAR (FORKLİFT, MENLİFT, VİNÇ VB.) İŞ VEREN TARAFINDAN TAHSİS EDİLECKTİR.",
+      "showDescription": true
+    },
+    "ÖZBURAK SUSAM (14072026)": {
+      "name": "ÖZBURAK SUSAM (14072026)",
+      "companyInfo": {
+        "title": "Fiyat Teklifi",
+        "company": "ÖZBURAK SUSAM",
+        "contact": "",
+        "date": "2026-07-14",
+        "email": "",
+        "taxOffice": "",
+        "taxNo": "",
+        "address": "",
+        "termsValidity": "30.07.2026",
+        "termsPayment": "%50 PEŞİN. KALAN BAKİYE KURULUMDAN SONRA 5 İŞ GÜNÜ İÇİNDE",
+        "termsDelivery": "ÖN ÖDEMEDEN SONRA 60 İŞGÜNÜ",
+        "termsShipping": "ALICIYA AİTTİR",
+        "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+        "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+        "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+      },
+      "items": [
+        {
+          "desc": "18 KAZANLI SUSAM TRANSFER SİSTEMİ VE DEVREYE ALIMI",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 65000
+        }
+      ],
+      "exchangeRate": 47,
+      "showTL": false,
+      "showVAT": true,
+      "vatRate": 20,
+      "annexCentral": "",
+      "annexPnomatik": "",
+      "description": "SİSTEM ÖZELLİKLERİ:\n1) 18 ADET KAVURMA KAZANI İÇİN GEÇERLİDİR. HER İKİ VEYA ÜÇ KAZAN İÇİN 1 ADET KLEPE KULLANILACAKTIR.\n2) KURU KAVRULMUŞ SUSAM ÇEKMEK İÇİN TASARLANMIŞTIR.\n3) Belirtilen Akış Diyagramına Göre 300kg'lık Kavrulmuş Susamı 2-6 dakikada transfer edebilecektir. Süre; kazanların konumuna göre değişmektedir.\n4) Belirtilen diyagrama göre kavurma kazanlarından itibaren transfer noktasına kadar olan ürün taşıma boruları firmamıza aittir. \n5) İki veya üç kazan ortasında birer kumanda seti (IŞIKLI START BUTONU) bulunacaktır.\n6) Pnomatik ekipmanlarında kullanılacak hava hattının kurulması alıcıya aittir.\n7) Transfer noktasındaki hazne 300kg susam alacak kapasitede Krom 304 kalitede imal edilecektir.\n8) Ürün görmeyecek olan bazı aksamlar boyalı sactan ve plastik malzemeden imal edilebilir.\n9) Tranfer işlemi otomasyonu firmamıza aittir.\n10) Tesisat boruları Krom 304 kalitede olacaktır.\n11) İki veya üç kazan için 1 adet otomatik yön valfi olacaktır.\n12) Kontrol sistemi 7\" dokunmatik ekran olacaktır.\n\nNOTLAR:\n*BU BİR ÖN KEŞİF TEKLİFİDİR. DETAYLI FİYATLANDIRMA FİRMA ZİYARETİNDEN SONRA YAPILACAKTIR! (PLATFORM GEREKLİ OLUP OLMADIĞI DEĞERLENDİRİLECEKTİR. VERİLEN TEKLİF PLATFORM GEREKTİRMEYEN DURUM İÇİN GEÇERLİDİR.)\n*KURULUM SÜRESİ TAKRİBİ 1 HAFTADIR. 5-6 KİŞİLİK MONTAJ EKİBİMİZİN KURULUM SÜRESİNCE YEMEK VE KONAKLAMA İHTİYACI FİRMANIZ TARAFINDAN KARŞILANACAKTIR.\n*KURULUM ESNASINDA GEREK DUYULAN FORKLİFT, VİNÇ VB EKİPMANLARIN TEDARİĞİ ALICI FİRMAYA AİTTİR.",
+      "showDescription": true
+    },
+    "Termomekanik(17072026)": {
+      "name": "Termomekanik(17072026)",
+      "companyInfo": {
+        "title": "Fiyat Teklifi",
+        "company": "TERMOMEKANİK TEKNİK HİZMETLER MÜHENDİSLİK SANAYİ TİCARET ANONİM ŞİRKETİ",
+        "contact": "",
+        "date": "2026-07-14",
+        "email": "",
+        "taxOffice": "ÇORLU",
+        "taxNo": "8400743592",
+        "address": "CUMHURİYET MAH. BASAMAK SK. NO:4 TEKİRDAĞ/ÇORLU",
+        "termsValidity": "30.07.2026",
+        "termsPayment": "%50 PEŞİN. KALAN BAKİYE AMBAR TESLİMİNDE",
+        "termsDelivery": "ÖN ÖDEMEDEN SONRA 30 İŞGÜNÜ",
+        "termsShipping": "ALICIYA AİTTİR",
+        "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+        "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+        "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+      },
+      "items": [
+        {
+          "desc": "ÖZEL KALSİT TAŞIMA CİHAZI",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 37000
+        }
+      ],
+      "exchangeRate": 47,
+      "showTL": false,
+      "showVAT": true,
+      "vatRate": 20,
+      "annexCentral": "",
+      "annexPnomatik": "",
+      "description": "SİSTEM ÖZELLİKLERİ:\n1) HAZNE - MALZEME KROMNİKEL304 - 1 ADET \n2) POMPA - 30KW -  1 ADET\n3) TOZ TOPLAMA SİSTEMİ - MALZEME BOYALI SAÇ - 1 ADET\n4) BELİRTİLEN AKIŞ DİYAGRAMINA GÖRE 6 - 7 TON/SA KAPASİTEDE KALSİT TAŞIYACAKTIR.\n5) 7\" DOKUNMATİK EKRAN - 1 ADET\n6) OTOMASYON - GMT MARKA\n7) TAŞIMA BORU ÇAPI 5\" OLARAK BELİRLENMİŞTİR. BORULAMA SİSTEMİ ALICI FİRMAYA AİTTİR.",
+      "showDescription": true
+    },
+    "TuranPlastik(20072026)": {
+      "name": "TuranPlastik(20072026)",
+      "companyInfo": {
+        "title": "Fiyat Teklifi",
+        "company": "Turan Plastik Ambalaj Maddeleri ve Gıda San. Tic. A.Ş.",
+        "contact": "Aziz TURAN",
+        "date": "2026-07-20",
+        "email": "",
+        "taxOffice": "Selçuk",
+        "taxNo": "8690146772",
+        "address": "BUYUKKAYACIK OSB MAH. 4. ORG. SAN. BOLGESI 405 NOLU SK. NO:20 SELCUKLU/KONYA",
+        "termsValidity": "30.07.2026",
+        "termsPayment": "%25 PEŞİN. KALAN BAKİYE KURULUMDAN SONRA 12 TAKSİT OLARAK TAHSİL EDİLECEKTİR.",
+        "termsDelivery": "ÖN ÖDEMEDEN SONRA 45 İŞGÜNÜ",
+        "termsShipping": "ALICIYA AİTTİR",
+        "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+        "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+        "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+      },
+      "items": [
+        {
+          "desc": "20 Makine için Merkezi Sistem Projesi (KROM)",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 60000
+        },
+        {
+          "desc": "4 m³ Modüler Silo + 50-75kg Silo Besleme Haznesi (GALVANİZLİ)",
+          "qty": 4,
+          "unit": "Adet",
+          "unitPrice": 5000
+        }
+      ],
+      "exchangeRate": 47,
+      "showTL": false,
+      "showVAT": true,
+      "vatRate": 20,
+      "annexCentral": "",
+      "annexPnomatik": "",
+      "description": "",
+      "showDescription": true
+    },
+    "KütahyaSEKİÖREN(07082026)": {
+      "name": "KütahyaSEKİÖREN(07082026)",
+      "companyInfo": {
+        "title": "PROFORMA FATURA",
+        "company": "S.S. KÜTAHYA SEKİÖREN KADIN GİRİŞİMİ ÜRETİM VE İŞLETME KOOPERATİFİ",
+        "contact": "İŞLETME KAYIT NO:  TR-43-K-013272",
+        "date": "2026-08-07",
+        "email": "",
+        "taxOffice": "30 AĞUSTOS",
+        "taxNo": "6070911654",
+        "address": "GAZİ KEMAL MAH. SİNEMA SK NO: 8/3 KÜTAHYA",
+        "termsValidity": "30.08.2026",
+        "termsPayment": "%50 PEŞİN. KALAN BAKİYE AMBAR TESLİMİNDE.",
+        "termsDelivery": "ÖN ÖDEMEDEN SONRA 20 İŞGÜNÜ",
+        "termsShipping": "ALICIYA AİTTİR",
+        "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+        "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+        "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+      },
+      "items": [
+        {
+          "desc": "BFT-DK10 Dondurarak Kurutma",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 9000
+        }
+      ],
+      "exchangeRate": 47,
+      "showTL": false,
+      "showVAT": true,
+      "vatRate": 20,
+      "annexCentral": "",
+      "annexPnomatik": "",
+      "description": "• BFT-DK10 Dondurarak Kurutma:\nKURUTMA ODASI MALZEMESİ: CrNi304\nTEPSİ MALZEMESİ: CrNi304 (30X70cm - 5 ADET)\nSOĞUTMA SİSTEMİ: R404A Gazlı Sistem\nSOĞUTMA: -30 / -35 °C\nISITMA SİSTEMİ: Slikon Rezistanslı\nBUZ TUTMA KAPASİTESİ: 7KG\nYAŞ ÜRÜN KAPASİTESİ (KG/PARTİ): 7-10KG\nGÜÇ TÜKETİMİ: Min: 2kw / Max: 10kW\nBESLEME VOLTAJI: 220V\nORTALAMA ELEKTRİK TÜKETİMİ (SAATLİK) : 1,5 - 2kW\nGARANTİ: 1 YIL",
+      "showDescription": true
+    },
+    "AnfoEndüstriyelMakine(08082026)": {
+      "name": "AnfoEndüstriyelMakine(08082026)",
+      "companyInfo": {
+        "title": "PROFORMA FATURA",
+        "company": "ANFO ENDÜSTRİYEL MAKİNA",
+        "contact": "AKİF PAR",
+        "date": "2026-08-08",
+        "email": "",
+        "taxOffice": "",
+        "taxNo": "",
+        "address": "CUMHURİYET MAH. ZÜBEYDE HANIM CAD. NO:7BB ÇORLU/TEKİRDAĞ",
+        "termsValidity": "FİYATLARA KDV DAHİL DEĞİLDİR. - 30.08.2026",
+        "termsPayment": " %50 PEŞİN. KALAN BAKİYE AMBAR TESLİMİNDE.",
+        "termsDelivery": "ÖN ÖDEMEDEN SONRA 3-4 HAFTA",
+        "termsShipping": "ALICIYA AİTTİR",
+        "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+        "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+        "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+      },
+      "items": [
+        {
+          "desc": "ÖZEL ÜRÜN TAŞIMA CİHAZI (HAZNE BOYALI)",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 9000
+        },
+        {
+          "desc": "ÖZEL ÜRÜN TAŞIMA CİHAZI (HAZNE CrNi304)",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 10500
+        }
+      ],
+      "exchangeRate": 47,
+      "showTL": false,
+      "showVAT": false,
+      "vatRate": 20,
+      "annexCentral": "",
+      "annexPnomatik": "AnfoEndüstriyelMakine(08082026)",
+      "description": "SİSTEM ÖZELLİKLERİ:\n1) HAZNE MALZEMESİ MÜŞTERİ TERCİHİNE GÖRE İMAL EDİLECEKTİR (KROMNİKEL304  VEYA BOYALI SAÇ) - 2 ADET\n2) POMPA - 7,5KW - 1 ADET\n3) TOZ TOPLAMA SİSTEMİ - MALZEME BOYALI SAÇ - 1 ADET\n4) BELİRTİLEN AKIŞ DİYAGRAMINA GÖRE 1,5-2 TON/SA KAPASİTEDE ÜRÜN TAŞIYACAKTIR.\n5) 7\" DOKUNMATİK EKRAN - 1 ADET\n6) OTOMASYON - GMT MARKA\n7) FİLTRELER KOLAY ULAŞILIP MÜDAHALE EDİLEBİLECEK ŞEKİLDE OLACAKTIR.\n8) FİYATLARA KURULUM DAHİL DEĞİLDİR. (KULLANICININ KENDİ KURABİLİCEĞİ DÜŞÜNÜLMEKTEDİR)\n9) TAŞIMA BORU ÇAPI 60,3X2MM OLARAK BELİRLENMİŞTİR. BORULAMA SİSTEMİ ALICI FİRMAYA AİTTİR.",
+      "showDescription": true
+    },
+    "Harkom(12082026)": {
+      "name": "Harkom(12082026)",
+      "companyInfo": {
+        "title": "PROFORMA FATURA",
+        "company": "Harkom",
+        "contact": "",
+        "date": "2026-08-12",
+        "email": "",
+        "taxOffice": "",
+        "taxNo": "",
+        "address": "",
+        "termsValidity": "FİYATLARA KDV DAHİL DEĞİLDİR. - 30.08.2026",
+        "termsPayment": " %50 PEŞİN. KALAN BAKİYE AMBAR TESLİMİNDE.",
+        "termsDelivery": "ÖN ÖDEMEDEN SONRA 3-4 HAFTA",
+        "termsShipping": "ALICIYA AİTTİR",
+        "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+        "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+        "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+      },
+      "items": [
+        {
+          "desc": "BFT-MY301 Hammadde Yükleyici",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 1600
+        },
+        {
+          "desc": "BFT-HY501 Hammadde Yükleyici",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 2000
+        },
+        {
+          "desc": "BFT-YTY500 Hammadde Yükleyici",
+          "qty": 1,
+          "unit": "Adet",
+          "unitPrice": 2300
+        }
+      ],
+      "exchangeRate": 47,
+      "showTL": false,
+      "showVAT": false,
+      "vatRate": 20,
+      "annexCentral": "",
+      "annexPnomatik": "",
+      "description": "• BFT-MY301 Hammadde Yükleyici:\nMAKSİMUM KAPASİTE : 300 KG/SA\nMALZEME : CrNi304 PASLANMAZ\nBAĞLANTI BORU ÇAPI : 1-1/2\" SPİRAL TELLİ HORTUM\nHAMMADDE HAZNESİ : 0-7KG\nMOTOR : 2 KADEMELİ 1,1KW (GARANTİLİ DEĞİLDİR)\nMEKANİK VE ELEKTRONİK GARANTİ: 1 YIL\n\n• BFT-HY501 Hammadde Yükleyici:\nMAKSİMUM KAPASİTE : 500 KG/SA\nMALZEME : CrNi304 PASLANMAZ\nBESLEME BASINCI : 6-8 BAR (VİDALI GRUP KOMPRESÖR GEREKLİDİR)\nBAĞLANTI BORU ÇAPI : 1-1/2\" SPİRAL TELLİ HORTUM\nHAMMADDE HAZNESİ : 0-7 KG\nMEKANİK VE ELEKTRONİK GARANTİ: 1 YIL\n\n• BFT-YTY500 Hammadde Yükleyici:\nMAKSİMUM KAPASİTE : 500 KG/SA\nMOTOR: 2,2kW TEK KADEMELİ\nMOTOR ÜNİTESİ MALZEMESİ : ST37 STATİK BOYALI\nÜRÜN HAZNE MALZEMESİ: CrNi304 PASLANMAZ\nBAĞLANTI BORU ÇAPI : 1-1/2\" SPİRAL TELLİ HORTUM\nHAMMADDE HAZNESİ : 0-10 KG\nMEKANİK VE ELEKTRONİK GARANTİ: 1 YIL",
+      "showDescription": true
+    },
+    "Yeni Teklif": {
+      "name": "Yeni Teklif",
+      "companyInfo": {
+        "title": "Fiyat Teklifi",
+        "company": "",
+        "contact": "",
+        "date": "2026-08-26",
+        "email": "",
+        "taxOffice": "",
+        "taxNo": "",
+        "address": "",
+        "termsValidity": "30.06.2026",
+        "termsPayment": "%50 PEŞİN KALAN AMBAR TESLİMİ ÖDECEK",
+        "termsDelivery": "ÖN ÖDEMEDEN SONRA 30 İŞGÜNÜ",
+        "termsShipping": "ALICIYA AİTTİR",
+        "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+        "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+        "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+      },
+      "items": [],
+      "exchangeRate": 47,
+      "showTL": false,
+      "showVAT": false,
+      "vatRate": 20,
+      "annexCentral": "",
+      "annexPnomatik": "",
+      "description": "• BFT-MY300 Hammadde Yükleyici:\nMAKSİMUM KAPASİTE : 300KG/SA\nMALZEME : ST37 STATİK BOYALI\nBAĞLANTI BORU ÇAPI : 1-1/2\" SPİRAL TELLİ HORTUM\nHAMMADDE HAZNESİ : 0-7KG\nMOTOR : 2 KADEMELİ 1,1KW (GARANTİLİ DEĞİLDİR)\nMEKANİK VE ELEKTRONİK GARANTİ: 1 YIL",
+      "showDescription": true
+    },
+    "Yeni Teklif1": {
+      "name": "Yeni Teklif1",
+      "companyInfo": {
+        "title": "Fiyat Teklifi",
+        "company": "",
+        "contact": "",
+        "date": "2026-08-26",
+        "email": "",
+        "taxOffice": "",
+        "taxNo": "",
+        "address": "",
+        "termsValidity": "30.06.2026",
+        "termsPayment": "%50 PEŞİN KALAN AMBAR TESLİMİ ÖDECEK",
+        "termsDelivery": "ÖN ÖDEMEDEN SONRA 30 İŞGÜNÜ",
+        "termsShipping": "ALICIYA AİTTİR",
+        "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+        "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+        "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+      },
+      "items": [],
+      "exchangeRate": 47,
+      "showTL": false,
+      "showVAT": false,
+      "vatRate": 20,
+      "annexCentral": "",
+      "annexPnomatik": "",
+      "description": "",
+      "showDescription": true
+    }
+  },
+  "m_projects": {
+    "Turan Plastik (25062026) (Galvanizli)": {
+      "name": "Turan Plastik (25062026) (Galvanizli)",
+      "stationCount": 20,
+      "materialCount": 4,
+      "pumpCount": 1,
+      "machineDistance": 7.5,
+      "longestDistance": 125,
+      "wallToMachineCable": 4,
+      "controlCableLength": 2,
+      "wallToMachineHose": 4,
+      "screenSelect": "GHPro-070E-WIFI*",
+      "driverSelect": "MICNO-02200H*",
+      "pumpSelect": "2RB 920 - 16,5 KW ÇİFT TÜRBİN*",
+      "pipeSelect": "Ø76.1X1,5 SİYAH BORU (Galvaniz DAHİL)*",
+      "laborRatio": 50
+    },
+    "Turan Plastik (25062026) (KROM)": {
+      "name": "Turan Plastik (25062026) (KROM)",
+      "stationCount": 20,
+      "materialCount": 4,
+      "pumpCount": 1,
+      "machineDistance": 7.5,
+      "longestDistance": 125,
+      "wallToMachineCable": 4,
+      "controlCableLength": 2,
+      "wallToMachineHose": 4,
+      "screenSelect": "GHPro-070E-WIFI*",
+      "driverSelect": "MICNO-02200H*",
+      "pumpSelect": "2RB 920 - 16,5 KW ÇİFT TÜRBİN*",
+      "pipeSelect": "Ø76.1X2 KROM BORU*",
+      "laborRatio": 50
+    },
+    "AnfoEndüstriyelMakine(08082026)": {
+      "name": "AnfoEndüstriyelMakine(08082026)",
+      "stationCount": 2,
+      "materialCount": 1,
+      "pumpCount": 1,
+      "machineDistance": 4,
+      "longestDistance": 20,
+      "wallToMachineCable": 7,
+      "controlCableLength": 4,
+      "wallToMachineHose": 7,
+      "screenSelect": "GHPro-070E-WIFI*",
+      "driverSelect": "MICNO-01100H*",
+      "pumpSelect": "BLOWER 7,5 KW ÇİFT TÜRBİN*",
+      "pipeSelect": "Ø60,3X2 SİYAH BORU (Galvaniz DAHİL)",
+      "laborRatio": 50
+    }
+  },
+  "p_projects": {
+    "Turan Plastik (25062026)": {
+      "name": "Turan Plastik (25062026)",
+      "productSelect": "P.Propilen granül",
+      "capacity": 1,
+      "pipeDiameter": 72,
+      "verticalLength": 4,
+      "totalLength": 125,
+      "elbows": 4,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 920 (16.50 kW)"
+    },
+    "AnfoEndüstriyelMakine(08082026)": {
+      "name": "AnfoEndüstriyelMakine(08082026)",
+      "productSelect": "Buğday kepeği",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 6,
+      "totalLength": 20,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.8,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 820 (7.50 kW)"
+    },
+    "Yeni Proje": {
+      "name": "Yeni Proje",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 820 (5.50 kW)"
+    },
+    "Yeni Proje1": {
+      "name": "Yeni Proje1",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje2": {
+      "name": "Yeni Proje2",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje3": {
+      "name": "Yeni Proje3",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje4": {
+      "name": "Yeni Proje4",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje5": {
+      "name": "Yeni Proje5",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje6": {
+      "name": "Yeni Proje6",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje7": {
+      "name": "Yeni Proje7",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje8": {
+      "name": "Yeni Proje8",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje9": {
+      "name": "Yeni Proje9",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje10": {
+      "name": "Yeni Proje10",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    },
+    "Yeni Proje11": {
+      "name": "Yeni Proje11",
+      "productSelect": "P.Propilen granül",
+      "capacity": 2,
+      "pipeDiameter": 56,
+      "verticalLength": 4,
+      "totalLength": 6,
+      "elbows": 3,
+      "airDensity": 0.8,
+      "velocityRatio": 0.7,
+      "selectedPhase": "3AC",
+      "selectedBlowerModel": "2RB 720 (3.00 kW)"
+    }
+  },
+  "l_materials": [
+    {
+      "name": "YÜKLEYİCİ PANO LAZER KESİM",
+      "priceUSD": 19.09,
+      "group": "LAZER KESİM",
+      "desc": null,
+      "updateDate": "2021",
+      "supplier": "TUĞRUL LAZER"
+    },
+    {
+      "name": "HYMY500-502 LAZER KESİM",
+      "priceUSD": 14.29,
+      "group": "LAZER KESİM",
+      "supplier": "TUĞRUL LAZER",
+      "updateDate": "02.07.2026",
+      "desc": null
+    },
+    {
+      "name": "HYMY501-503 LAZER KESİM",
+      "priceUSD": 126.63,
+      "group": "LAZER KESİM",
+      "supplier": "TUĞRUL LAZER",
+      "updateDate": "02.07.2026",
+      "desc": null
+    },
+    {
+      "name": "1\" FİLİTRE REGÜLATÖR",
+      "priceUSD": 45.09,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "desc": null,
+      "updateDate": "2021"
+    },
+    {
+      "name": "YÜKLEYİCİ PANO BOYA",
+      "priceUSD": 1.61,
+      "group": "MEKANİK BOYA VE KAYNAK",
+      "desc": null,
+      "updateDate": "26.06.2026",
+      "supplier": "BOYACI CELAL"
+    },
+    {
+      "name": "HYMY500-502 GÖVDE BOYA",
+      "priceUSD": 2.53,
+      "group": "MEKANİK BOYA VE KAYNAK",
+      "supplier": "BOYACI CELAL",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "HYMY500-502 ÜST KAPAK BOYA",
+      "priceUSD": 1.1,
+      "group": "MEKANİK BOYA VE KAYNAK",
+      "supplier": "BOYACI CELAL",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "HYMY500-502 PLASTİK ÜST GÖVDE",
+      "priceUSD": 18.1,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "desc": null,
+      "updateDate": "2021",
+      "supplier": "KÖSEOĞLU PLASTİK"
+    },
+    {
+      "name": "HAZNE ALT KAPAK PLASTİK GÖVDE",
+      "priceUSD": 18.1,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "KÖSEOĞLU PLASTİK",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "HYMY500-501-502-503 KAYNAK",
+      "priceUSD": 2.78,
+      "group": "MEKANİK BOYA VE KAYNAK",
+      "supplier": "BFT",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "HY1000-1001 KAYNAK MALİYETİ",
+      "priceUSD": 16.67,
+      "group": "MEKANİK BOYA VE KAYNAK",
+      "supplier": "BFT",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "HY2000-2001 KAYNAK MALİYETİ",
+      "priceUSD": 0,
+      "group": "MEKANİK BOYA VE KAYNAK",
+      "supplier": "BFT",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "HY1000 BOYA MALİYETİ",
+      "priceUSD": 0,
+      "group": "MEKANİK BOYA VE KAYNAK",
+      "supplier": "BOYACI CELAL",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "HY2000 BOYA MALİYETİ",
+      "priceUSD": 0,
+      "group": "MEKANİK BOYA VE KAYNAK",
+      "supplier": "BOYACI CELAL",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "1/2\" FİLTRELİ REGÜLATÖR G GÖVDE",
+      "priceUSD": 19.3,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "31.12.2025",
+      "desc": null
+    },
+    {
+      "name": "1\"-1/2\" REDÜKSİYON PLX",
+      "priceUSD": 1.71,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "1\" DÜZ NİPEL 30°",
+      "priceUSD": 1.66,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "1\" İÇTEN DİŞLİ TE",
+      "priceUSD": 6.15,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "3/4\"-1\" ORANTILI NİPEL",
+      "priceUSD": 2.04,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "1\" N.K 0-16 BAR SELENOİD VALF",
+      "priceUSD": 36,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "3/4'' 25 MM PATLAÇ VALF",
+      "priceUSD": 22.6,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "1/2 16 MM PNÖM.DÜZ REKOR",
+      "priceUSD": 1.88,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "1\"-1/2\" ORANTILI NİPEL",
+      "priceUSD": 1.87,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "1/2 16 MM PNÖM.DİRSEK REKOR",
+      "priceUSD": 1.23,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "23.06.2026",
+      "desc": null
+    },
+    {
+      "name": "1/2\" ALYAN KÖRTAPA İNCE",
+      "priceUSD": 0.58,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "02.08.2025",
+      "desc": null
+    },
+    {
+      "name": "1/2” 3/2 TEK BOBİN VALF*",
+      "priceUSD": 12,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "15.07.2026",
+      "desc": null
+    },
+    {
+      "name": "1/2\" DÜZ NİPEL 30°",
+      "priceUSD": 1.02,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "1/2” 5/3 KAPALI MERKEZ VALF",
+      "priceUSD": 34.5,
+      "group": "PNÖMATİK EKİPMANLAR",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "KARE FİLTRE HAMMADDE + BASIMI",
+      "priceUSD": 4.7,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "OKERSAN KAUÇUK",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "YUVARLAK FİLTRE HAMMADDE + BASIMI",
+      "priceUSD": 4.7,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "OKERSAN KAUÇUK",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "KARE FİLTRE BEZİ",
+      "priceUSD": 1.31,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "NECDET KAYA",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "YUVARLAK FİLTRE BEZİ",
+      "priceUSD": 1.31,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "NECDET KAYA",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "YUVARLAK 6 DELİKLİ CONTA",
+      "priceUSD": 0.17,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "KARE 4 DELİKLİ CONTA",
+      "priceUSD": 0.63,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "KARE 8 DELİKLİ CONTA",
+      "priceUSD": 0.63,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "ENJEKTÖR ARKA CONTA",
+      "priceUSD": 0.02,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "PLASTİK POMPA GÖVDE",
+      "priceUSD": 0.49,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "PLASTİK POMPA KAPAK",
+      "priceUSD": 0.39,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "PLASTİK POMPA ENJEKTÖR UCU",
+      "priceUSD": 0.5,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "ENJEKTÖR HAMMADDE + BASIMI",
+      "priceUSD": 0.1,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "PLASTİK KULP",
+      "priceUSD": 0.36,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "PİNMAKS",
+      "updateDate": "24.06.2026",
+      "desc": null
+    },
+    {
+      "name": "Q38x1,2 POLİSAJLI PASLANMAZ DİKİŞLİ BORU - 12cm",
+      "priceUSD": 1,
+      "group": "DİĞER MALZEMELER",
+      "supplier": "BAYRAKÇIOĞLU",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "Q38x1,2 POLİSAJLI PASLANMAZ DİKİŞLİ BORU - 60cm",
+      "priceUSD": 4,
+      "group": "DİĞER MALZEMELER",
+      "supplier": "BAYRAKÇIOĞLU",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "GWEST 22 MM SES-LED FLAŞÖR İKAZLI BUZZER 24V AC-DC",
+      "priceUSD": 1.81,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "desc": null,
+      "updateDate": "2021"
+    },
+    {
+      "name": "LC1-D12BD 24V DC 5.5kW 1NA+1NK KONTAKTÖR TELEM.",
+      "priceUSD": 20.98,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "GWEST AZ-15GW22-B AZ MİKRO SWITCH",
+      "priceUSD": 2.2,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "18.05.2026",
+      "desc": null
+    },
+    {
+      "name": "DELTA PMT SERİSİ 24V 100W 4,5A GÜÇ KAYNAĞI",
+      "priceUSD": 12.82,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "TTR 6x1,5mm² KABLO",
+      "priceUSD": 1.41,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "28.04.2026",
+      "desc": null
+    },
+    {
+      "name": "SCHNEIDER RSZE1S48M SOKETLİ RÖLE İÇİN SOKET",
+      "priceUSD": 2.24,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "RSB-2A080BD RÖLE",
+      "priceUSD": 1.5,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "ELEKTRONİK KART",
+      "priceUSD": 29,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "22.05.2025",
+      "desc": null
+    },
+    {
+      "name": "POWER SOKETİ",
+      "priceUSD": 0.26,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "17.05.2025",
+      "desc": null
+    },
+    {
+      "name": "POWER KABLOSU",
+      "priceUSD": 0.78,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "17.05.2025",
+      "desc": null
+    },
+    {
+      "name": "SWİTCH SOKETİ",
+      "priceUSD": 0.21,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "SWİTCH KABLOSU",
+      "priceUSD": 0.54,
+      "group": "ELEKTRİK ELEKTRONİK MALZEMELER",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "Ø38 SPİRAL TELLİ HORTUM (1 1/2\")",
+      "priceUSD": 3,
+      "group": "SPİRAL TELLİ HORTUM",
+      "desc": null,
+      "updateDate": "26.06.2026",
+      "supplier": "MSR PLASTİK"
+    },
+    {
+      "name": "Ø48 SPİRAL TELLİ HORTUM (2\")",
+      "priceUSD": 4,
+      "group": "SPİRAL TELLİ HORTUM",
+      "supplier": "MSR PLASTİK",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "Ø60 SPİRAL TELLİ HORTUM (2 1/2\")",
+      "priceUSD": 6.5,
+      "group": "SPİRAL TELLİ HORTUM",
+      "supplier": "MSR PLASTİK",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "Ø76 SPİRAL TELLİ HORTUM (3\")",
+      "priceUSD": 8,
+      "group": "SPİRAL TELLİ HORTUM",
+      "supplier": "MSR PLASTİK",
+      "updateDate": "26.06.2026",
+      "desc": null
+    },
+    {
+      "name": "Ø38 SPİRAL TELLİ HORTUM KELEPÇESİ",
+      "priceUSD": 1.2,
+      "group": "SPİRAL TELLİ HORTUM",
+      "supplier": "KARYILDIZ",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "Ø48 SPİRAL TELLİ HORTUM KELEPÇESİ",
+      "priceUSD": 1.2,
+      "group": "SPİRAL TELLİ HORTUM",
+      "supplier": "KARYILDIZ",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "Ø60 SPİRAL TELLİ HORTUM KELEPÇESİ",
+      "priceUSD": 1.2,
+      "group": "SPİRAL TELLİ HORTUM",
+      "supplier": "KARYILDIZ",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "Ø76 SPİRAL TELLİ HORTUM KELEPÇESİ",
+      "priceUSD": 1.2,
+      "group": "SPİRAL TELLİ HORTUM",
+      "supplier": "KARYILDIZ",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "2 KADEMELİ MONOFAZE MOTOR (BT0160)",
+      "priceUSD": 14.6,
+      "group": "POMPA (BLOWER) MODELLERİ",
+      "desc": null,
+      "updateDate": "01.07.2026",
+      "supplier": "BYS"
+    },
+    {
+      "name": "BLOWER 0,70 KW TEK TÜRBİN",
+      "priceUSD": 160,
+      "group": "POMPA (BLOWER) MODELLERİ",
+      "supplier": "DOĞUŞSAN MÜHENDİSLİK",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "BLOWER 1,60 KW TEK TÜRBİN",
+      "priceUSD": 285,
+      "group": "POMPA (BLOWER) MODELLERİ",
+      "supplier": "DOĞUŞSAN MÜHENDİSLİK",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "BLOWER 2,2 KW TEK TÜRBİN",
+      "priceUSD": 300,
+      "group": "POMPA (BLOWER) MODELLERİ",
+      "supplier": "DOĞUŞSAN MÜHENDİSLİK",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "BLOWER 1,60 KW ÇİFT TÜRBİN",
+      "priceUSD": 355,
+      "group": "POMPA (BLOWER) MODELLERİ",
+      "supplier": "DOĞUŞSAN MÜHENDİSLİK",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "BLOWER 2,2 KW ÇİFT TÜRBİN",
+      "priceUSD": 375,
+      "group": "POMPA (BLOWER) MODELLERİ",
+      "supplier": "DOĞUŞSAN MÜHENDİSLİK",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "BLOWER 3,0 KW ÇİFT TÜRBİN",
+      "priceUSD": 550,
+      "group": "POMPA (BLOWER) MODELLERİ",
+      "supplier": "DOĞUŞSAN MÜHENDİSLİK",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "BLOWER 4,0 KW ÇİFT TÜRBİN",
+      "priceUSD": 600,
+      "group": "POMPA (BLOWER) MODELLERİ",
+      "supplier": "DOĞUŞSAN MÜHENDİSLİK",
+      "updateDate": "01.07.2026",
+      "desc": null
+    },
+    {
+      "name": "TRİFAZE MODEL GÖVDE LAZER KESİM",
+      "priceUSD": 78,
+      "group": "LAZER KESİM",
+      "supplier": "TUĞRUL DEMİR",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "TRİFAZE MODEL HAZNE LAZER KESİM",
+      "priceUSD": 12,
+      "group": "LAZER KESİM",
+      "supplier": "TUĞRUL DEMİR",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "TRİFAZE MODEL BOYA",
+      "priceUSD": 15,
+      "group": "MEKANİK BOYA VE KAYNAK",
+      "supplier": "BOYACI CELAL",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "TOZ FİLTRE (HT0809) (Ø185x130mm)",
+      "priceUSD": 21,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "NANOTECH",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "TOZ FİLTRE (HT1550) (Ø185x450mm)",
+      "priceUSD": 34,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "NANOTECH",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "TRİFAZE MOTOR TAKOZLARI",
+      "priceUSD": 1,
+      "group": "PLASTİK VE CONTA AKSAMLARI",
+      "supplier": "",
+      "updateDate": "2021",
+      "desc": null
+    },
+    {
+      "name": "362-1 U KANCALI TOGGLE CLAMP-HAFİF SERİ",
+      "priceUSD": 3.25,
+      "group": "DİĞER MALZEMELER",
+      "supplier": "PİNYON",
+      "updateDate": "23.06.2026",
+      "desc": null
+    }
+  ],
+  "l_models": {
+    "HY500": {
+      "items": [
+        {
+          "name": "YÜKLEYİCİ PANO LAZER KESİM",
+          "qty": 1
+        },
+        {
+          "name": "YÜKLEYİCİ PANO BOYA",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-502 LAZER KESİM",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-502 PLASTİK ÜST GÖVDE",
+          "qty": 1
+        },
+        {
+          "name": "HAZNE ALT KAPAK PLASTİK GÖVDE",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-501-502-503 KAYNAK",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-502 GÖVDE BOYA",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-502 ÜST KAPAK BOYA",
+          "qty": 1
+        },
+        {
+          "name": "1/2\" FİLTRELİ REGÜLATÖR G GÖVDE",
+          "qty": 1
+        },
+        {
+          "name": "1/2 16 MM PNÖM.DİRSEK REKOR",
+          "qty": 8
+        },
+        {
+          "name": "1/2\" ALYAN KÖRTAPA İNCE",
+          "qty": 2
+        },
+        {
+          "name": "1/2” 5/3 KAPALI MERKEZ VALF",
+          "qty": 1
+        },
+        {
+          "name": "KARE FİLTRE HAMMADDE + BASIMI",
+          "qty": 1
+        },
+        {
+          "name": "KARE FİLTRE BEZİ",
+          "qty": 1
+        },
+        {
+          "name": "YUVARLAK 6 DELİKLİ CONTA",
+          "qty": 2
+        },
+        {
+          "name": "KARE 4 DELİKLİ CONTA",
+          "qty": 1
+        },
+        {
+          "name": "ENJEKTÖR ARKA CONTA",
+          "qty": 8
+        },
+        {
+          "name": "PLASTİK POMPA GÖVDE",
+          "qty": 1
+        },
+        {
+          "name": "PLASTİK POMPA KAPAK",
+          "qty": 2
+        },
+        {
+          "name": "PLASTİK POMPA ENJEKTÖR UCU",
+          "qty": 1
+        },
+        {
+          "name": "ENJEKTÖR HAMMADDE + BASIMI",
+          "qty": 8
+        },
+        {
+          "name": "PLASTİK KULP",
+          "qty": 1
+        },
+        {
+          "name": "362-1 U KANCALI TOGGLE CLAMP-HAFİF SERİ",
+          "qty": 4
+        },
+        {
+          "name": "Q38x1,2 POLİSAJLI PASLANMAZ DİKİŞLİ BORU - 12cm",
+          "qty": 1
+        },
+        {
+          "name": "Q38x1,2 POLİSAJLI PASLANMAZ DİKİŞLİ BORU - 60cm",
+          "qty": 1
+        },
+        {
+          "name": "ELEKTRONİK KART",
+          "qty": 1
+        },
+        {
+          "name": "GWEST 22 MM SES-LED FLAŞÖR İKAZLI BUZZER 24V AC-DC",
+          "qty": 1
+        },
+        {
+          "name": "GWEST AZ-15GW22-B AZ MİKRO SWITCH",
+          "qty": 1
+        },
+        {
+          "name": "POWER KABLOSU",
+          "qty": 1
+        },
+        {
+          "name": "SWİTCH KABLOSU",
+          "qty": 1
+        },
+        {
+          "name": "SWİTCH SOKETİ",
+          "qty": 1
+        },
+        {
+          "name": "TTR 6x1,5mm² KABLO",
+          "qty": 4
+        },
+        {
+          "name": "Ø38 SPİRAL TELLİ HORTUM (1 1/2\")",
+          "qty": 4
+        },
+        {
+          "name": "Ø38 SPİRAL TELLİ HORTUM KELEPÇESİ",
+          "qty": 2
+        }
+      ],
+      "machineCount": 30
+    },
+    "MY302": {
+      "machineCount": 30,
+      "items": [
+        {
+          "name": "YÜKLEYİCİ PANO LAZER KESİM",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-502 LAZER KESİM",
+          "qty": 1
+        },
+        {
+          "name": "YÜKLEYİCİ PANO BOYA",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-502 GÖVDE BOYA",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-502 ÜST KAPAK BOYA",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-502 PLASTİK ÜST GÖVDE",
+          "qty": 1
+        },
+        {
+          "name": "HAZNE ALT KAPAK PLASTİK GÖVDE",
+          "qty": 1
+        },
+        {
+          "name": "HYMY500-501-502-503 KAYNAK",
+          "qty": 1
+        },
+        {
+          "name": "1/2\" ALYAN KÖRTAPA İNCE",
+          "qty": 1
+        },
+        {
+          "name": "KARE FİLTRE BEZİ",
+          "qty": 1
+        },
+        {
+          "name": "KARE FİLTRE HAMMADDE + BASIMI",
+          "qty": 1
+        },
+        {
+          "name": "YUVARLAK 6 DELİKLİ CONTA",
+          "qty": 2
+        },
+        {
+          "name": "KARE 4 DELİKLİ CONTA",
+          "qty": 1
+        },
+        {
+          "name": "PLASTİK POMPA KAPAK",
+          "qty": 1
+        },
+        {
+          "name": "362-1 U KANCALI TOGGLE CLAMP-HAFİF SERİ",
+          "qty": 4
+        },
+        {
+          "name": "PLASTİK KULP",
+          "qty": 1
+        },
+        {
+          "name": "Q38x1,2 POLİSAJLI PASLANMAZ DİKİŞLİ BORU - 12cm",
+          "qty": 1
+        },
+        {
+          "name": "Q38x1,2 POLİSAJLI PASLANMAZ DİKİŞLİ BORU - 60cm",
+          "qty": 1
+        },
+        {
+          "name": "GWEST 22 MM SES-LED FLAŞÖR İKAZLI BUZZER 24V AC-DC",
+          "qty": 1
+        },
+        {
+          "name": "GWEST AZ-15GW22-B AZ MİKRO SWITCH",
+          "qty": 1
+        },
+        {
+          "name": "TTR 6x1,5mm² KABLO",
+          "qty": 4
+        },
+        {
+          "name": "ELEKTRONİK KART",
+          "qty": 1
+        },
+        {
+          "name": "POWER KABLOSU",
+          "qty": 1
+        },
+        {
+          "name": "POWER SOKETİ",
+          "qty": 1
+        },
+        {
+          "name": "SWİTCH KABLOSU",
+          "qty": 1
+        },
+        {
+          "name": "SWİTCH SOKETİ",
+          "qty": 1
+        },
+        {
+          "name": "Ø38 SPİRAL TELLİ HORTUM (1 1/2\")",
+          "qty": 4
+        },
+        {
+          "name": "Ø38 SPİRAL TELLİ HORTUM KELEPÇESİ",
+          "qty": 2
+        },
+        {
+          "name": "2 KADEMELİ MONOFAZE MOTOR (BT0160)",
+          "qty": 1
+        },
+        {
+          "name": "1/2 16 MM PNÖM.DİRSEK REKOR",
+          "qty": 3
+        },
+        {
+          "name": "1/2” 3/2 TEK BOBİN VALF*",
+          "qty": 1
+        }
+      ]
+    }
+  },
+  "l_personnel": [
+    {
+      "name": "Fatih YAVUZ",
+      "netSalary": 1930,
+      "ssk": 0,
+      "bagkur": 0,
+      "yemek": 0,
+      "yol": 0
+    },
+    {
+      "name": "Bekir KARTAL",
+      "netSalary": 1930,
+      "ssk": 0,
+      "bagkur": 0,
+      "yemek": 0,
+      "yol": 0
+    },
+    {
+      "name": "Kamil YAVUZ",
+      "netSalary": 970,
+      "ssk": 0,
+      "bagkur": 0,
+      "yemek": 0,
+      "yol": 0
+    },
+    {
+      "name": "Ali G�NEL",
+      "netSalary": 970,
+      "ssk": 0,
+      "bagkur": 0,
+      "yemek": 90,
+      "yol": 0
+    },
+    {
+      "name": "Hasan H�seyin KARTAL",
+      "netSalary": 860,
+      "ssk": 0,
+      "bagkur": 0,
+      "yemek": 90,
+      "yol": 0
+    },
+    {
+      "name": "Hasan Berk KARTAL",
+      "netSalary": 610,
+      "ssk": 0,
+      "bagkur": 0,
+      "yemek": 90,
+      "yol": 0
+    }
+  ],
+  "l_shopExpenses": [
+    {
+      "name": "Kira",
+      "price": 555
+    },
+    {
+      "name": "Güvenlik",
+      "price": 35
+    },
+    {
+      "name": "Elektrik",
+      "price": 215
+    },
+    {
+      "name": "Su",
+      "price": 17
+    },
+    {
+      "name": "Telefon",
+      "price": 5
+    },
+    {
+      "name": "İnternet",
+      "price": 13
+    },
+    {
+      "name": "Muhasebe Ücreti",
+      "price": 175
+    },
+    {
+      "name": "SGK",
+      "price": 1000
+    },
+    {
+      "name": "Servis",
+      "price": 300
+    }
+  ],
+  "m_drivers": [
+    {
+      "name": "MICNO-00075H*",
+      "price": 250
+    },
+    {
+      "name": "MICNO-00150H*",
+      "price": 260
+    },
+    {
+      "name": "MICNO-00220H*",
+      "price": 306
+    },
+    {
+      "name": "MICNO-00370H*",
+      "price": 333
+    },
+    {
+      "name": "MICNO-00550H*",
+      "price": 442
+    },
+    {
+      "name": "MICNO-00750H*",
+      "price": 505
+    },
+    {
+      "name": "MICNO-01100H*",
+      "price": 635
+    },
+    {
+      "name": "MICNO-01500H*",
+      "price": 800
+    },
+    {
+      "name": "MICNO-01850H*",
+      "price": 926
+    },
+    {
+      "name": "MICNO-02200H*",
+      "price": 1120
+    },
+    {
+      "name": "MICNO-03000HS*",
+      "price": 1250
+    }
+  ],
+  "m_generalItems": [
+    {
+      "id": "plc",
+      "name": "GMT-396T (PLC)*",
+      "price": 222,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "input_mod",
+      "name": "GXM-16IA (Input Modül)*",
+      "price": 70,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "output_mod",
+      "name": "GXM-16TA (Output Modül)*",
+      "price": 96,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "transistor_kart",
+      "name": "Transtör Kart*",
+      "price": 18,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "guc_kaynagi",
+      "name": "Güç Kaynağı*",
+      "price": 55,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "fren_direnci",
+      "name": "Fren Direnci*",
+      "price": 90,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "pano_havalandirma",
+      "name": "Pano Havalandırma*",
+      "price": 90,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "lobar_kucuk",
+      "name": "Lobar (Küçük)*",
+      "price": 20,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "lobar_buyuk",
+      "name": "Lobar (Büyük)*",
+      "price": 40,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "pano",
+      "name": "Pano*",
+      "price": 500,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "diger_malzemeler",
+      "name": "Diğer Malzemeler*",
+      "price": 50,
+      "category": "Pano Ekipmanları"
+    },
+    {
+      "id": "kablo_12x1",
+      "name": "12X1 Kumanda Kablosu*",
+      "price": 2,
+      "category": "Kablolar"
+    },
+    {
+      "id": "kablo_6x05",
+      "name": "6X0,5 Kumanda Kablosu*",
+      "price": 1,
+      "category": "Kablolar"
+    },
+    {
+      "id": "kablo_8x1",
+      "name": "8X1 KUMANDA KABLOSU (Duvar-İstasyon Arası)*",
+      "price": 1.5,
+      "category": "Kablolar"
+    },
+    {
+      "id": "kablo_4x4",
+      "name": "4x4 Bilendajlı Kablo*",
+      "price": 4.5,
+      "category": "Kablolar"
+    },
+    {
+      "id": "soket_duvar",
+      "name": "24LÜ SOKET (DUVAR TİPİ)*",
+      "price": 67,
+      "category": "Soketler"
+    },
+    {
+      "id": "soket_makina",
+      "name": "24LÜ SOKET (MAKİNA TİPİ)*",
+      "price": 67,
+      "category": "Soketler"
+    },
+    {
+      "id": "soket_duvar_16",
+      "name": "16LI SOKET (DUVAR TİPİ)",
+      "price": 50,
+      "category": "Soketler"
+    },
+    {
+      "id": "hazne",
+      "name": "HAZNE*",
+      "price": 275,
+      "category": "İstasyon Ekipmanları"
+    },
+    {
+      "id": "kumanda_seti",
+      "name": "KUMANDA SETİ*",
+      "price": 45,
+      "category": "İstasyon Ekipmanları"
+    },
+    {
+      "id": "profil_120",
+      "name": "120x120x4 Profil*",
+      "price": 5,
+      "category": "Duvardaki Sistem"
+    },
+    {
+      "id": "hat_baglanti",
+      "name": "HAT BAĞLANTI EKİPMANLARI*",
+      "price": 10,
+      "category": "Duvardaki Sistem"
+    },
+    {
+      "id": "piston_ma1650",
+      "name": "MA1650 PİSTON*",
+      "price": 10,
+      "category": "Duvardaki Sistem"
+    },
+    {
+      "id": "valf_5_2",
+      "name": "VALF (1/4\" 5/2 Tek Bobin)*",
+      "price": 12,
+      "category": "Duvardaki Sistem"
+    },
+    {
+      "id": "klepe_takimi",
+      "name": "KLEPE TAKIMI*",
+      "price": 6,
+      "category": "Duvardaki Sistem"
+    },
+    {
+      "id": "sase_sistemi",
+      "name": "ŞASE SİSTEMİ (SİKLON+JETFİLTRE)*",
+      "price": 1000,
+      "category": "Pompa Şase"
+    },
+    {
+      "id": "contali_kelepce",
+      "name": "CONTALI SAÇ KELEPÇE*",
+      "price": 13,
+      "category": "Tesisat ve Borulama"
+    },
+    {
+      "id": "tesisat_aparatlari",
+      "name": "TESİSAT DÖŞEME APARATLARI*",
+      "price": 17,
+      "category": "Tesisat ve Borulama"
+    }
+  ],
+  "m_pipes": [
+    {
+      "name": "Ø38X1,2 KROM BORU",
+      "price": 0,
+      "hose": "Ø38 SPİRAL HORTUM (1 1/2\")*",
+      "hosePrice": 3,
+      "clamp": "Ø38 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    },
+    {
+      "name": "Ø48X1,5 KROM BORU",
+      "price": 0,
+      "hose": "Ø48 SPİRAL HORTUM (2\")*",
+      "hosePrice": 4,
+      "clamp": "Ø48 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    },
+    {
+      "name": "Ø60.3X2 KROM BORU",
+      "price": 0,
+      "hose": "Ø60.3 SPİRAL HORTUM (2 1/2\")*",
+      "hosePrice": 6.5,
+      "clamp": "Ø60.3 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    },
+    {
+      "name": "Ø76.1X2 KROM BORU*",
+      "price": 14.5,
+      "hose": "Ø76.1 SPİRAL HORTUM (3\")*",
+      "hosePrice": 8,
+      "clamp": "Ø76.1 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    },
+    {
+      "name": "Ø88.9x2 KROM BORU",
+      "price": 0,
+      "hose": "Ø88.9 SPİRAL HORTUM",
+      "hosePrice": 0,
+      "clamp": "Ø88.9 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    },
+    {
+      "name": "Ø38X1,2 SİYAH BORU (Galvaniz DAHİL)*",
+      "price": 1.7,
+      "hose": "Ø38 SPİRAL HORTUM (1 1/2\")*",
+      "hosePrice": 3,
+      "clamp": "Ø38 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    },
+    {
+      "name": "Ø48X1,5 SİYAH BORU (Galvaniz DAHİL)*",
+      "price": 2.6,
+      "hose": "Ø48 SPİRAL HORTUM (2\")*",
+      "hosePrice": 4,
+      "clamp": "Ø48 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    },
+    {
+      "name": "Ø60,3X2 SİYAH BORU (Galvaniz DAHİL)",
+      "price": 0,
+      "hose": "Ø60.3 SPİRAL HORTUM (2 1/2\")*",
+      "hosePrice": 6.5,
+      "clamp": "Ø60.3 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    },
+    {
+      "name": "Ø76.1X1,5 SİYAH BORU (Galvaniz DAHİL)*",
+      "price": 4.5,
+      "hose": "Ø76.1 SPİRAL HORTUM (3\")*",
+      "hosePrice": 8,
+      "clamp": "Ø76.1 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    },
+    {
+      "name": "Ø88.9x2 SİYAH BORU (Galvaniz DAHİL)",
+      "price": 0,
+      "hose": "Ø88.9 SPİRAL HORTUM",
+      "hosePrice": 0,
+      "clamp": "Ø88.9 SPİRAL HORTUM KELEPÇESİ*",
+      "clampPrice": 1.2
+    }
+  ],
+  "m_pumps": [
+    {
+      "name": "DVP PA 315 CLAW*",
+      "price": 5160
+    },
+    {
+      "name": "BLOWER 0,70 KW TEK TÜRBİN*",
+      "price": 160
+    },
+    {
+      "name": "BLOWER 1,60 KW TEK TÜRBİN*",
+      "price": 285
+    },
+    {
+      "name": "BLOWER 2,2 KW TEK TÜRBİN*",
+      "price": 300
+    },
+    {
+      "name": "BLOWER 5,5 KW TEK TÜRBİN*",
+      "price": 740
+    },
+    {
+      "name": "BLOWER 18,5 KW TEK TÜRBİN*",
+      "price": 1915
+    },
+    {
+      "name": "BLOWER 1,60 KW ÇİFT TÜRBİN*",
+      "price": 355
+    },
+    {
+      "name": "BLOWER 2,2 KW ÇİFT TÜRBİN*",
+      "price": 375
+    },
+    {
+      "name": "BLOWER 3,0 KW ÇİFT TÜRBİN*",
+      "price": 550
+    },
+    {
+      "name": "BLOWER 4,0 KW ÇİFT TÜRBİN*",
+      "price": 600
+    },
+    {
+      "name": "BLOWER 5,50 KW ÇİFT TÜRBİN*",
+      "price": 810
+    },
+    {
+      "name": "BLOWER 7,5 KW ÇİFT TÜRBİN*",
+      "price": 1500
+    },
+    {
+      "name": "BLOWER 11 KW ÇİFT TÜRBİN*",
+      "price": 1555
+    },
+    {
+      "name": "2RB 920 - 16,5 KW ÇİFT TÜRBİN*",
+      "price": 3200
+    }
+  ],
+  "m_screens": [
+    {
+      "name": "GHS-043*",
+      "price": 141
+    },
+    {
+      "name": "GHS-043E*",
+      "price": 169
+    },
+    {
+      "name": "GHPro-070E-WIFI*",
+      "price": 160
+    },
+    {
+      "name": "GHS-070*",
+      "price": 155
+    },
+    {
+      "name": "GHS-070E*",
+      "price": 184
+    },
+    {
+      "name": "GHS-101*",
+      "price": 290
+    },
+    {
+      "name": "GHS-101E*",
+      "price": 312
+    },
+    {
+      "name": "MSG-156E*",
+      "price": 1055
+    }
+  ],
+  "t_company_info": {
+    "title": "Fiyat Teklifi",
+    "company": "",
+    "contact": "",
+    "date": "2026-08-26",
+    "email": "",
+    "taxOffice": "",
+    "taxNo": "",
+    "address": "",
+    "termsValidity": "30.06.2026",
+    "termsPayment": "%50 PEŞİN KALAN AMBAR TESLİMİ ÖDECEK",
+    "termsDelivery": "ÖN ÖDEMEDEN SONRA 30 İŞGÜNÜ",
+    "termsShipping": "ALICIYA AİTTİR",
+    "noteBankExchange": "TL ÖDEMELERİNDE FİYATLAR FATURA TARİHİNDE KUVEYTTÜRK BANKASI DÖVİZ SATIŞ KURUNDAN TL'YE ÇEVİRİLECEKTİR.",
+    "noteOrderConfirm": "SİPARİŞİNİZ YAZILI OLARAK TEYİT EDİLDİKTEN VE ÖN ÖDEMEDEN SONRA İŞLEME ALINIR",
+    "noteForceMajeure": "Mal teslimatı Mücbir Sebepler (Savaş hali, Deprem, Sel yangın Diğer Doğal Afetler ) halinde imalatçının kontrolü dışında gelişen sebeplerden dolayı bu sözleşmeden doğan yükümlülüklerin gecikmesi anlamına gelir. İhtilaf halinde Konya Ticaret Odası Tahkim uzlaştırma ve Hakem bilirkişilik yönetmeliğince Kurulacak Hakem Mahkemesi tarafından çözülecektir."
+  },
+  "t_customers": {},
+  "t_exchange_rate": 47,
+  "t_product_catalog": {
+    "Yedek Parça": [
+      {
+        "name": "Yükleyici Bez Filtre",
+        "price": 37
+      },
+      {
+        "name": "Yükleyici Tel Filtre",
+        "price": 37
+      },
+      {
+        "name": "MERKEZİ TOZ FİLTRE (HT1559) (Ø300x450mm)",
+        "price": 75,
+        "description": ""
+      },
+      {
+        "name": "TOZ FİLTRE (HT1550) (Ø185x450mm)",
+        "price": 55,
+        "description": ""
+      },
+      {
+        "name": "TOZ FİLTRE (HT0809) (Ø185x130mm)",
+        "price": 45,
+        "description": ""
+      },
+      {
+        "name": "MERKEZİ SİSTEM KLEPE CONTASI",
+        "price": 6,
+        "description": ""
+      },
+      {
+        "name": "Yükleyici Emiş Borusu (Ø38)",
+        "price": 20,
+        "description": ""
+      }
+    ],
+    "Merkezi Sistem Parçaları": [
+      {
+        "name": "Merkezi Sistem Klepesi",
+        "price": 100
+      }
+    ],
+    "Hammadde Yükleyici": [
+      {
+        "name": "BFT-HY500 Hammadde Yükleyici",
+        "price": 1200,
+        "description": "MAKSİMUM KAPASİTE : 500 KG/SA\nMALZEME : ST37 STATİK BOYALI\nBESLEME BASINCI : 6-8 BAR (VİDALI GRUP KOMPRESÖR GEREKLİDİR)\nBAĞLANTI BORU ÇAPI : 1-1/2\" SPİRAL TELLİ HORTUM\nHAMMADDE HAZNESİ : 0-7 KG\nMEKANİK VE ELEKTRONİK GARANTİ: 1 YIL"
+      },
+      {
+        "name": "BFT-MY300 Hammadde Yükleyici",
+        "price": 800,
+        "description": "MAKSİMUM KAPASİTE : 300KG/SA\nMALZEME : ST37 STATİK BOYALI\nBAĞLANTI BORU ÇAPI : 1-1/2\" SPİRAL TELLİ HORTUM\nHAMMADDE HAZNESİ : 0-7KG\nMOTOR : 2 KADEMELİ 1,1KW (GARANTİLİ DEĞİLDİR)\nMEKANİK VE ELEKTRONİK GARANTİ: 1 YIL"
+      },
+      {
+        "name": "BFT-MY301 Hammadde Yükleyici",
+        "price": 1600,
+        "description": "MAKSİMUM KAPASİTE : 300 KG/SA\nMALZEME : CrNi304 PASLANMAZ\nBAĞLANTI BORU ÇAPI : 1-1/2\" SPİRAL TELLİ HORTUM\nHAMMADDE HAZNESİ : 0-7KG\nMOTOR : 2 KADEMELİ 1,1KW (GARANTİLİ DEĞİLDİR)\nMEKANİK VE ELEKTRONİK GARANTİ: 1 YIL"
+      },
+      {
+        "name": "BFT-HY501 Hammadde Yükleyici",
+        "price": 2000,
+        "description": "MAKSİMUM KAPASİTE : 500 KG/SA\nMALZEME : CrNi304 PASLANMAZ\nBESLEME BASINCI : 6-8 BAR\nBAĞLANTI BORU ÇAPI : 1-1/2\" SPİRAL TELLİ HORTUM\nHAMMADDE HAZNESİ : 0-7 KG\nMEKANİK VE ELEKTRONİK GARANTİ: 1 YIL"
+      },
+      {
+        "name": "BFT-YTY500 Hammadde Yükleyici",
+        "price": 2300,
+        "description": "MAKSİMUM KAPASİTE : 500 KG/SA\nMOTOR: 2,2kW TEK KADEMELİ\nMOTOR ÜNİTESİ MALZEMESİ : ST37 STATİK BOYALI\nÜRÜN HAZNE MALZEMESİ: CrNi304 PASLANMAZ\nBAĞLANTI BORU ÇAPI : 1-1/2\" SPİRAL TELLİ HORTUM\nHAMMADDE HAZNESİ : 0-10 KG\nMEKANİK VE ELEKTRONİK GARANTİ: 1 YIL"
+      }
+    ],
+    "Dondurarak Kurutma": [
+      {
+        "name": "BFT-DK25 Dondurarak Kurutma",
+        "price": 30000,
+        "description": "KURUTMA ODASI MALZEMESİ: CrNi304\nTEPSİ MALZEMESİ: CrNi304\nSOĞUTMA SİSTEMİ: R404A Gazlı Sistem\nSOĞUTMA: -30/-35 °C\nISITMA SİSTEMİ: Slikon Rezistanslı\nBUZ TUTMA KAPASİTESİ: 18KG\nYAŞ ÜRÜN KAPASİTESİ (KG/PARTİ): 20-25KG\nGÜÇ TÜKETİMİ: Min: 1kw / Max: 20kW\nBESLEME VOLTAJI: 380V\nORTALAMA ELEKTRİK TÜKETİMİ: 2 - 3kW\nGARANTİ: 1 YIL"
+      },
+      {
+        "name": "BFT-DK10 Dondurarak Kurutma",
+        "price": 9000,
+        "description": "KURUTMA ODASI MALZEMESİ: CrNi304\nTEPSİ MALZEMESİ: CrNi304 (30X70cm - 5 ADET)\nSOĞUTMA SİSTEMİ: R404A Gazlı Sistem\nSOĞUTMA: -30 / -35 °C\nISITMA SİSTEMİ: Slikon Rezistanslı\nBUZ TUTMA KAPASİTESİ: 7KG\nYAŞ ÜRÜN KAPASİTESİ (KG/PARTİ): 7-10KG\nGÜÇ TÜKETİMİ: Min: 2kw / Max: 10kW\nBESLEME VOLTAJI: 220V\nORTALAMA ELEKTRİK TÜKETİMİ (SAATLİK) : 1,5 - 2kW\nGARANTİ: 1 YIL"
+      }
+    ]
+  },
+  "t_proposal_desc_library": {
+    "PETEK AÇIKLAMA": "MERKEZİ SİSTEM DEVREYE ALIMI:\n*COEX + PE + PET TOPLAM MAKİNE: 55 ADET\n*COEX + PE + PET TOPLAM HAZNE: 193 ADET\n*COEX + PE + PET TOPLAM TEKLİ ÜRÜN SEÇİM BLOĞU: 31 ADET\n*COEX + PE + PET TOPLAM ÇİFTLİ ÜRÜN SEÇİM BLOĞU: 78 ADET\n*COEX + PE + PET TOPLAM ÜÇLÜ ÜRÜN SEÇİM BLOĞU: 36 ADET\n*POMPA: 7 ADET\n*7\" EKRANLI PANO: 55 ADET\n*MERKEZİ ANA PANO: 1 ADET\n*OTOMASYON: 1 ADET\n*MONTAJ İŞÇİLİĞİ\n\nPASLANMAZ VE GALVANİZLİ BORU METRAJI:\n*Ø76,1X2 PASLANMAZ VEYA GALVANİZLİ BORU\n*CONTALI SAÇ KELEPÇE\n*SİSTEM KABLOLAMASI\n*DUVAR BAĞLANTI EKİPMANLARI\n*TESİSAT İŞÇİLİĞİ\n\nNOTLAR:\n*SİSTEM ORJİNAL HAMMADDE İLE ÇALIŞACAK ŞEKİLDE TASARLANACAKTIR. UZUN HATLARDA KIRMA (ÇAPAK) ÇEKTİRİLMEYECEKTİR.\n*KIRMA (ÇAPAK) MAKİNE BAŞINDA SEYYAR OLARAK BESLENECEKTİR.\n*FİYATLARA BESLEME SİLOLARI DAHİL DEĞİLDİR.\n*FİYATLARA MAKİNE ÜSTÜNDEKİ DEPO KAPAKLARI DAHİL DEĞİLDİR.\n*ANA BESLEME ENERJİ KABLOLALARI FİYATA DAHİL DEĞİLDİR.\n*FABRİKA İÇERİSİNDE KULLANILACAK OLAN ARAÇLAR (FORKLİFT, MENLİFT, VİNÇ VB.) İŞ VEREN TARAFINDAN TAHSİS EDİLECKTİR.",
+    "SUSAM TAŞIMA CİHAZI": "SİSTEM ÖZELLİKLERİ:\n1) 18 ADET KAVURMA KAZANI İÇİN GEÇERLİDİR. HER İKİ VEYA ÜÇ KAZAN İÇİN 1 ADET KLEPE KULLANILACAKTIR.\n2) KURU KAVRULMUŞ SUSAM ÇEKMEK İÇİN TASARLANMIŞTIR.\n3) Belirtilen Akış Diyagramına Göre 300kg'lık Kavrulmuş Susamı 2-6 dakikada transfer edebilecektir. Süre; kazanların konumuna göre değişmektedir.\n4) Belirtilen diyagrama göre kavurma kazanlarından itibaren transfer noktasına kadar olan ürün taşıma boruları firmamıza aittir. \n5) İki veya üç kazan ortasında birer kumanda seti (IŞIKLI START BUTONU) bulunacaktır.\n6) Pnomatik ekipmanlarında kullanılacak hava hattının kurulması alıcıya aittir.\n7) Transfer noktasındaki hazne 300kg susam alacak kapasitede Krom 304 kalitede imal edilecektir.\n8) Ürün görmeyecek olan bazı aksamlar boyalı sactan ve plastik malzemeden imal edilebilir.\n9) Tranfer işlemi otomasyonu firmamıza aittir.\n10) Tesisat boruları Krom 304 kalitede olacaktır.\n11) İki veya üç kazan için 1 adet otomatik yön valfi olacaktır.\n12) Kontrol sistemi 7\" dokunmatik ekran olacaktır.\n\nNOTLAR:\n*BU BİR ÖN KEŞİF TEKLİFİDİR. DETAYLI FİYATLANDIRMA FİRMA ZİYARETİNDEN SONRA YAPILACAKTIR! (PLATFORM GEREKLİ OLUP OLMADIĞI DEĞERLENDİRİLECEKTİR. VERİLEN TEKLİF PLATFORM GEREKTİRMEYEN DURUM İÇİN GEÇERLİDİR.)\n*KURULUM SÜRESİ TAKRİBİ 1 HAFTADIR. 5-6 KİŞİLİK MONTAJ EKİBİMİZİN KURULUM SÜRESİNCE YEMEK VE KONAKLAMA İHTİYACI FİRMANIZ TARAFINDAN KARŞILANACAKTIR.\n*KURULUM ESNASINDA GEREK DUYULAN FORKLİFT, VİNÇ VB EKİPMANLARIN TEDARİĞİ ALICI FİRMAYA AİTTİR."
+  },
+  "t_proposal_items": [],
+  "t_show_tl": false,
+  "t_show_vat": false,
+  "t_vat_rate": 20
+}

@@ -49,6 +49,22 @@
     // Overriding localStorage to auto-detect changes and trigger uploads
     const originalSetItem = localStorage.setItem;
     const originalRemoveItem = localStorage.removeItem;
+    const localArchiveKey = "bft_cloud_upload_archive_v1";
+
+    const saveLocalCloudSnapshot = (companyCode, data) => {
+        try {
+            const previous = JSON.parse(localStorage.getItem(localArchiveKey) || "[]");
+            const archive = Array.isArray(previous) ? previous : [];
+            archive.unshift({
+                companyCode,
+                savedAt: new Date().toISOString(),
+                data: { ...data }
+            });
+            originalSetItem.call(localStorage, localArchiveKey, JSON.stringify(archive.slice(0, 20)));
+        } catch (err) {
+            console.warn("Local cloud archive save failed:", err);
+        }
+    };
 
     localStorage.setItem = function(key, value) {
         originalSetItem.apply(this, arguments);
@@ -75,6 +91,8 @@
         const modalInputCode = document.getElementById("modalSyncCompanyCode");
         const btnModalUpload = document.getElementById("btnModalUploadToCloud");
         const btnModalDownload = document.getElementById("btnModalDownloadFromCloud");
+        const btnModalImport = document.getElementById("btnModalImportFromFile");
+        const cloudImportFile = document.getElementById("cloudImportFile");
         const modalStatusEl = document.getElementById("modalSyncStatus");
 
         // UI Synced update helper
@@ -161,6 +179,48 @@
             if (modalStatusEl) modalStatusEl.textContent = msg;
         };
 
+        const importJsonBackup = async (file) => {
+            const text = await file.text();
+            let parsed;
+            try {
+                parsed = JSON.parse(text);
+            } catch (err) {
+                throw new Error("Seçilen dosya geçerli bir JSON dosyası değil.");
+            }
+
+            const sourceData = parsed && typeof parsed === "object" && parsed.data && typeof parsed.data === "object"
+                ? parsed.data
+                : parsed;
+            const importedKeys = storageKeys.filter(key => Object.prototype.hasOwnProperty.call(sourceData, key));
+
+            if (!importedKeys.length) {
+                throw new Error("Dosyada uygulamanın tanıdığı bir veri anahtarı bulunamadı.");
+            }
+
+            const confirmed = await window.showCustomConfirm(
+                `Bu işlem mevcut yerel kayıtları silecek ve seçilen dosyadaki ${importedKeys.length} veri grubunu geri yükleyecek. Dosyada bulunmayan kayıtlar da kaldırılacak. Ardından geri yüklenen veriler buluta yüklenecek. Devam edilsin mi?`,
+                "Dosyadan Veri İçe Aktar"
+            );
+            if (!confirmed) return false;
+
+            isPullingFromCloud = true;
+            try {
+                storageKeys.forEach(key => localStorage.removeItem(key));
+                importedKeys.forEach(key => {
+                    const value = sourceData[key];
+                    if (value === null || value === undefined) {
+                        localStorage.removeItem(key);
+                    } else {
+                        localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value));
+                    }
+                });
+            } finally {
+                isPullingFromCloud = false;
+            }
+
+            return true;
+        };
+
         const uploadAction = async (getCodeFn, disableBtnsFn, enableBtnsFn, updateStatusFn) => {
             const companyCode = getCodeFn().trim().toLowerCase();
             if (!companyCode) {
@@ -184,6 +244,7 @@
 
             try {
                 await db.collection("portal_data").doc(companyCode).set(payload);
+                saveLocalCloudSnapshot(companyCode, payload.data);
                 
                 const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
                 const successMsg = `Son Yükleme: ${nowStr}`;
@@ -288,6 +349,24 @@
         if (btnModalDownload) {
             btnModalDownload.addEventListener("click", () => {
                 downloadAction(() => modalInputCode.value, disableAllButtons, enableAllButtons, updateAllStatus);
+            });
+        }
+        if (btnModalImport && cloudImportFile) {
+            btnModalImport.addEventListener("click", () => cloudImportFile.click());
+            cloudImportFile.addEventListener("change", async () => {
+                const file = cloudImportFile.files && cloudImportFile.files[0];
+                cloudImportFile.value = "";
+                if (!file) return;
+
+                try {
+                    const imported = await importJsonBackup(file);
+                    if (!imported) return;
+                    await uploadAction(() => modalInputCode.value, disableAllButtons, enableAllButtons, updateAllStatus);
+                } catch (err) {
+                    console.error("File import error:", err);
+                    updateAllStatus("Dosya içe aktarma hatası!");
+                    alert("Dosya içe aktarılırken bir hata oluştu: " + err.message);
+                }
             });
         }
 
@@ -480,6 +559,7 @@
 
         try {
             await db.collection("portal_data").doc(companyCode).set(payload);
+            saveLocalCloudSnapshot(companyCode, payload.data);
             
             const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
             const successMsg = `Bulut Eşitlendi (Otomatik): ${nowStr}`;
@@ -639,7 +719,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.32";
+    const CURRENT_APP_VERSION = "1.0.33";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;
