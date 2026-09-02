@@ -252,7 +252,7 @@ function initPriceEditor() {
     container.innerHTML = "";
 
     // Helper to generate a card section element
-    function createGroupCard(title, list, onAdd, onDelete, onUpdatePrice, onUpdateName) {
+    function createGroupCard(title, list, onAdd, onDelete, onUpdatePrice, onUpdateName, onMoveUp, onMoveDown) {
         const card = document.createElement("div");
         card.className = "price-group-card";
         
@@ -334,6 +334,34 @@ function initPriceEditor() {
             inputContainer.appendChild(inp);
             inputContainer.appendChild(unit);
             
+            // Move Up button
+            const upBtn = document.createElement("button");
+            upBtn.className = "project-btn-main";
+            upBtn.style.padding = "0.4rem 0.5rem";
+            upBtn.style.marginTop = "0";
+            upBtn.style.background = "rgba(99, 102, 241, 0.08)";
+            upBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+            upBtn.style.color = "#c7d2fe";
+            upBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+            upBtn.title = "Yukarı Taşı";
+            upBtn.addEventListener("click", () => {
+                if (idx > 0 && onMoveUp) onMoveUp(idx);
+            });
+
+            // Move Down button
+            const downBtn = document.createElement("button");
+            downBtn.className = "project-btn-main";
+            downBtn.style.padding = "0.4rem 0.5rem";
+            downBtn.style.marginTop = "0";
+            downBtn.style.background = "rgba(99, 102, 241, 0.08)";
+            downBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+            downBtn.style.color = "#c7d2fe";
+            downBtn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+            downBtn.title = "Aşağı Taşı";
+            downBtn.addEventListener("click", () => {
+                if (idx < list.length - 1 && onMoveDown) onMoveDown(idx);
+            });
+            
             // Delete button
             const delBtn = document.createElement("button");
             delBtn.className = "project-btn-main btn-delete";
@@ -348,6 +376,8 @@ function initPriceEditor() {
             
             row.appendChild(nameInput);
             row.appendChild(inputContainer);
+            row.appendChild(upBtn);
+            row.appendChild(downBtn);
             row.appendChild(delBtn);
             card.appendChild(row);
         });
@@ -439,6 +469,16 @@ function initPriceEditor() {
             savePrices();
             initSelectors();
             calculate();
+        },
+        (idx) => {
+            [screens[idx - 1], screens[idx]] = [screens[idx], screens[idx - 1]];
+            savePrices();
+            initPriceEditor();
+        },
+        (idx) => {
+            [screens[idx], screens[idx + 1]] = [screens[idx + 1], screens[idx]];
+            savePrices();
+            initPriceEditor();
         }
     ));
 
@@ -469,6 +509,16 @@ function initPriceEditor() {
             savePrices();
             initSelectors();
             calculate();
+        },
+        (idx) => {
+            [drivers[idx - 1], drivers[idx]] = [drivers[idx], drivers[idx - 1]];
+            savePrices();
+            initPriceEditor();
+        },
+        (idx) => {
+            [drivers[idx], drivers[idx + 1]] = [drivers[idx + 1], drivers[idx]];
+            savePrices();
+            initPriceEditor();
         }
     ));
 
@@ -499,6 +549,16 @@ function initPriceEditor() {
             savePrices();
             initSelectors();
             calculate();
+        },
+        (idx) => {
+            [pumps[idx - 1], pumps[idx]] = [pumps[idx], pumps[idx - 1]];
+            savePrices();
+            initPriceEditor();
+        },
+        (idx) => {
+            [pumps[idx], pumps[idx + 1]] = [pumps[idx + 1], pumps[idx]];
+            savePrices();
+            initPriceEditor();
         }
     ));
 
@@ -1150,6 +1210,28 @@ function initPriceEditor() {
                 }
                 savePrices();
                 calculate();
+            },
+            (idx) => {
+                const item1 = catItems[idx - 1];
+                const item2 = catItems[idx];
+                const idx1 = generalItems.findIndex(g => g.name === item1.name && g.id === item1.id);
+                const idx2 = generalItems.findIndex(g => g.name === item2.name && g.id === item2.id);
+                if (idx1 !== -1 && idx2 !== -1) {
+                    [generalItems[idx1], generalItems[idx2]] = [generalItems[idx2], generalItems[idx1]];
+                    savePrices();
+                    initPriceEditor();
+                }
+            },
+            (idx) => {
+                const item1 = catItems[idx];
+                const item2 = catItems[idx + 1];
+                const idx1 = generalItems.findIndex(g => g.name === item1.name && g.id === item1.id);
+                const idx2 = generalItems.findIndex(g => g.name === item2.name && g.id === item2.id);
+                if (idx1 !== -1 && idx2 !== -1) {
+                    [generalItems[idx1], generalItems[idx2]] = [generalItems[idx2], generalItems[idx1]];
+                    savePrices();
+                    initPriceEditor();
+                }
             }
         ));
     });

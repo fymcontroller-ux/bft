@@ -41,6 +41,7 @@
     let isSyncing = false; // Flag to prevent circular sync loop
     let isPullingFromCloud = false;
     let hasPendingUpload = false;
+    let isInitialCloudCheckDone = false; // Prevents fresh/empty devices from overwriting cloud before checking
     const myClientId = Math.random().toString(36).substring(2) + Date.now().toString(36);
     let autoUploadTimeout = null;
     let unsubscribeSnapshot = null;
@@ -190,6 +191,8 @@
                 localStorage.setItem("t_sync_last_status", successMsg);
                 localStorage.setItem("t_sync_company_code", companyCode);
                 updateSyncUI(companyCode, successMsg);
+
+                isInitialCloudCheckDone = true;
 
                 // Re-setup listener in case code changed
                 setupRealtimeSync(companyCode);
@@ -361,6 +364,11 @@
 
     // Helper: Schedule silent auto upload
     function scheduleAutoUpload() {
+        if (!isInitialCloudCheckDone) {
+            console.log("Bulut ilk kontrolü bekleniyor, otomatik yükleme bekletildi.");
+            return;
+        }
+
         const companyCode = (localStorage.getItem("t_sync_company_code") || "bft_portal").trim().toLowerCase();
         if (!companyCode) return;
 
@@ -498,6 +506,26 @@
         }
     }
 
+    // Helper: Initial splash screen dismissal
+    function hideInitialSplashScreen(delay = 350) {
+        setTimeout(() => {
+            const splash = document.getElementById("appInitialSplashScreen");
+            if (splash) {
+                splash.style.opacity = "0";
+                splash.style.pointerEvents = "none";
+                setTimeout(() => {
+                    splash.style.display = "none";
+                }, 400);
+            }
+        }, delay);
+    }
+
+    // Safety timeout: If cloud check takes more than 3 seconds (offline/slow), dismiss splash safely
+    setTimeout(() => {
+        isInitialCloudCheckDone = true;
+        hideInitialSplashScreen(0);
+    }, 3000);
+
     // Helper: Real-time Cloud updates listener
     function setupRealtimeSync(companyCode) {
         if (unsubscribeSnapshot) {
@@ -505,19 +533,35 @@
             unsubscribeSnapshot = null;
         }
 
-        if (!companyCode) return;
+        if (!companyCode) {
+            isInitialCloudCheckDone = true;
+            hideInitialSplashScreen(0);
+            return;
+        }
 
         unsubscribeSnapshot = db.collection("portal_data").doc(companyCode)
             .onSnapshot(doc => {
-                if (isSyncing) return; // Prevent loops while upload/download is active
-
-                if (!doc.exists) return;
+                if (!doc.exists) {
+                    isInitialCloudCheckDone = true;
+                    hideInitialSplashScreen(300);
+                    return;
+                }
 
                 const remotePayload = doc.data();
-                if (!remotePayload || !remotePayload.data) return;
+                if (!remotePayload || !remotePayload.data) {
+                    isInitialCloudCheckDone = true;
+                    hideInitialSplashScreen(300);
+                    return;
+                }
+
+                // Initial cloud check completed
+                isInitialCloudCheckDone = true;
+
+                if (isSyncing) return; // Prevent loops while upload/download is active
 
                 // Ignore updates that were written by this client
                 if (remotePayload.lastWriterClientId === myClientId) {
+                    hideInitialSplashScreen(200);
                     return;
                 }
 
@@ -546,6 +590,9 @@
                     isSyncing = true;
                     isPullingFromCloud = true;
                     
+                    const splashText = document.getElementById("initialSplashText");
+                    if (splashText) splashText.textContent = "Güncel veriler eşitlendi! Başlatılıyor...";
+
                     try {
                         // Copy remote data into localStorage
                         storageKeys.forEach(key => {
@@ -578,16 +625,21 @@
                     setTimeout(() => {
                         location.reload(true);
                     }, 1200);
+                } else {
+                    // No changes: smoothly dismiss splash screen
+                    hideInitialSplashScreen(350);
                 }
             }, err => {
                 console.error("Firestore onSnapshot error:", err);
+                isInitialCloudCheckDone = true;
+                hideInitialSplashScreen(0);
             });
     }
 
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.30";
+    const CURRENT_APP_VERSION = "1.0.32";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;

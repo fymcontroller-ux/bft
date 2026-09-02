@@ -732,7 +732,8 @@ function generateCleanMerkeziPrintElement() {
 
     // Apply exact typography & borders to tables inside container
     container.querySelectorAll(".table-container").forEach(tc => {
-        tc.style.cssText = "display: inline-block; width: 100%; margin-bottom: 10px; break-inside: avoid; page-break-inside: avoid;";
+        tc.style.setProperty("display", "block", "important");
+        tc.style.cssText += "display: inline-block; width: 100%; margin-bottom: 10px; break-inside: avoid; page-break-inside: avoid;";
     });
     container.querySelectorAll(".table-title, h4").forEach(tt => {
         tt.style.cssText = "font-size: 0.75rem; font-weight: 700; color: #000000; border-left: 3px solid #4338ca; padding-left: 5px; margin: 0 0 3px 0;";

@@ -10,7 +10,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Global Initial Cloud Sync Splash Screen -->
+    <div id="appInitialSplashScreen" class="initial-splash-overlay">
+        <div class="initial-splash-card">
+            <div class="initial-splash-logo-container">
+                <i class="fa-solid fa-cubes initial-splash-logo-icon"></i>
+                <div class="initial-splash-cloud-badge">
+                    <i class="fa-solid fa-cloud-arrow-down fa-bounce"></i>
+                </div>
+            </div>
+            <h2 class="initial-splash-title">BFT PORTAL</h2>
+            <p class="initial-splash-subtitle" id="initialSplashText">Bulut verileri eşitleniyor...</p>
+            <div class="initial-splash-loader-bar">
+                <div class="initial-splash-loader-progress"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="portal-container">
+        <!-- Invisible Hover Trigger for Sidebar -->
+        <div class="sidebar-hover-trigger"></div>
         <!-- Sidebar Navigation -->
         <aside class="portal-sidebar">
             <div class="sidebar-logo" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem;">
@@ -32,7 +51,7 @@
                 </li>
                 <li class="sidebar-item" data-target="yukleyici-sec">
                     <i class="fa-solid fa-boxes-stacked"></i>
-                    <span>Yükleyici</span>
+                    <span>Makineler</span>
                 </li>
                 <li class="sidebar-item" data-target="merkezi-sec">
                     <i class="fa-solid fa-network-wired"></i>
@@ -48,31 +67,8 @@
                 </li>
             </ul>
             
-            <!-- Cloud Sync Panel -->
-            <div class="sidebar-cloud-sync" style="margin-top: auto; padding: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; background: rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--accent-indigo); font-weight: bold;">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                    <span>Bulut Senkronizasyonu</span>
-                </div>
-                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0;">
-                    <label for="syncCompanyCode" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Şirket / Cihaz Kodu</label>
-                    <div class="input-container" style="padding: 0.35rem 0.5rem; background: var(--bg-input);">
-                        <input type="text" id="syncCompanyCode" value="bft_portal" style="font-size: 0.75rem; color: var(--text-primary); text-align: left; width: 100%; border: none; background: transparent; outline: none;">
-                    </div>
-                </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button id="btnUploadToCloud" class="project-btn-main btn-save" style="flex: 1; padding: 0.4rem; font-size: 0.72rem; margin: 0; background: linear-gradient(135deg, var(--accent-indigo), rgba(99, 102, 241, 0.8));">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Yükle
-                    </button>
-                    <button id="btnDownloadFromCloud" class="project-btn-main" style="flex: 1; padding: 0.4rem; font-size: 0.72rem; margin: 0; background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.2); color: #c7d2fe;">
-                        <i class="fa-solid fa-cloud-arrow-down"></i> Çek
-                    </button>
-                </div>
-                <div id="syncStatus" style="font-size: 0.7rem; color: var(--text-muted); text-align: center; line-height: 1.2;">Son Eşleşme: Yapılmadı</div>
-                <button id="btnDeleteCloudProjects" class="project-btn-main btn-delete" style="width: 100%; padding: 0.4rem; font-size: 0.72rem; margin: 0; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.15); color: #fca5a5;">
-                    <i class="fa-solid fa-trash-can"></i> Projeleri Sil
-                </button>
-            </div>
+            <!-- Cloud Sync Panel removed from sidebar -->
+        </aside>
         </aside>
 
         <!-- Main Content Area -->
@@ -93,7 +89,7 @@
                             <i class="fa-solid fa-boxes-stacked"></i>
                         </div>
                         <div class="overview-info">
-                            <span class="overview-title">Yükleyici Maliyetleri</span>
+                            <span class="overview-title">Makine Maliyetleri</span>
                             <span class="overview-desc">Model bazlı malzeme, grup, personel ve dükkan maliyet hesabı.</span>
                             <span class="overview-link">Modüle Git <i class="fa-solid fa-arrow-right"></i></span>
                         </div>
@@ -121,6 +117,17 @@
                         </div>
                     </div>
 
+                    <div class="overview-card" onclick="switchPortalSection('teklifver-sec')">
+                        <div class="overview-icon-container teklifver">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="overview-info">
+                            <span class="overview-title">Teklif Ver</span>
+                            <span class="overview-desc">Müşterilere sunmak için profesyonel teklif ve quotation hazırlayın.</span>
+                            <span class="overview-link">Modüle Git <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+
                     <div class="overview-card" id="btnOpenSyncModal">
                         <div class="overview-icon-container" style="background: rgba(99, 102, 241, 0.1); color: var(--accent-indigo); border: 1px solid rgba(99, 102, 241, 0.2);">
                             <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -139,8 +146,8 @@
             <section id="yukleyici-sec" class="portal-section">
                 <div class="section-header">
                     <div>
-                        <h2><i class="fa-solid fa-boxes-stacked" style="color: var(--accent-indigo);"></i> Yükleyici Maliyetleri</h2>
-                        <p>Yükleyici makinelerin malzeme fiyat listesi, model reçeteleri ve işletme gider analizi.</p>
+                        <h2><i class="fa-solid fa-boxes-stacked" style="color: var(--accent-indigo);"></i> Makine Maliyetleri</h2>
+                        <p>Makine maliyetlerinin malzeme fiyat listesi, model reçeteleri ve işletme gider analizi.</p>
                     </div>
                     <div class="header-actions">
                         <div class="tabs-container">
@@ -159,115 +166,113 @@
 
                 <!-- Tab 1: Cost Dashboard -->
                 <div id="calcTabContent" class="tab-content active-content">
-                    <div class="dashboard-grid">
-                        <div class="panel-card">
-                            <div class="panel-title">
-                                <i class="fa-solid fa-sliders"></i> Sistem Seçimleri ve Parametreler
-                            </div>
-                            <div class="form-section stacked-form-section">
-                                <h3>Model Seçimi</h3>
-                                <div class="form-group">
-                                    <label for="modelSelect">Yükleyici Modeli</label>
-                                    <div class="input-container">
-                                        <select id="modelSelect">
-                                            <option value="YTY">YTY (Yerden Trifaze Yükleyici)</option>
-                                            <option value="HY500">HY500</option>
-                                            <option value="MY300">MY300</option>
-                                            <option value="MY500">MY500</option>
-                                            <option value="MY502" selected>MY502</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group" style="margin-top: 0.5rem;">
-                                    <label for="modelCapacityInput">Model Kapasitesi</label>
-                                    <div class="input-container">
-                                        <input type="number" id="modelCapacityInput" value="20" min="1" max="200">
-                                        <span class="unit">Adet</span>
-                                    </div>
-                                </div>
-                                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                                    <button type="button" class="project-btn-main" id="btnAddNewModel" style="background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.2); color: #c7d2fe; flex: 1; min-width: 80px;">
-                                        <i class="fa-solid fa-plus"></i> Ekle
-                                    </button>
-                                    <button type="button" class="project-btn-main" id="btnCopyModel" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); color: #a7f3d0; flex: 1; min-width: 80px;">
-                                        <i class="fa-solid fa-copy"></i> Kopyala
-                                    </button>
-                                    <button type="button" class="project-btn-main" id="btnRenameModel" style="background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.2); color: #fde68a; flex: 1; min-width: 80px;">
-                                        <i class="fa-solid fa-pen-to-square"></i> Revize
-                                    </button>
-                                    <button type="button" class="project-btn-main btn-delete" id="btnDeleteModel" style="flex: 1; min-width: 80px;">
-                                        <i class="fa-solid fa-trash-can"></i> Sil
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="spec-preview-card" style="margin-top: 1rem; margin-bottom: 1rem;">
-                                <div class="spec-item">
-                                    <span class="spec-lbl">Model Kapasitesi</span>
-                                    <span class="spec-val" id="modelMachineCount">20 Makine</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-lbl">Toplam Malzeme Çeşidi</span>
-                                    <span class="spec-val" id="modelItemTypesCount">0 Kalem</span>
-                                </div>
-                            </div>
+                    <div class="panel-card">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-sliders"></i> Sistem Seçimleri ve Parametreler
                         </div>
-
-                        <div class="panel-card scroll-x">
-                            <div class="panel-title">
-                                <i class="fa-solid fa-receipt"></i> Maliyet Dökümü ve Özet Sonuçlar
-                            </div>
-                            <div class="metrics-grid">
-                                <div class="metric-card glow-teal">
-                                    <span class="metric-lbl">Ara Toplam ($)</span>
-                                    <span class="metric-val teal-text" id="summarySubtotalUSD">$0.00</span>
-                                </div>
-                                <div class="metric-card glow-indigo">
-                                    <span class="metric-lbl">İşletme Maliyeti / Makine ($)</span>
-                                    <span class="metric-val indigo-text" id="summaryOperatingUSD">$0.00</span>
-                                </div>
-                                <div class="metric-card glow-violet">
-                                    <span class="metric-lbl">Genel Toplam ($)</span>
-                                    <span class="metric-val violet-text" id="summaryGrandTotalUSD">$0.00</span>
-                                </div>
-                            </div>
-                            <div class="table-container">
-                                <table class="cost-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Parça Adı</th>
-                                            <th style="text-align: center; width: 120px;">Miktar</th>
-                                            <th>Tedarikçi Firma</th>
-                                            <th style="text-align: right;">Birim Fiyat ($)</th>
-                                            <th style="text-align: right;">Toplam Fiyat ($)</th>
-                                            <th>Güncelleme Tarihi</th>
-                                            <th style="text-align: center; width: 60px;">İşlem</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="costTableBody">
-                                        <!-- Dynamically loaded -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <!-- Quick Add Material Bar -->
-                            <div class="quick-add-container" style="display: flex; gap: 1rem; align-items: center; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px dashed var(--border-color); flex-wrap: wrap;">
-                                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
-                                    <i class="fa-solid fa-cart-plus" style="color: var(--accent-indigo);"></i> Reçeteye Yeni Parça Ekle:
-                                </span>
-                                <div class="input-container" style="width: 200px; padding: 0.35rem 0.5rem; border-color: rgba(99, 102, 241, 0.25);">
-                                    <select id="quickAddCategorySelect" style="text-align: left; text-align-last: left; font-size: 0.85rem; width: 100%;">
-                                        <option value="">-- Tüm Gruplar --</option>
+                        <div class="form-section stacked-form-section">
+                            <h3>Model Seçimi</h3>
+                            <div class="form-group">
+                                <label for="modelSelect">Makine Modeli</label>
+                                <div class="input-container">
+                                    <select id="modelSelect">
+                                        <option value="YTY">YTY (Yerden Trifaze Yükleyici)</option>
+                                        <option value="HY500">HY500</option>
+                                        <option value="MY300">MY300</option>
+                                        <option value="MY500">MY500</option>
+                                        <option value="MY502" selected>MY502</option>
                                     </select>
                                 </div>
-                                <div class="input-container" style="flex: 1; min-width: 250px; padding: 0.35rem 0.5rem; border-color: rgba(99, 102, 241, 0.25);">
-                                    <select id="quickAddMaterialSelect" style="text-align: left; text-align-last: left; font-size: 0.85rem; width: 100%;">
-                                        <!-- Loaded dynamically -->
-                                    </select>
+                            </div>
+                            <div class="form-group" style="margin-top: 0.5rem;">
+                                <label for="modelCapacityInput">Model Kapasitesi</label>
+                                <div class="input-container">
+                                    <input type="number" id="modelCapacityInput" value="20" min="1" max="200">
+                                    <span class="unit">Adet</span>
                                 </div>
-                                <button type="button" class="project-btn-main btn-save" id="btnQuickAddSubmit" style="padding: 0.5rem 1.5rem; font-size: 0.85rem; margin-top: 0; display: flex; align-items: center; gap: 6px;">
-                                    <i class="fa-solid fa-plus"></i> Reçeteye Ekle
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                <button type="button" class="project-btn-main" id="btnAddNewModel" style="background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.2); color: #c7d2fe; flex: 1; min-width: 80px;">
+                                    <i class="fa-solid fa-plus"></i> Ekle
+                                </button>
+                                <button type="button" class="project-btn-main" id="btnCopyModel" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); color: #a7f3d0; flex: 1; min-width: 80px;">
+                                    <i class="fa-solid fa-copy"></i> Kopyala
+                                </button>
+                                <button type="button" class="project-btn-main" id="btnRenameModel" style="background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.2); color: #fde68a; flex: 1; min-width: 80px;">
+                                    <i class="fa-solid fa-pen-to-square"></i> Revize
+                                </button>
+                                <button type="button" class="project-btn-main btn-delete" id="btnDeleteModel" style="flex: 1; min-width: 80px;">
+                                    <i class="fa-solid fa-trash-can"></i> Sil
                                 </button>
                             </div>
+                        </div>
+                        <div class="spec-preview-card" style="margin-top: 1rem; margin-bottom: 0;">
+                            <div class="spec-item">
+                                <span class="spec-lbl">Model Kapasitesi</span>
+                                <span class="spec-val" id="modelMachineCount">20 Makine</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-lbl">Toplam Malzeme Çeşidi</span>
+                                <span class="spec-val" id="modelItemTypesCount">0 Kalem</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" style="margin-top: 1.5rem;">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-receipt"></i> Maliyet Dökümü ve Özet Sonuçlar
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric-card glow-teal">
+                                <span class="metric-lbl">Ara Toplam ($)</span>
+                                <span class="metric-val teal-text" id="summarySubtotalUSD">$0.00</span>
+                            </div>
+                            <div class="metric-card glow-indigo">
+                                <span class="metric-lbl">İşletme Maliyeti / Makine ($)</span>
+                                <span class="metric-val indigo-text" id="summaryOperatingUSD">$0.00</span>
+                            </div>
+                            <div class="metric-card glow-violet">
+                                <span class="metric-lbl">Genel Toplam ($)</span>
+                                <span class="metric-val violet-text" id="summaryGrandTotalUSD">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="table-container" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                            <table class="cost-table cost-table-compact">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 160px;">Parça Adı</th>
+                                        <th style="text-align: center; width: 90px;">Miktar</th>
+                                        <th style="display: none;">Tedarikçi Firma</th>
+                                        <th style="text-align: right; width: 100px;">Birim Fiyat</th>
+                                        <th style="text-align: right; width: 100px;">Toplam Fiyat</th>
+                                        <th style="display: none;">Güncelleme Tarihi</th>
+                                        <th style="text-align: center; width: 100px;">İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="costTableBody">
+                                    <!-- Dynamically loaded -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Quick Add Material Bar -->
+                        <div class="quick-add-container" style="display: flex; gap: 0.75rem; align-items: center; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px dashed var(--border-color); flex-wrap: wrap;">
+                            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                                <i class="fa-solid fa-cart-plus" style="color: var(--accent-indigo);"></i> Ekle:
+                            </span>
+                            <div class="input-container" style="flex: 1; min-width: 150px; padding: 0.3rem 0.4rem; font-size: 0.85rem;">
+                                <select id="quickAddCategorySelect" style="text-align: left; text-align-last: left; font-size: 0.85rem; width: 100%;">
+                                    <option value="">-- Gruplar --</option>
+                                </select>
+                            </div>
+                            <div class="input-container" style="flex: 1.5; min-width: 180px; padding: 0.3rem 0.4rem; font-size: 0.85rem;">
+                                <select id="quickAddMaterialSelect" style="text-align: left; text-align-last: left; font-size: 0.85rem; width: 100%;">
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+                            <button type="button" class="project-btn-main btn-save" id="btnQuickAddSubmit" style="padding: 0.4rem 1rem; font-size: 0.8rem; margin-top: 0; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                                <i class="fa-solid fa-plus"></i> Reçeteye Ekle
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -331,7 +336,7 @@
                                         <th style="text-align: right;">Yemek ($)</th>
                                         <th style="text-align: right;">Yol ($)</th>
                                         <th style="text-align: right;">Toplam ($)</th>
-                                        <th style="text-align: center; width: 80px;">İşlemler</th>
+                                        <th style="text-align: center; width: 110px;">İşlemler</th>
                                     </tr>
                                 </thead>
                                 <tbody id="personnelTableBody">
@@ -1268,7 +1273,7 @@
                                         <th style="text-align: center;">Miktar / Birim</th>
                                         <th style="text-align: right;">Birim Fiyat ($)</th>
                                         <th style="text-align: right;">Toplam Fiyat ($)</th>
-                                        <th style="text-align: right;" class="hide-print-col">İşlem</th>
+                                        <th style="text-align: right; width: 110px;" class="hide-print-col">İşlem</th>
                                     </tr>
                                 </thead>
                                 <tbody id="teklifTableBody">
@@ -1545,12 +1550,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="firebase_sync.js?v=1.0.2"></script>
+    <script src="firebase_sync.js?v=1.0.3"></script>
     <script src="starter_data.js"></script>
     <script src="yukleyici.js?v=1.0.1"></script>
     <script src="merkezi.js"></script>
     <script src="pnomatik.js"></script>
-    <script src="teklifver.js"></script>
+    <script src="teklifver.js?v=1.0.3"></script>
     <script src="main.js"></script>
 </body>
 </html>

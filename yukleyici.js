@@ -341,6 +341,48 @@ function initPriceEditor() {
             dateContainer.appendChild(dateInp);
             inputsWrapper.appendChild(dateContainer);
 
+            // Move Up button
+            const upBtn = document.createElement("button");
+            upBtn.className = "project-btn-main";
+            upBtn.style.padding = "0.4rem 0.5rem";
+            upBtn.style.marginTop = "0";
+            upBtn.style.background = "rgba(99, 102, 241, 0.08)";
+            upBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+            upBtn.style.color = "#c7d2fe";
+            upBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+            upBtn.title = "Yukarı Taşı";
+            upBtn.addEventListener("click", () => {
+                const listIdx = list.findIndex(x => x.name === item.name);
+                const trueIdx = materials.findIndex(m => m.name === item.name);
+                if (listIdx > 0 && trueIdx > 0) {
+                    [materials[trueIdx - 1], materials[trueIdx]] = [materials[trueIdx], materials[trueIdx - 1]];
+                    savePricesAndExpenses();
+                    initPriceEditor();
+                }
+            });
+            inputsWrapper.appendChild(upBtn);
+
+            // Move Down button
+            const downBtn = document.createElement("button");
+            downBtn.className = "project-btn-main";
+            downBtn.style.padding = "0.4rem 0.5rem";
+            downBtn.style.marginTop = "0";
+            downBtn.style.background = "rgba(99, 102, 241, 0.08)";
+            downBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+            downBtn.style.color = "#c7d2fe";
+            downBtn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+            downBtn.title = "Aşağı Taşı";
+            downBtn.addEventListener("click", () => {
+                const listIdx = list.findIndex(x => x.name === item.name);
+                const trueIdx = materials.findIndex(m => m.name === item.name);
+                if (listIdx < list.length - 1 && trueIdx < materials.length - 1) {
+                    [materials[trueIdx], materials[trueIdx + 1]] = [materials[trueIdx + 1], materials[trueIdx]];
+                    savePricesAndExpenses();
+                    initPriceEditor();
+                }
+            });
+            inputsWrapper.appendChild(downBtn);
+
             // Item Delete button
             const delItemBtn = document.createElement("button");
             delItemBtn.className = "project-btn-main btn-delete";
@@ -496,10 +538,58 @@ function initExpenseEditor() {
         // Actions
         const actionCell = document.createElement("td");
         actionCell.style.textAlign = "center";
+        actionCell.style.verticalAlign = "middle";
+        actionCell.style.whiteSpace = "nowrap";
+        actionCell.style.padding = "0.5rem !important";
+
+        // Move Up button
+        const upBtn = document.createElement("button");
+        upBtn.className = "project-btn-main";
+        upBtn.style.padding = "0.25rem 0.4rem";
+        upBtn.style.marginTop = "0";
+        upBtn.style.marginRight = "0.15rem";
+        upBtn.style.display = "inline-block";
+        upBtn.style.background = "rgba(99, 102, 241, 0.08)";
+        upBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+        upBtn.style.color = "#c7d2fe";
+        upBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        upBtn.title = "Yukarı Taşı";
+        upBtn.addEventListener("click", () => {
+            if (idx > 0) {
+                [personnel[idx - 1], personnel[idx]] = [personnel[idx], personnel[idx - 1]];
+                saveAndRecalcExpenses();
+                initExpenseEditor();
+            }
+        });
+        actionCell.appendChild(upBtn);
+
+        // Move Down button
+        const downBtn = document.createElement("button");
+        downBtn.className = "project-btn-main";
+        downBtn.style.padding = "0.25rem 0.4rem";
+        downBtn.style.marginTop = "0";
+        downBtn.style.marginRight = "0.15rem";
+        downBtn.style.display = "inline-block";
+        downBtn.style.background = "rgba(99, 102, 241, 0.08)";
+        downBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+        downBtn.style.color = "#c7d2fe";
+        downBtn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+        downBtn.title = "Aşağı Taşı";
+        downBtn.addEventListener("click", () => {
+            if (idx < personnel.length - 1) {
+                [personnel[idx], personnel[idx + 1]] = [personnel[idx + 1], personnel[idx]];
+                saveAndRecalcExpenses();
+                initExpenseEditor();
+            }
+        });
+        actionCell.appendChild(downBtn);
+
+        // Delete button
         const delBtn = document.createElement("button");
         delBtn.className = "project-btn-main btn-delete";
-        delBtn.style.padding = "0.25rem 0.5rem";
+        delBtn.style.padding = "0.25rem 0.4rem";
         delBtn.style.marginTop = "0";
+        delBtn.style.display = "inline-block";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
         delBtn.addEventListener("click", async () => {
             if (await window.showCustomConfirm(`"${p.name}" personelini silmek istediğinize emin misiniz?`)) {
@@ -569,6 +659,44 @@ function initExpenseEditor() {
         inputContainer.appendChild(inp);
         inputContainer.appendChild(unit);
         rightContainer.appendChild(inputContainer);
+
+        // Move Up button
+        const upBtn = document.createElement("button");
+        upBtn.className = "project-btn-main";
+        upBtn.style.padding = "0.4rem 0.5rem";
+        upBtn.style.marginTop = "0";
+        upBtn.style.background = "rgba(99, 102, 241, 0.08)";
+        upBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+        upBtn.style.color = "#c7d2fe";
+        upBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        upBtn.title = "Yukarı Taşı";
+        upBtn.addEventListener("click", () => {
+            if (idx > 0) {
+                [shopExpenses[idx - 1], shopExpenses[idx]] = [shopExpenses[idx], shopExpenses[idx - 1]];
+                saveAndRecalcExpenses();
+                initExpenseEditor();
+            }
+        });
+        rightContainer.appendChild(upBtn);
+
+        // Move Down button
+        const downBtn = document.createElement("button");
+        downBtn.className = "project-btn-main";
+        downBtn.style.padding = "0.4rem 0.5rem";
+        downBtn.style.marginTop = "0";
+        downBtn.style.background = "rgba(99, 102, 241, 0.08)";
+        downBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+        downBtn.style.color = "#c7d2fe";
+        downBtn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+        downBtn.title = "Aşağı Taşı";
+        downBtn.addEventListener("click", () => {
+            if (idx < shopExpenses.length - 1) {
+                [shopExpenses[idx], shopExpenses[idx + 1]] = [shopExpenses[idx + 1], shopExpenses[idx]];
+                saveAndRecalcExpenses();
+                initExpenseEditor();
+            }
+        });
+        rightContainer.appendChild(downBtn);
 
         const delBtn = document.createElement("button");
         delBtn.className = "project-btn-main btn-delete";
@@ -1054,16 +1182,15 @@ function calculate() {
         row.appendChild(tdName);
 
         const tdQty = document.createElement("td");
-        tdQty.style.display = "flex";
-        tdQty.style.alignItems = "center";
-        tdQty.style.justifyContent = "center";
-        tdQty.style.gap = "0.5rem";
+        tdQty.style.textAlign = "center";
+        tdQty.style.verticalAlign = "middle";
+        tdQty.style.padding = "0.5rem !important";
 
         const qtyContainer = document.createElement("div");
         qtyContainer.className = "input-container";
         qtyContainer.style.width = "65px";
         qtyContainer.style.padding = "0.15rem 0.35rem";
-        qtyContainer.style.margin = "0";
+        qtyContainer.style.margin = "0 auto";
         qtyContainer.style.display = "inline-flex";
         qtyContainer.style.alignItems = "center";
 
@@ -1118,6 +1245,7 @@ function calculate() {
         unitBadge.style.minWidth = "50px";
         unitBadge.style.textAlign = "center";
         unitBadge.style.transition = "all 0.2s ease";
+        unitBadge.style.marginLeft = "0.5rem";
 
         if (unitText === "m") {
             unitBadge.style.background = "rgba(99, 102, 241, 0.12)";
@@ -1149,16 +1277,18 @@ function calculate() {
         tdQty.appendChild(unitBadge);
         row.appendChild(tdQty);
 
-        // 3. Supplier
+        // 3. Supplier (Hidden for compact view)
         const tdSupplier = document.createElement("td");
         tdSupplier.textContent = details.supplier;
+        tdSupplier.style.display = "none";
         row.appendChild(tdSupplier);
 
         // 4. Unit Price
         const tdUnitPrice = document.createElement("td");
         tdUnitPrice.style.textAlign = "right";
         tdUnitPrice.style.fontFamily = "var(--font-mono)";
-        tdUnitPrice.textContent = `$${priceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`;
+        tdUnitPrice.style.fontSize = "0.85rem";
+        tdUnitPrice.textContent = `$${priceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         row.appendChild(tdUnitPrice);
 
         // 5. Total Price
@@ -1166,23 +1296,73 @@ function calculate() {
         tdRowTotal.style.textAlign = "right";
         tdRowTotal.style.fontFamily = "var(--font-mono)";
         tdRowTotal.style.fontWeight = "600";
+        tdRowTotal.style.fontSize = "0.85rem";
         tdRowTotal.textContent = `$${totalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         row.appendChild(tdRowTotal);
 
-        // 6. Update Date
+        // 6. Update Date (Hidden for compact view)
         const tdDate = document.createElement("td");
         tdDate.textContent = details.updateDate;
+        tdDate.style.display = "none";
         row.appendChild(tdDate);
 
-        // 7. Delete button
+        // 7. Action buttons (Move Up, Move Down, Delete)
         const tdAction = document.createElement("td");
         tdAction.style.textAlign = "center";
+        tdAction.style.verticalAlign = "middle";
+        tdAction.style.whiteSpace = "nowrap";
+        tdAction.style.padding = "0.5rem !important";
 
+        // Move Up button
+        const upBtn = document.createElement("button");
+        upBtn.className = "project-btn-main";
+        upBtn.style.padding = "0.25rem 0.35rem";
+        upBtn.style.marginTop = "0";
+        upBtn.style.marginRight = "0.15rem";
+        upBtn.style.display = "inline-block";
+        upBtn.style.background = "rgba(99, 102, 241, 0.08)";
+        upBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+        upBtn.style.color = "#c7d2fe";
+        upBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        upBtn.title = "Yukarı Taşı";
+        upBtn.addEventListener("click", () => {
+            const idx = model.items.findIndex(x => x.name === item.name);
+            if (idx > 0) {
+                [model.items[idx - 1], model.items[idx]] = [model.items[idx], model.items[idx - 1]];
+                savePricesAndExpenses();
+                calculate();
+            }
+        });
+
+        // Move Down button
+        const downBtn = document.createElement("button");
+        downBtn.className = "project-btn-main";
+        downBtn.style.padding = "0.25rem 0.35rem";
+        downBtn.style.marginTop = "0";
+        downBtn.style.marginRight = "0.15rem";
+        downBtn.style.display = "inline-block";
+        downBtn.style.background = "rgba(99, 102, 241, 0.08)";
+        downBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+        downBtn.style.color = "#c7d2fe";
+        downBtn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+        downBtn.title = "Aşağı Taşı";
+        downBtn.addEventListener("click", () => {
+            const idx = model.items.findIndex(x => x.name === item.name);
+            if (idx < model.items.length - 1) {
+                [model.items[idx], model.items[idx + 1]] = [model.items[idx + 1], model.items[idx]];
+                savePricesAndExpenses();
+                calculate();
+            }
+        });
+
+        // Delete button
         const delBtn = document.createElement("button");
         delBtn.className = "project-btn-main btn-delete";
-        delBtn.style.padding = "0.25rem 0.4rem";
+        delBtn.style.padding = "0.25rem 0.35rem";
         delBtn.style.marginTop = "0";
+        delBtn.style.display = "inline-block";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        delBtn.title = "Sil";
         delBtn.addEventListener("click", () => {
             const idx = model.items.findIndex(x => x.name === item.name);
             if (idx !== -1) {
@@ -1192,6 +1372,8 @@ function calculate() {
             }
         });
 
+        tdAction.appendChild(upBtn);
+        tdAction.appendChild(downBtn);
         tdAction.appendChild(delBtn);
         row.appendChild(tdAction);
 

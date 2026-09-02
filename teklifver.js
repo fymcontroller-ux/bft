@@ -41,11 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initTeklifVer() {
-    // Load custom catalog
+    // Load custom catalog (fallback to default in memory if not in localStorage)
     productCatalog = JSON.parse(localStorage.getItem("t_product_catalog")) || defaultCatalog;
-    if (!localStorage.getItem("t_product_catalog")) {
-        localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
-    }
 
     // Populate exchange rate from default or localStorage
     const storedRate = parseFloat(localStorage.getItem("t_exchange_rate")) || defaultExchangeRate;
@@ -664,7 +661,7 @@ function renderCatalogViewer() {
                     <tr>
                         <th>Ürün Adı / Açıklama</th>
                         <th style="text-align: right; width: 150px;">Birim Fiyatı (USD)</th>
-                        <th style="text-align: center; width: 60px;">İşlem</th>
+                        <th style="text-align: center; width: 110px;">İşlem</th>
                     </tr>
                 </thead>
                 <tbody class="catalog-tbody"></tbody>
@@ -759,20 +756,68 @@ function renderCatalogViewer() {
                 tdPrice.appendChild(priceContainer);
                 tr.appendChild(tdPrice);
 
-                // 3. Actions (Delete)
+                // 3. Actions (Up, Down, Delete)
                 const tdActions = document.createElement("td");
                 tdActions.style.textAlign = "center";
+                tdActions.style.verticalAlign = "middle";
+                tdActions.style.whiteSpace = "nowrap";
 
+                // Move Up button
+                const upBtn = document.createElement("button");
+                upBtn.className = "project-btn-main";
+                upBtn.style.padding = "0.15rem 0.35rem";
+                upBtn.style.margin = "0";
+                upBtn.style.marginRight = "0.1rem";
+                upBtn.style.fontSize = "0.75rem";
+                upBtn.style.display = "inline-block";
+                upBtn.style.background = "rgba(99, 102, 241, 0.08)";
+                upBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+                upBtn.style.color = "#c7d2fe";
+                upBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+                upBtn.title = "Yukarı Taşı";
+                upBtn.addEventListener("click", () => {
+                    if (index > 0) {
+                        [productCatalog[cat][index - 1], productCatalog[cat][index]] = [productCatalog[cat][index], productCatalog[cat][index - 1]];
+                        localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
+                        renderCatalogViewer();
+                    }
+                });
+
+                // Move Down button
+                const downBtn = document.createElement("button");
+                downBtn.className = "project-btn-main";
+                downBtn.style.padding = "0.15rem 0.35rem";
+                downBtn.style.margin = "0";
+                downBtn.style.marginRight = "0.1rem";
+                downBtn.style.fontSize = "0.75rem";
+                downBtn.style.display = "inline-block";
+                downBtn.style.background = "rgba(99, 102, 241, 0.08)";
+                downBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+                downBtn.style.color = "#c7d2fe";
+                downBtn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+                downBtn.title = "Aşağı Taşı";
+                downBtn.addEventListener("click", () => {
+                    if (index < productCatalog[cat].length - 1) {
+                        [productCatalog[cat][index], productCatalog[cat][index + 1]] = [productCatalog[cat][index + 1], productCatalog[cat][index]];
+                        localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
+                        renderCatalogViewer();
+                    }
+                });
+
+                // Delete button
                 const delBtn = document.createElement("button");
                 delBtn.className = "project-btn-main btn-delete";
                 delBtn.style.padding = "0.15rem 0.35rem";
                 delBtn.style.margin = "0";
                 delBtn.style.fontSize = "0.75rem";
+                delBtn.style.display = "inline-block";
                 delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
                 delBtn.addEventListener("click", () => {
                     deleteCatalogProduct(cat, prod.name);
                 });
 
+                tdActions.appendChild(upBtn);
+                tdActions.appendChild(downBtn);
                 tdActions.appendChild(delBtn);
                 tr.appendChild(tdActions);
 
@@ -1071,21 +1116,68 @@ function updateProposalSummary() {
         tdTotal.textContent = `$${itemTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         row.appendChild(tdTotal);
         
-        // 6. Delete Action
+        // 6. Actions
         const tdActions = document.createElement("td");
         tdActions.style.textAlign = "center";
         tdActions.className = "hide-print-col";
-        
+        tdActions.style.verticalAlign = "middle";
+        tdActions.style.whiteSpace = "nowrap";
+        tdActions.style.padding = "0.5rem !important";
+
+        // Move Up button
+        const upBtn = document.createElement("button");
+        upBtn.className = "project-btn-main";
+        upBtn.style.padding = "0.2rem 0.35rem";
+        upBtn.style.margin = "0";
+        upBtn.style.marginRight = "0.15rem";
+        upBtn.style.display = "inline-block";
+        upBtn.style.background = "rgba(99, 102, 241, 0.08)";
+        upBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+        upBtn.style.color = "#c7d2fe";
+        upBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        upBtn.title = "Yukarı Taşı";
+        upBtn.addEventListener("click", () => {
+            if (idx > 0) {
+                [proposalItems[idx - 1], proposalItems[idx]] = [proposalItems[idx], proposalItems[idx - 1]];
+                saveProposalState();
+                updateProposalSummary();
+            }
+        });
+        tdActions.appendChild(upBtn);
+
+        // Move Down button
+        const downBtn = document.createElement("button");
+        downBtn.className = "project-btn-main";
+        downBtn.style.padding = "0.2rem 0.35rem";
+        downBtn.style.margin = "0";
+        downBtn.style.marginRight = "0.15rem";
+        downBtn.style.display = "inline-block";
+        downBtn.style.background = "rgba(99, 102, 241, 0.08)";
+        downBtn.style.borderColor = "rgba(99, 102, 241, 0.2)";
+        downBtn.style.color = "#c7d2fe";
+        downBtn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+        downBtn.title = "Aşağı Taşı";
+        downBtn.addEventListener("click", () => {
+            if (idx < proposalItems.length - 1) {
+                [proposalItems[idx], proposalItems[idx + 1]] = [proposalItems[idx + 1], proposalItems[idx]];
+                saveProposalState();
+                updateProposalSummary();
+            }
+        });
+        tdActions.appendChild(downBtn);
+
+        // Delete button
         const delBtn = document.createElement("button");
         delBtn.className = "project-btn-main btn-delete";
-        delBtn.style.padding = "0.2rem 0.4rem";
+        delBtn.style.padding = "0.2rem 0.35rem";
         delBtn.style.margin = "0";
+        delBtn.style.display = "inline-block";
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
         delBtn.addEventListener("click", () => {
             deleteProposalItem(idx);
         });
-        
         tdActions.appendChild(delBtn);
+        
         row.appendChild(tdActions);
         
         tbody.appendChild(row);
