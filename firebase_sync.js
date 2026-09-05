@@ -92,7 +92,7 @@
         const btnModalUpload = document.getElementById("btnModalUploadToCloud");
         const btnModalDownload = document.getElementById("btnModalDownloadFromCloud");
         const btnModalImport = document.getElementById("btnModalImportFromFile");
-        const cloudImportFile = document.getElementById("cloudImportFile");
+        const cloudArchiveSelect = document.getElementById("cloudArchiveSelect");
         const modalStatusEl = document.getElementById("modalSyncStatus");
 
         // UI Synced update helper
@@ -122,6 +122,7 @@
                 const currentCode = localStorage.getItem("t_sync_company_code") || "bft_portal";
                 const currentStatus = localStorage.getItem("t_sync_last_status") || "Son Eşleşme: Yapılmadı";
                 updateSyncUI(currentCode, currentStatus);
+                populateLocalArchiveOptions();
                 modalEl.classList.add("open");
             });
 
@@ -177,6 +178,29 @@
         const updateAllStatus = (msg) => {
             if (statusEl) statusEl.textContent = msg;
             if (modalStatusEl) modalStatusEl.textContent = msg;
+        };
+
+        const getLocalCloudArchive = () => {
+            try {
+                const archive = JSON.parse(localStorage.getItem(localArchiveKey) || "[]");
+                return Array.isArray(archive) ? archive : [];
+            } catch (err) {
+                return [];
+            }
+        };
+
+        const populateLocalArchiveOptions = () => {
+            if (!cloudArchiveSelect) return;
+            const archive = getLocalCloudArchive();
+            cloudArchiveSelect.innerHTML = "";
+            if (!archive.length) {
+                cloudArchiveSelect.add(new Option("Henüz yerel bulut kaydı yok", ""));
+                return;
+            }
+            archive.forEach((snapshot, index) => {
+                const dateText = new Date(snapshot.savedAt).toLocaleString("tr-TR");
+                cloudArchiveSelect.add(new Option(`${index + 1}. ${dateText} - ${snapshot.companyCode}`, String(index)));
+            });
         };
 
         const importJsonBackup = async (file) => {
@@ -351,22 +375,38 @@
                 downloadAction(() => modalInputCode.value, disableAllButtons, enableAllButtons, updateAllStatus);
             });
         }
-        if (btnModalImport && cloudImportFile) {
-            btnModalImport.addEventListener("click", () => cloudImportFile.click());
-            cloudImportFile.addEventListener("change", async () => {
-                const file = cloudImportFile.files && cloudImportFile.files[0];
-                cloudImportFile.value = "";
-                if (!file) return;
+        if (btnModalImport) {
+            btnModalImport.addEventListener("click", async () => {
+                const archive = getLocalCloudArchive();
+                const selectedIndex = Number.parseInt(cloudArchiveSelect?.value ?? "", 10);
+                const snapshot = Number.isInteger(selectedIndex) ? archive[selectedIndex] : null;
 
-                try {
-                    const imported = await importJsonBackup(file);
-                    if (!imported) return;
-                    await uploadAction(() => modalInputCode.value, disableAllButtons, enableAllButtons, updateAllStatus);
-                } catch (err) {
-                    console.error("File import error:", err);
-                    updateAllStatus("Dosya içe aktarma hatası!");
-                    alert("Dosya içe aktarılırken bir hata oluştu: " + err.message);
+                if (!snapshot || !snapshot.data) {
+                    alert("Lütfen geri yüklenecek bir yerel kayıt seçin.");
+                    return;
                 }
+
+                const restoredKeys = storageKeys.filter(key => Object.prototype.hasOwnProperty.call(snapshot.data, key));
+                if (!await window.showCustomConfirm(
+                    `Mevcut yerel kayıtlar silinecek ve ${new Date(snapshot.savedAt).toLocaleString("tr-TR")} tarihli kayıt geri yüklenecek. Ardından ${modalInputCode.value.trim().toLowerCase() || "bft_portal"} koduna buluta yüklenecek. Devam edilsin mi?`,
+                    "Yerel Arşivden Geri Dön"
+                )) return;
+
+                isPullingFromCloud = true;
+                try {
+                    storageKeys.forEach(key => localStorage.removeItem(key));
+                    restoredKeys.forEach(key => {
+                        const value = snapshot.data[key];
+                        if (value !== null && value !== undefined) {
+                            localStorage.setItem(key, value);
+                        }
+                    });
+                } finally {
+                    isPullingFromCloud = false;
+                }
+
+                await uploadAction(() => modalInputCode.value, disableAllButtons, enableAllButtons, updateAllStatus);
+                location.reload(true);
             });
         }
 
@@ -719,7 +759,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.33";
+    const CURRENT_APP_VERSION = "1.0.34";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;
