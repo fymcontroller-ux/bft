@@ -1104,6 +1104,47 @@ function initPortalNavigation() {
     if (savedSection && document.getElementById(savedSection)) {
         switchPortalSection(savedSection);
     }
+
+    // Update App Button Click Handler for Auto-Updates
+    const btnUpdateApp = document.getElementById("btnUpdateApp");
+    if (btnUpdateApp) {
+        btnUpdateApp.addEventListener("click", async () => {
+            const btnTextEl = document.getElementById("btnUpdateAppText");
+            if (!btnTextEl || btnTextEl.offsetParent === null) return; // Button not visible
+
+            // Hide button immediately after click
+            btnUpdateApp.style.opacity = '0';
+            btnUpdateApp.style.pointerEvents = 'none';
+            btnTextEl.textContent = 'Güncelleniyor...';
+
+            try {
+                const mainWindow = require('electron').BrowserWindow.getFocusedWindow();
+                
+                // Prevent DevTools from opening during update
+                if (mainWindow && !mainWindow.webContents.isDevToolsOpened()) {
+                    mainWindow.webContents.once('devtools-opened', () => {
+                        mainWindow.webContents.closeDevTools();
+                    });
+                }
+
+                // Get current version
+                const currentVersion = localStorage.getItem("bft_app_version") || "v1.0.0";
+                
+                // Trigger IPC call to download-and-install-update
+                const downloadUrl = await window.require('electron').ipcRenderer.invoke('download-and-install-update', null);
+                
+                // Close app after successful update
+                mainWindow.close();
+                
+            } catch (err) {
+                console.error("Update button click error:", err);
+                window.showToast("Güncelleme işlemi başarısız: " + err.message, "error");
+                btnUpdateApp.style.opacity = '1';
+                btnUpdateApp.style.pointerEvents = 'auto';
+                btnTextEl.textContent = 'Yeni Sürüm Var (v1.0.1)'; // Reset text
+            }
+        });
+    }
 }
 
 // Fetch stats from LocalStorage to display in the main Dashboard overview cards

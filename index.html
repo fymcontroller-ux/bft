@@ -1478,9 +1478,11 @@
                         <i class="fa-solid fa-cloud-arrow-down"></i> Çek (Download)
                     </button>
                 </div>
-                <input type="file" id="cloudImportFile" accept=".json,application/json" style="display: none;">
+                <select id="cloudArchiveSelect" aria-label="Yerel bulut arşivi" style="width: 100%; padding: 0.6rem; font-size: 0.82rem; color: var(--text-primary); background: var(--bg-input); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px;">
+                    <option value="">Yerel kayıt aranıyor...</option>
+                </select>
                 <button id="btnModalImportFromFile" class="project-btn-main" style="width: 100%; padding: 0.6rem; font-size: 0.85rem; margin: 0; background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.25); color: #6ee7b7;">
-                    <i class="fa-solid fa-file-import"></i> Dosyadan İçe Aktar ve Buluta Yükle
+                    <i class="fa-solid fa-clock-rotate-left"></i> Seçilen Yerel Kaydı Geri Yükle ve Buluta Yükle
                 </button>
                 <div id="modalSyncStatus" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; line-height: 1.2;">Son Eşleşme: Yapılmadı</div>
                 <button id="btnModalDeleteCloudProjects" class="project-btn-main btn-delete" style="width: 100%; padding: 0.6rem; font-size: 0.85rem; margin: 0; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.15); color: #fca5a5;">
@@ -1549,6 +1551,24 @@
         </div>
     </div>
 
+    <!-- Update Installation Overlay -->
+    <div id="updateInstallOverlay" class="update-install-overlay">
+        <div id="updateInstallCard" class="update-install-card">
+            <div id="updateInstallContent">
+                <div id="updateInstallLoadingSection">
+                    <div id="updateInstallIconContainer">
+                        <!-- Dynamic icon: spinner, checkmark, etc. -->
+                    </div>
+                    <h3 id="updateInstallTitle" class="update-install-title">Bekleniyor...</h3>
+                    <p id="updateInstallStatus" class="update-install-status"></p>
+                    <div id="updateInstallProgressContainer" class="update-install-progress" style="display: none;">
+                        <div id="updateInstallProgressBar" class="update-install-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -1561,5 +1581,46 @@
     <script src="pnomatik.js"></script>
     <script src="teklifver.js?v=1.0.3"></script>
     <script src="main.js"></script>
+
+    <!-- Update Overlay Manager -->
+    !function(){
+        var overlay = document.getElementById('updateInstallOverlay'),
+            progressBar = document.getElementById('updateInstallProgressBar');
+        
+        if (!overlay) return;
+
+        // Listen for IPC messages from Electron main process
+        window.require && window.require('electron') && window.require('electron').ipcRenderer && 
+            window.require('electron').ipcRenderer.on('update-download-progress', function(ev, data){
+                if (!data || !data.percent) return;
+
+                var percent = data.percent;
+                
+                // Update progress bar width and color
+                progressBar.style.width = (percent >= 100 ? '100%' : percent) + '%';
+                
+                // Change appearance based on status
+                if (data.isError || !progressBar.classList.contains('complete')) {
+                    if (percent >= 98 && percent < 100) {
+                        progressBar.classList.add('complete');
+                    } else if (data.percent > 0) {
+                        progressBar.classList.remove('complete', 'error');
+                        progressBar.classList.add('slow'); // Orange/yellow for downloading
+                    } else if (data.status && data.status.includes('başarısız')) {
+                        progressBar.classList.add('error');
+                    } else if (data.status && data.status.includes('başarılı') || 
+                               data.status && data.status.includes('tamamlandı')) {
+                        progressBar.classList.add('complete');
+                    }
+                } else {
+                    progressBar.classList.remove('slow', 'error');
+                }
+
+                // Update status text if provided
+                if (data.status) {
+                    overlay.querySelector('.update-install-status').textContent = data.status;
+                }
+            });
+    }();
 </body>
 </html>

@@ -1505,6 +1505,140 @@ select option:checked, select option:hover {
     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ===== UPDATE INSTALL OVERLAY ===== */
+.update-install-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 7, 13, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.update-install-overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.update-install-card {
+    background: linear-gradient(145deg, #1a1d2e 0%, #161824 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2.25rem 2rem;
+    min-width: 420px;
+    max-width: 520px;
+    text-align: center;
+    box-shadow: 
+        0 20px 60px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.update-install-logo {
+    font-size: 4rem;
+    color: var(--accent-teal);
+    margin-bottom: 0.75rem;
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.update-install-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.update-install-status {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    min-height: 1.8em;
+    line-height: 1.6;
+    padding: 0.5rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+}
+
+.update-install-progress {
+    width: 100%;
+    height: 10px;
+    background: var(--bg-input);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.update-install-progress-bar {
+    height: 100%;
+    width: 30%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 8px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.update-install-progress-bar.slow {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
+.update-install-progress-bar.error {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+}
+
+.update-install-progress-bar.complete {
+    background: linear-gradient(90deg, #10b981, #059669);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.update-install-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(16, 185, 129, 0.2);
+    border-top-color: var(--accent-teal);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 0.75rem;
+    vertical-align: middle;
+}
+
+.update-install-checkmark {
+    font-size: 4rem;
+    color: var(--success);
+    margin-bottom: 0.75rem;
+}
+
+.update-install-success-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.update-install-success-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 .alternatives-section {
     display: flex;
     flex-direction: column;
