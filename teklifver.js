@@ -159,6 +159,8 @@ function initTeklifVer() {
         if (savedInfo.termsPayment) document.getElementById("termsPayment").value = savedInfo.termsPayment;
         if (savedInfo.termsDelivery) document.getElementById("termsDelivery").value = savedInfo.termsDelivery;
         if (savedInfo.termsShipping) document.getElementById("termsShipping").value = savedInfo.termsShipping;
+        if (savedInfo.termsTradeName) document.getElementById("termsTradeName").value = savedInfo.termsTradeName;
+        if (savedInfo.termsIban) document.getElementById("termsIban").value = savedInfo.termsIban;
         if (savedInfo.noteBankExchange) document.getElementById("noteBankExchange").value = savedInfo.noteBankExchange;
         if (savedInfo.noteOrderConfirm) document.getElementById("noteOrderConfirm").value = savedInfo.noteOrderConfirm;
         if (savedInfo.noteForceMajeure) document.getElementById("noteForceMajeure").value = savedInfo.noteForceMajeure;
@@ -188,7 +190,7 @@ function initTeklifVer() {
     const companyInputs = [
         "proposalTitle", "clientCompany", "contactPerson", "proposalDate",
         "clientEmail", "clientTaxOffice", "clientTaxNo", "clientAddress",
-        "termsValidity", "termsPayment", "termsDelivery", "termsShipping",
+        "termsValidity", "termsPayment", "termsDelivery", "termsShipping", "termsTradeName", "termsIban",
         "noteBankExchange", "noteOrderConfirm", "noteForceMajeure"
     ];
     companyInputs.forEach(id => {
@@ -292,6 +294,8 @@ function saveCompanyInfoState() {
         termsPayment: document.getElementById("termsPayment").value,
         termsDelivery: document.getElementById("termsDelivery").value,
         termsShipping: document.getElementById("termsShipping").value,
+        termsTradeName: document.getElementById("termsTradeName").value,
+        termsIban: document.getElementById("termsIban").value,
         noteBankExchange: document.getElementById("noteBankExchange").value,
         noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
         noteForceMajeure: document.getElementById("noteForceMajeure").value
@@ -394,6 +398,8 @@ function handleCustomerSelectChange() {
         termsPayment: document.getElementById("termsPayment").value,
         termsDelivery: document.getElementById("termsDelivery").value,
         termsShipping: document.getElementById("termsShipping").value,
+        termsTradeName: document.getElementById("termsTradeName").value,
+        termsIban: document.getElementById("termsIban").value,
         noteBankExchange: document.getElementById("noteBankExchange").value,
         noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
         noteForceMajeure: document.getElementById("noteForceMajeure").value
@@ -612,12 +618,49 @@ function addCatalogProduct() {
         return;
     }
 
-    productCatalog[category].push({ name: name, price: price, description: description });
+    productCatalog[category].push({ 
+        name: name, 
+        price: price, 
+        description: description, 
+        showInPriceList: false 
+    });
     localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
 
     nameInput.value = "";
     priceInput.value = "";
     if (descInput) descInput.value = "";
+    renderCatalogViewer();
+}
+
+function saveCatalogProductImage(category, index, file) {
+    if (!file || !file.type.startsWith("image/")) {
+        alert("Lütfen geçerli bir resim dosyası seçin.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        const image = new Image();
+        image.onload = () => {
+            const maxSize = 900;
+            const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(image.width * scale));
+            canvas.height = Math.max(1, Math.round(image.height * scale));
+            canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+
+            productCatalog[category][index].image = canvas.toDataURL("image/png");
+            localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
+            renderCatalogViewer();
+        };
+        image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeCatalogProductImage(category, index) {
+    delete productCatalog[category][index].image;
+    localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
     renderCatalogViewer();
 }
 
@@ -722,6 +765,15 @@ function renderCatalogViewer() {
                 tdName.appendChild(descInp);
                 tr.appendChild(tdName);
 
+                const imageInput = document.createElement("input");
+                imageInput.type = "file";
+                imageInput.accept = "image/*";
+                imageInput.style.display = "none";
+                imageInput.addEventListener("change", (event) => {
+                    saveCatalogProductImage(cat, index, event.target.files[0]);
+                });
+                tr.appendChild(imageInput);
+
                 // 2. Price (Editable)
                 const tdPrice = document.createElement("td");
                 tdPrice.style.textAlign = "right";
@@ -818,6 +870,51 @@ function renderCatalogViewer() {
 
                 tdActions.appendChild(upBtn);
                 tdActions.appendChild(downBtn);
+
+                const imageBtn = document.createElement("button");
+                imageBtn.className = "project-btn-main";
+                imageBtn.style.padding = "0.15rem 0.35rem";
+                imageBtn.style.margin = "0 0.1rem 0 0";
+                imageBtn.style.fontSize = "0.75rem";
+                imageBtn.style.display = "inline-block";
+                imageBtn.innerHTML = `<i class="fa-solid ${prod.image ? "fa-image" : "fa-camera"}"></i>`;
+                imageBtn.title = prod.image ? "Ürün görselini değiştir" : "Ürün görseli yükle";
+                imageBtn.addEventListener("click", () => imageInput.click());
+                tdActions.appendChild(imageBtn);
+
+                if (prod.image) {
+                    const removeImageBtn = document.createElement("button");
+                    removeImageBtn.className = "project-btn-main btn-delete";
+                    removeImageBtn.style.padding = "0.15rem 0.35rem";
+                    removeImageBtn.style.margin = "0 0.1rem 0 0";
+                    removeImageBtn.style.fontSize = "0.75rem";
+                    removeImageBtn.style.display = "inline-block";
+                    removeImageBtn.innerHTML = '<i class="fa-solid fa-image-slash"></i>';
+                    removeImageBtn.title = "Ürün görselini kaldır";
+                    removeImageBtn.addEventListener("click", () => removeCatalogProductImage(cat, index));
+                    tdActions.appendChild(removeImageBtn);
+                }
+
+                // Show in Price List Toggle
+                const showPriceBtn = document.createElement("button");
+                showPriceBtn.className = "project-btn-main";
+                showPriceBtn.style.padding = "0.15rem 0.35rem";
+                showPriceBtn.style.margin = "0";
+                showPriceBtn.style.marginRight = "0.1rem";
+                showPriceBtn.style.fontSize = "0.75rem";
+                showPriceBtn.style.display = "inline-block";
+                showPriceBtn.style.background = prod.showInPriceList ? "rgba(16, 185, 129, 0.2)" : "rgba(99, 102, 241, 0.08)";
+                showPriceBtn.style.borderColor = prod.showInPriceList ? "rgba(16, 185, 129, 0.3)" : "rgba(99, 102, 241, 0.2)";
+                showPriceBtn.style.color = prod.showInPriceList ? "#a7f3d0" : "#c7d2fe";
+                showPriceBtn.innerHTML = `<i class="fa-solid ${prod.showInPriceList ? 'fa-check-circle' : 'fa-circle'}"></i>`;
+                showPriceBtn.title = "Fiyat Listesinde Göster";
+                showPriceBtn.addEventListener("click", () => {
+                    productCatalog[cat][index].showInPriceList = !productCatalog[cat][index].showInPriceList;
+                    localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
+                    renderCatalogViewer();
+                });
+
+                tdActions.appendChild(showPriceBtn);
                 tdActions.appendChild(delBtn);
                 tr.appendChild(tdActions);
 
@@ -1563,6 +1660,8 @@ function buildProposalPrintElement() {
     const termsPayment = document.getElementById("termsPayment").value || "Girilmedi";
     const termsDelivery = document.getElementById("termsDelivery").value || "Girilmedi";
     const termsShipping = document.getElementById("termsShipping").value || "Girilmedi";
+    const termsTradeName = document.getElementById("termsTradeName").value || "Girilmedi";
+    const termsIban = document.getElementById("termsIban").value || "Girilmedi";
     const noteBankExchange = document.getElementById("noteBankExchange").value || "";
     const noteOrderConfirm = document.getElementById("noteOrderConfirm").value || "";
     const noteForceMajeure = document.getElementById("noteForceMajeure").value || "";
@@ -1730,23 +1829,31 @@ function buildProposalPrintElement() {
             <!-- NOTLAR TABLOSU VE AÇIKLAMALAR -->
             <div style="margin-top: 15px; margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid;">
                 <h4 style="margin: 0 0 4px 0; font-size: 0.85rem; color: #0f172a; text-align: center; font-weight: 800; letter-spacing: 0.5px; border-bottom: 1.5px solid #0f172a; padding-bottom: 2px;">NOTLAR</h4>
-                <table style="width: 100%; border-collapse: collapse; font-size: 0.72rem; line-height: 1.35; margin-bottom: 4px; border: 1.5px solid #0f172a;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.72rem; line-height: 1.35; margin-bottom: 4px; border: 2px solid #000000;">
                     <tbody>
-                        <tr style="border-bottom: 1px solid #0f172a;">
-                            <td style="width: 25%; padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border-right: 1px solid #0f172a;">FİYAT GEÇERLİLİK SÜRESİ</td>
-                            <td style="padding: 4px 6px; font-weight: 500;">${termsValidity}</td>
+                        <tr style="border-bottom: 1.5px solid #000000;">
+                            <td style="width: 25%; padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border: 1.5px solid #000000;">FİYAT GEÇERLİLİK SÜRESİ</td>
+                            <td style="padding: 4px 6px; font-weight: 500; border: 1.5px solid #000000;">${termsValidity}</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid #0f172a;">
-                            <td style="padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border-right: 1px solid #0f172a;">ÖDEME</td>
-                            <td style="padding: 4px 6px; font-weight: 500;">${termsPayment}</td>
+                        <tr style="border-bottom: 1.5px solid #000000;">
+                            <td style="padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border: 1.5px solid #000000;">ÖDEME</td>
+                            <td style="padding: 4px 6px; font-weight: 500; border: 1.5px solid #000000;">${termsPayment}</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid #0f172a;">
-                            <td style="padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border-right: 1px solid #0f172a;">TESLİM SÜRESİ</td>
-                            <td style="padding: 4px 6px; font-weight: 500;">${termsDelivery}</td>
+                        <tr style="border-bottom: 1.5px solid #000000;">
+                            <td style="padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border: 1.5px solid #000000;">TESLİM SÜRESİ</td>
+                            <td style="padding: 4px 6px; font-weight: 500; border: 1.5px solid #000000;">${termsDelivery}</td>
+                        </tr>
+                        <tr style="border-bottom: 1.5px solid #000000;">
+                            <td style="padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border: 1.5px solid #000000;">NAKLİYE</td>
+                            <td style="padding: 4px 6px; font-weight: 500; border: 1.5px solid #000000;">${termsShipping}</td>
+                        </tr>
+                        <tr style="border-bottom: 1.5px solid #000000;">
+                            <td style="padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border: 1.5px solid #000000;">TİCARİ UNVAN</td>
+                            <td style="padding: 4px 6px; font-weight: 500; border: 1.5px solid #000000;">${termsTradeName}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border-right: 1px solid #0f172a;">NAKLİYE</td>
-                            <td style="padding: 4px 6px; font-weight: 500;">${termsShipping}</td>
+                            <td style="padding: 4px 6px; font-weight: bold; background-color: #f8fafc; border: 1.5px solid #000000;">IBAN NUMARASI</td>
+                            <td style="padding: 4px 6px; font-weight: 500; border: 1.5px solid #000000;">${termsIban}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1826,6 +1933,8 @@ function saveCurrentProposalTemplate() {
             termsPayment: document.getElementById("termsPayment").value,
             termsDelivery: document.getElementById("termsDelivery").value,
             termsShipping: document.getElementById("termsShipping").value,
+            termsTradeName: document.getElementById("termsTradeName").value,
+            termsIban: document.getElementById("termsIban").value,
             noteBankExchange: document.getElementById("noteBankExchange").value,
             noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
             noteForceMajeure: document.getElementById("noteForceMajeure").value
@@ -1873,6 +1982,8 @@ function saveCurrentProposalTemplateSilent() {
             termsPayment: document.getElementById("termsPayment").value,
             termsDelivery: document.getElementById("termsDelivery").value,
             termsShipping: document.getElementById("termsShipping").value,
+            termsTradeName: document.getElementById("termsTradeName").value,
+            termsIban: document.getElementById("termsIban").value,
             noteBankExchange: document.getElementById("noteBankExchange").value,
             noteOrderConfirm: document.getElementById("noteOrderConfirm").value,
             noteForceMajeure: document.getElementById("noteForceMajeure").value
@@ -1934,6 +2045,8 @@ function loadSelectedProposalTemplate() {
             document.getElementById("termsPayment").value = prop.companyInfo.termsPayment || "";
             document.getElementById("termsDelivery").value = prop.companyInfo.termsDelivery || "";
             document.getElementById("termsShipping").value = prop.companyInfo.termsShipping || "";
+            document.getElementById("termsTradeName").value = prop.companyInfo.termsTradeName || "";
+            document.getElementById("termsIban").value = prop.companyInfo.termsIban || "";
             document.getElementById("noteBankExchange").value = prop.companyInfo.noteBankExchange || "";
             document.getElementById("noteOrderConfirm").value = prop.companyInfo.noteOrderConfirm || "";
             document.getElementById("noteForceMajeure").value = prop.companyInfo.noteForceMajeure || "";

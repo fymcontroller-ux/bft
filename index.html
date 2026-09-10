@@ -36,12 +36,12 @@
                 <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;">
                     <i class="fa-solid fa-cubes"></i>
                     <span>BFT Portal</span>
-                    <span id="appVersionBadge" style="font-size: 0.65rem; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 10px; font-weight: 500; margin-left: auto;">v1.0.0</span>
+                    <span id="appVersionBadge" style="font-size: 0.65rem; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 10px; font-weight: 500; margin-left: auto;">v1.0.37</span>
                 </div>
                 <!-- Automatic Update Alert Button (Only shown when new version is available) -->
                 <button id="btnUpdateApp" class="project-btn-main" style="display: none; width: 100%; margin-top: 0.4rem; padding: 0.45rem 0.6rem; font-size: 0.76rem; font-weight: 700; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 6px; cursor: pointer; text-align: center; justify-content: center; align-items: center; gap: 5px; animation: pulseGlow 2s infinite;" title="Yeni Sürümü İndir ve Kur">
                     <i class="fa-solid fa-cloud-arrow-down" style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important;"></i>
-                    <span id="btnUpdateAppText" style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; font-weight: 700; display: inline-block;">Yeni Sürüm Var (v1.0.1)</span>
+                    <span id="btnUpdateAppText" style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; font-weight: 700; display: inline-block;">Yeni Sürüm Var (v1.0.37)</span>
                 </button>
             </div>
             <ul class="sidebar-menu">
@@ -60,6 +60,10 @@
                 <li class="sidebar-item" data-target="pnomatik-sec">
                     <i class="fa-solid fa-wind"></i>
                     <span>Pnömatik</span>
+                </li>
+                <li class="sidebar-item" data-target="fiyatlistesi-sec">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Fiyat Listesi</span>
                 </li>
                 <li class="sidebar-item" data-target="teklifver-sec">
                     <i class="fa-solid fa-file-invoice-dollar"></i>
@@ -140,6 +144,37 @@
                     </div>
                 </div>
 
+            </section>
+
+            <!-- SECTION: FİYAT LİSTESİ -->
+            <section id="fiyatlistesi-sec" class="portal-section">
+                <div class="section-header">
+                    <div>
+                        <h2><i class="fa-solid fa-list-check" style="color: var(--accent-indigo);"></i> Fiyat Listesi</h2>
+                        <p>Katalog yönetiminde seçili olan ürünlerin güncel fiyat listesi.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button type="button" class="export-btn preview-trigger-btn" id="btnPreviewPriceList" title="Fiyat Listesi Önizleme ve Yazdırma" style="background: linear-gradient(135deg, var(--accent-indigo), #4f46e5); box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);">
+                            <i class="fa-solid fa-eye"></i> Önizleme
+                        </button>
+                        <div class="price-list-controls">
+                            <div class="control-group">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="price-list-search" placeholder="Ürün ara...">
+                            </div>
+                            <div class="control-group">
+                                <i class="fa-solid fa-filter"></i>
+                                <select id="price-list-category">
+                                    <option value="All">Tüm Kategoriler</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="price-list-container" class="price-list-wrapper">
+                    <!-- Data will be rendered here by fiyatlistesi.js -->
+                </div>
             </section>
 
             <!-- SECTION 1: YÜKLEYİCİ MALİYETLERİ -->
@@ -633,7 +668,7 @@
                 <div class="section-header">
                     <div>
                         <h2><i class="fa-solid fa-wind" style="color: var(--accent-indigo);"></i> Pnömatik Taşıma Hesaplayıcı</h2>
-                        <p>Bulk malzemelerin iletim geometrisi ve Blower vakum hava debi gereksinim analizi.</p>
+                        <p>Bulk malzeme taşıma geometrisi ve Blower vakum hava debi gereksinim analizi.</p>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                         <button class="export-btn" id="exportBtnPnomatik" style="display: none;">
@@ -1086,6 +1121,18 @@
                                     <label for="termsShipping" style="font-weight: 600; font-size: 0.9rem;">Nakliye</label>
                                     <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
                                         <input type="text" id="termsShipping" value="ALICIYA AİTTİR" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="termsTradeName" style="font-weight: 600; font-size: 0.9rem;">Ticari Unvan</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="termsTradeName" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
+                                    <label for="termsIban" style="font-weight: 600; font-size: 0.9rem;">IBAN Numarası</label>
+                                    <div class="input-container" style="width: 100%; padding: 0.5rem 0.75rem;">
+                                        <input type="text" id="termsIban" style="text-align: left !important; font-size: 0.9rem; width: 100%;">
                                     </div>
                                 </div>
 
@@ -1551,76 +1598,18 @@
         </div>
     </div>
 
-    <!-- Update Installation Overlay -->
-    <div id="updateInstallOverlay" class="update-install-overlay">
-        <div id="updateInstallCard" class="update-install-card">
-            <div id="updateInstallContent">
-                <div id="updateInstallLoadingSection">
-                    <div id="updateInstallIconContainer">
-                        <!-- Dynamic icon: spinner, checkmark, etc. -->
-                    </div>
-                    <h3 id="updateInstallTitle" class="update-install-title">Bekleniyor...</h3>
-                    <p id="updateInstallStatus" class="update-install-status"></p>
-                    <div id="updateInstallProgressContainer" class="update-install-progress" style="display: none;">
-                        <div id="updateInstallProgressBar" class="update-install-progress-bar"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="fiyatlistesi.js"></script>
+    <script src="firebase_sync.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="firebase_sync.js?v=1.0.3"></script>
-    <script src="starter_data.js"></script>
-    <script src="yukleyici.js?v=1.0.1"></script>
+    <script src="main.js"></script>
+    <script src="yukleyici.js"></script>
     <script src="merkezi.js"></script>
     <script src="pnomatik.js"></script>
-    <script src="teklifver.js?v=1.0.3"></script>
-    <script src="main.js"></script>
-
-    <!-- Update Overlay Manager -->
-    !function(){
-        var overlay = document.getElementById('updateInstallOverlay'),
-            progressBar = document.getElementById('updateInstallProgressBar');
-        
-        if (!overlay) return;
-
-        // Listen for IPC messages from Electron main process
-        window.require && window.require('electron') && window.require('electron').ipcRenderer && 
-            window.require('electron').ipcRenderer.on('update-download-progress', function(ev, data){
-                if (!data || !data.percent) return;
-
-                var percent = data.percent;
-                
-                // Update progress bar width and color
-                progressBar.style.width = (percent >= 100 ? '100%' : percent) + '%';
-                
-                // Change appearance based on status
-                if (data.isError || !progressBar.classList.contains('complete')) {
-                    if (percent >= 98 && percent < 100) {
-                        progressBar.classList.add('complete');
-                    } else if (data.percent > 0) {
-                        progressBar.classList.remove('complete', 'error');
-                        progressBar.classList.add('slow'); // Orange/yellow for downloading
-                    } else if (data.status && data.status.includes('başarısız')) {
-                        progressBar.classList.add('error');
-                    } else if (data.status && data.status.includes('başarılı') || 
-                               data.status && data.status.includes('tamamlandı')) {
-                        progressBar.classList.add('complete');
-                    }
-                } else {
-                    progressBar.classList.remove('slow', 'error');
-                }
-
-                // Update status text if provided
-                if (data.status) {
-                    overlay.querySelector('.update-install-status').textContent = data.status;
-                }
-            });
-    }();
+    <script src="teklifver.js"></script>
+    <script src="starter_data.js"></script>
 </body>
 </html>
