@@ -1321,6 +1321,21 @@ function updateDashboardStats() {
         if (pnomatikDescEl) {
             pnomatikDescEl.innerHTML = `Sistemde kayıtlı <strong>${projectCountPnomatik} adet pnömatik taşıma projesi</strong> bulunuyor.`;
         }
+
+        // Fiyat Listesi Products Count
+        const catalog = JSON.parse(localStorage.getItem("t_product_catalog"));
+        const priceListDescEl = document.querySelector(".overview-card:nth-child(4) .overview-desc");
+        if (priceListDescEl) {
+            let totalProducts = 0;
+            if (catalog && typeof catalog === 'object') {
+                Object.values(catalog).forEach(items => {
+                    if (Array.isArray(items)) totalProducts += items.length;
+                });
+            }
+            if (totalProducts > 0) {
+                priceListDescEl.innerHTML = `Katalogda kayıtlı <strong>${totalProducts} adet ürün</strong> ve güncel liste fiyatları mevcuttur.`;
+            }
+        }
     } catch (e) {
         console.error("Dashboard istatistikleri güncellenirken hata oluştu:", e);
     }

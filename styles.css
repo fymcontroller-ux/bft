@@ -1852,6 +1852,12 @@ select option:checked, select option:hover {
     border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
+.overview-icon-container.fiyatlistesi {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
 .overview-icon-container.teklifver {
     background: rgba(249, 115, 22, 0.1);
     color: var(--accent-orange);

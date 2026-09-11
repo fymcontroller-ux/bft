@@ -121,6 +121,17 @@
                         </div>
                     </div>
 
+                    <div class="overview-card" onclick="switchPortalSection('fiyatlistesi-sec')">
+                        <div class="overview-icon-container fiyatlistesi">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <div class="overview-info">
+                            <span class="overview-title">Fiyat Listesi</span>
+                            <span class="overview-desc">Katalog ürünleri, güncel liste fiyatları ve kategori bazlı listeleme.</span>
+                            <span class="overview-link">Modüle Git <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+
                     <div class="overview-card" onclick="switchPortalSection('teklifver-sec')">
                         <div class="overview-icon-container teklifver">
                             <i class="fa-solid fa-file-invoice-dollar"></i>
@@ -962,7 +973,7 @@
                         <div class="form-group">
                             <label for="proposalSaveName">Aktif Teklif Adı</label>
                             <div class="input-container">
-                                <input type="text" id="proposalSaveName" value="Yeni Teklif" style="text-align: left !important;">
+                                <input type="text" id="proposalSaveName" value="" placeholder="Yeni Teklif Adı Girin..." style="text-align: left !important;">
                                 <span class="unit"><i class="fa-solid fa-file-invoice-dollar"></i></span>
                             </div>
                         </div>
@@ -976,6 +987,20 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Boş Durum Bilgilendirme Kartı (Teklif seçilmediğinde görünür) -->
+                <div id="proposalNoProjectAlert" class="panel-card" style="display: none; text-align: center; padding: 3.5rem 2rem; background: rgba(18, 20, 29, 0.45); border: 1px dashed rgba(99, 102, 241, 0.35); border-radius: 16px; margin-bottom: 1.5rem;">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(99, 102, 241, 0.1); color: var(--accent-indigo); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; margin: 0 auto 1.25rem;">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <h3 style="font-size: 1.15rem; color: var(--text-primary); margin-bottom: 0.6rem; font-weight: 600;">Lütfen Bir Teklif Seçin veya Yeni Teklif Kaydedin</h3>
+                    <p style="color: var(--text-secondary); max-width: 540px; margin: 0 auto; font-size: 0.92rem; line-height: 1.6;">
+                        Müşteri bilgileri, teklif notları, ürün kalemleri ve teklif tablosunu görüntüleyip düzenlemek için lütfen yukarıdaki <strong>Teklif Proje Yönetimi</strong> panelinden kayıtlı bir teklif seçin veya yeni bir teklif adı girip <strong>"Değişiklikleri Kaydet"</strong> butonuna tıklayın.
+                    </p>
+                </div>
+
+                <!-- Teklif Detay Kartları Kapsayıcısı (Sadece teklif seçilince veya kaydedilince görünür) -->
+                <div id="proposalDetailsContainer" style="display: none;">
 
                 <!-- TOP PANEL: Full-width Customer Details -->
                 <div class="panel-card" style="margin-bottom: 1.5rem;">
@@ -1345,6 +1370,7 @@
                             </button>
                         </div>
                     </div>
+                </div> <!-- End of proposalDetailsContainer -->
                 </div> <!-- End of Tab 1: Proposal Preparation -->
 
                 <!-- Tab 2: Catalog Management -->

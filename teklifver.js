@@ -272,6 +272,21 @@ function initTeklifVer() {
     // Load saved proposals list into dropdown
     loadSavedProposalsList();
 
+    // Check if there was an active proposal in localStorage
+    const activeProposalName = localStorage.getItem("t_active_proposal_name");
+    const savedProposals = JSON.parse(localStorage.getItem("t_proposals")) || {};
+    const propSelectEl = document.getElementById("savedProposalsSelect");
+
+    if (activeProposalName && savedProposals[activeProposalName] && propSelectEl) {
+        propSelectEl.value = activeProposalName;
+        loadSelectedProposalTemplate();
+    } else {
+        if (propSelectEl) propSelectEl.value = "";
+        const saveNameInput = document.getElementById("proposalSaveName");
+        if (saveNameInput) saveNameInput.value = "";
+        updateProposalDetailsVisibility();
+    }
+
     // Bind proposal project management (same UX as Merkezi/Pnömatik)
     document.getElementById("btnSaveProposal").addEventListener("click", saveCurrentProposalTemplate);
     document.getElementById("btnDeleteProposal").addEventListener("click", deleteSelectedProposalTemplate);
@@ -1901,6 +1916,23 @@ function loadSavedProposalsList() {
     toggleProposalDeleteButtonState();
 }
 
+function updateProposalDetailsVisibility() {
+    const select = document.getElementById("savedProposalsSelect");
+    const container = document.getElementById("proposalDetailsContainer");
+    const alertBox = document.getElementById("proposalNoProjectAlert");
+    
+    const isProposalActive = select && select.value && select.value.trim() !== "";
+    
+    if (container) {
+        container.style.display = isProposalActive ? "block" : "none";
+    }
+    if (alertBox) {
+        alertBox.style.display = isProposalActive ? "none" : "block";
+    }
+    
+    toggleProposalDeleteButtonState();
+}
+
 function toggleProposalDeleteButtonState() {
     const select = document.getElementById("savedProposalsSelect");
     const deleteBtn = document.getElementById("btnDeleteProposal");
@@ -1951,15 +1983,18 @@ function saveCurrentProposalTemplate() {
     };
 
     localStorage.setItem("t_proposals", JSON.stringify(proposals));
+    localStorage.setItem("t_active_proposal_name", name);
     loadSavedProposalsList();
     
     document.getElementById("savedProposalsSelect").value = name;
-    toggleProposalDeleteButtonState();
+    updateProposalDetailsVisibility();
     alert(`"${name}" teklifi başarıyla kaydedildi.`);
 }
 
 function saveCurrentProposalTemplateSilent() {
     if (isLoadingProposal) return;
+    const select = document.getElementById("savedProposalsSelect");
+    if (!select || !select.value || select.value.trim() === "") return;
     const nameInput = document.getElementById("proposalSaveName");
     if (!nameInput) return;
     const name = nameInput.value.trim();
@@ -2001,13 +2036,13 @@ function saveCurrentProposalTemplateSilent() {
 
     localStorage.setItem("t_proposals", JSON.stringify(proposals));
     
-    const select = document.getElementById("savedProposalsSelect");
-    if (select) {
-        const prevVal = select.value;
+    const selectEl = document.getElementById("savedProposalsSelect");
+    if (selectEl) {
+        const prevVal = selectEl.value;
         loadSavedProposalsList();
         if (prevVal !== name) {
-            select.value = name;
-            toggleProposalDeleteButtonState();
+            selectEl.value = name;
+            updateProposalDetailsVisibility();
         }
     }
 }
@@ -2017,15 +2052,20 @@ function loadSelectedProposalTemplate() {
     const name = select.value;
     
     if (name === "") {
-        // "-- Yeni Teklif Başlat --" seçildi: formu sıfırla
+        // "-- Yeni Teklif Başlat --" seçildi: formu sıfırla ve alt kartları gizle
+        localStorage.removeItem("t_active_proposal_name");
         resetToNewProposal();
         return;
     }
 
     const proposals = JSON.parse(localStorage.getItem("t_proposals")) || {};
     const prop = proposals[name];
-    if (!prop) return;
+    if (!prop) {
+        updateProposalDetailsVisibility();
+        return;
+    }
 
+    localStorage.setItem("t_active_proposal_name", name);
     isLoadingProposal = true;
     try {
         // Set active name input to the loaded proposal's name
@@ -2083,8 +2123,8 @@ function loadSelectedProposalTemplate() {
         document.getElementById("descLibrarySelect").value = "";
         document.getElementById("btnDeleteDescFromLib").disabled = true;
 
-        toggleProposalDeleteButtonState();
         updateProposalSummary();
+        updateProposalDetailsVisibility();
     } finally {
         isLoadingProposal = false;
     }
@@ -2093,7 +2133,8 @@ function loadSelectedProposalTemplate() {
 function resetToNewProposal() {
     isLoadingProposal = true;
     try {
-        document.getElementById("proposalSaveName").value = "Yeni Teklif";
+        localStorage.removeItem("t_active_proposal_name");
+        document.getElementById("proposalSaveName").value = "";
         document.getElementById("proposalTitle").value = "Fiyat Teklifi";
         document.getElementById("clientCompany").value = "";
         document.getElementById("contactPerson").value = "";
@@ -2114,14 +2155,13 @@ function resetToNewProposal() {
         localStorage.removeItem("t_proposal_description");
         localStorage.removeItem("t_show_proposal_description");
         
-        toggleProposalDeleteButtonState();
-        
         // Clear items directly without prompt when resetting to new proposal
         proposalItems = [];
         localStorage.removeItem("t_proposal_items");
         localStorage.removeItem("t_company_info");
         
         updateProposalSummary();
+        updateProposalDetailsVisibility();
     } finally {
         isLoadingProposal = false;
     }
@@ -2143,6 +2183,7 @@ async function deleteSelectedProposalTemplate() {
     delete proposals[name];
     
     localStorage.setItem("t_proposals", JSON.stringify(proposals));
+    localStorage.removeItem("t_active_proposal_name");
     
     loadSavedProposalsList();
     resetToNewProposal();
