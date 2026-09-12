@@ -11,7 +11,7 @@
 </head>
 <body>
     <!-- Global Initial Cloud Sync Splash Screen -->
-    <div id="appInitialSplashScreen" class="initial-splash-overlay">
+    <div id="appInitialSplashScreen" class="initial-splash-overlay" onclick="this.style.opacity='0';this.style.pointerEvents='none';setTimeout(()=>this.style.display='none',300);">
         <div class="initial-splash-card">
             <div class="initial-splash-logo-container">
                 <i class="fa-solid fa-cubes initial-splash-logo-icon"></i>

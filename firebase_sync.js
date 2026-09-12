@@ -640,11 +640,11 @@
         }, delay);
     }
 
-    // Safety timeout: If cloud check takes more than 3 seconds (offline/slow), dismiss splash safely
+    // Safety timeout: If cloud check takes more than 1.2 seconds (offline/slow), dismiss splash safely
     setTimeout(() => {
         isInitialCloudCheckDone = true;
         hideInitialSplashScreen(0);
-    }, 3000);
+    }, 1200);
 
     // Helper: Real-time Cloud updates listener
     function setupRealtimeSync(companyCode) {
@@ -747,26 +747,21 @@
                     if (statusEl) statusEl.textContent = successMsg;
                     if (modalStatusEl) modalStatusEl.textContent = successMsg;
 
-                    if (window.showToast) {
-                        window.showToast("☁️ Buluttaki güncel veriler eşitlendi! Ekran yenileniyor...", "info");
+                    // UI bileşenlerini pürüzsüzce güncelle (Sonsuz sayfa yenileme döngüsünü engellemek için location.reload yerine ekranı doğrudan yenile)
+                    try {
+                        if (typeof window.initTeklifVer === 'function') window.initTeklifVer();
+                        if (typeof window.loadSavedProjectsList === 'function') window.loadSavedProjectsList();
+                        if (typeof window.updateDashboardStats === 'function') window.updateDashboardStats();
+                        if (typeof window.renderCatalogViewer === 'function') window.renderCatalogViewer();
+                    } catch (uiErr) {
+                        console.warn("UI güncelleme hatası:", uiErr);
                     }
 
-                    sessionStorage.setItem("bft_sync_reloaded", "true");
-                    setTimeout(() => {
-                        try {
-                            location.reload();
-                        } catch (e) {
-                            hideInitialSplashScreen(0);
-                        }
-                    }, 800);
-
-                    // Fallback: If reload is blocked by browser on file:// protocol, ensure splash screen dissolves
-                    setTimeout(() => {
-                        hideInitialSplashScreen(0);
-                    }, 1800);
+                    // Açılış ekranını hemen kapat
+                    hideInitialSplashScreen(200);
                 } else {
                     // No changes: smoothly dismiss splash screen
-                    hideInitialSplashScreen(350);
+                    hideInitialSplashScreen(250);
                 }
             }, err => {
                 console.error("Firestore onSnapshot error:", err);
@@ -778,7 +773,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.42";
+    const CURRENT_APP_VERSION = "1.0.43";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;
