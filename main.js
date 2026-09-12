@@ -202,6 +202,8 @@ let currentPreviewTitle = '';
 let currentPreviewZoom = 1.0;
 let currentPreviewOnPrint = null;
 let currentPreviewSource = null; // 'merkezi', 'pnomatik', 'teklif'
+let currentCachedPdf = null; // { blob, file, filename, title }
+let isBackgroundPdfPreloading = false;
 
 window.openDocumentPreviewModal = function(element, filename, titleText, onPrint, sourceModule = null) {
     const modal = document.getElementById("pdfPreviewModal");
@@ -217,6 +219,9 @@ window.openDocumentPreviewModal = function(element, filename, titleText, onPrint
     currentPreviewTitle = titleText || "BFT Belge Raporu";
     currentPreviewOnPrint = typeof onPrint === "function" ? onPrint : null;
     currentPreviewSource = sourceModule;
+
+    // Reset cached PDF for the new document preview
+    currentCachedPdf = null;
 
     if (btnPrint2) {
         btnPrint2.style.display = sourceModule === "fiyatlistesi" ? "inline-flex" : "none";
@@ -258,6 +263,13 @@ window.openDocumentPreviewModal = function(element, filename, titleText, onPrint
     modal.classList.add("open");
     // Prevent body scroll while modal is open
     document.body.style.overflow = "hidden";
+
+    // Preload & pre-render PDF in the background so sharing on mobile has 0 latency (avoids user gesture expiration)
+    setTimeout(() => {
+        if (modal.classList.contains("open") && typeof window.preloadPdfPreview === "function") {
+            window.preloadPdfPreview(element, currentPreviewFilename, currentPreviewTitle);
+        }
+    }, 250);
 };
 
 window.closeDocumentPreviewModal = function() {
@@ -426,6 +438,7 @@ window.generateCleanTeklifPrintElement = function() {
                 freshElement = window.generateCleanTeklifPrintElement();
             }
 
+            currentCachedPdf = null;
             if (freshElement) {
                 currentPreviewElement = freshElement;
                 const sheetPaper = document.getElementById("previewSheetPaper");
@@ -435,6 +448,11 @@ window.generateCleanTeklifPrintElement = function() {
                     cloned.style.margin = "0 auto";
                     sheetPaper.appendChild(cloned);
                 }
+                setTimeout(() => {
+                    if (typeof window.preloadPdfPreview === "function") {
+                        window.preloadPdfPreview(freshElement, currentPreviewFilename, currentPreviewTitle);
+                    }
+                }, 300);
             }
             window.showToast(`Baskı Ölçeği %${Math.round(parseFloat(newScale) * 100)} olarak güncellendi.`);
         });
@@ -465,18 +483,364 @@ window.generateCleanTeklifPrintElement = function() {
     }
 }
 
+function downloadBlobDirectly(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2500);
+}
+
+function showShareReadyOverlay(pdfFile, pdfBlob, cleanFileName, titleText) {
+    let overlay = document.getElementById("bftShareReadyOverlay");
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "bftShareReadyOverlay";
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(10, 11, 16, 0.88);
+            backdrop-filter: blur(8px);
+            z-index: 10000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: 'Outfit', sans-serif;
+        `;
+        document.body.appendChild(overlay);
+    }
+    
+    overlay.innerHTML = `
+        <div style="background: rgba(18, 20, 29, 0.98); border: 1px solid rgba(37, 211, 102, 0.4); box-shadow: 0 15px 40px rgba(0,0,0,0.7); border-radius: 20px; padding: 26px 20px; max-width: 370px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+            <div style="width: 58px; height: 58px; border-radius: 50%; background: rgba(37, 211, 102, 0.15); color: #25D366; display: flex; align-items: center; justify-content: center; font-size: 1.85rem;">
+                <i class="fa-brands fa-whatsapp"></i>
+            </div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: #ffffff;">PDF Raporunuz Hazır!</div>
+            <p style="font-size: 0.88rem; color: #94a3b8; line-height: 1.5; margin: 0;">
+                Mobil güvenlik kuralı gereği paylaşım seçeneklerini açmak için lütfen aşağıdaki butona dokunun:
+            </p>
+            <button id="btnFreshShareConfirm" style="width: 100%; background: linear-gradient(135deg, #25D366, #128C7E); color: #ffffff; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 18px rgba(37, 211, 102, 0.4);">
+                <i class="fa-solid fa-share-nodes"></i> Paylaşım Seçeneklerini Aç
+            </button>
+            <div style="display: flex; gap: 10px; width: 100%; margin-top: 4px;">
+                <button id="btnFreshShareDownload" style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #e2e8f0; padding: 10px; border-radius: 10px; font-size: 0.84rem; cursor: pointer; font-weight: 500;">
+                    <i class="fa-solid fa-download"></i> PDF İndir
+                </button>
+                <button id="btnFreshShareClose" style="flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.12); color: #94a3b8; padding: 10px; border-radius: 10px; font-size: 0.84rem; cursor: pointer;">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    `;
+
+    overlay.style.display = "flex";
+
+    document.getElementById("btnFreshShareConfirm").onclick = async () => {
+        overlay.style.display = "none";
+        try {
+            await navigator.share({
+                files: [pdfFile],
+                title: titleText || "BFT Proje Raporu",
+                text: `${titleText || "BFT Proje Raporu"} ekte yer almaktadır.`
+            });
+            window.showToast("PDF başarıyla paylaşıldı.", "success");
+        } catch (e) {
+            if (e && e.name !== 'AbortError') {
+                console.warn("Fresh share hatası:", e);
+                downloadBlobDirectly(pdfBlob, cleanFileName);
+                window.showToast("PDF cihazınıza indirildi.", "info");
+            }
+        }
+    };
+
+    document.getElementById("btnFreshShareDownload").onclick = () => {
+        overlay.style.display = "none";
+        downloadBlobDirectly(pdfBlob, cleanFileName);
+        window.showToast("PDF başarıyla indirildi.", "success");
+    };
+
+    document.getElementById("btnFreshShareClose").onclick = () => {
+        overlay.style.display = "none";
+    };
+}
+
+window.renderPdfBlobTask = async function(element) {
+    if (!window.html2pdf && !(window.jspdf && window.jspdf.jsPDF) && typeof window.jsPDF !== 'function') {
+        throw new Error("PDF kütüphanesi yüklenemedi.");
+    }
+
+    const isPriceListElement = element.classList.contains("price-list-preview-document");
+    const PDF_CONTAINER_W = isPriceListElement ? "210mm" : "710px";
+    const PDF_MARGIN_MM   = 6;
+    const A4_W_MM         = 210;
+    const A4_H_MM         = 297;
+    const USABLE_W_MM     = A4_W_MM - (2 * PDF_MARGIN_MM);
+    const USABLE_H_MM     = A4_H_MM - (2 * PDF_MARGIN_MM);
+
+    const tempContainer = document.createElement("div");
+    tempContainer.style.cssText = `position: fixed; left: -9999px; top: 0; width: ${PDF_CONTAINER_W}; box-sizing: border-box; background: #ffffff; color: #000000; z-index: -99999; pointer-events: none; overflow: visible;`;
+    const clonedElement = element.cloneNode(true);
+
+    if (clonedElement.classList.contains("price-list-preview-document")) {
+        clonedElement.classList.add("price-list-pdf-export");
+        clonedElement.style.width = "100%";
+        clonedElement.style.maxWidth = "none";
+        clonedElement.style.minWidth = "0";
+        clonedElement.style.margin = "0";
+        clonedElement.style.boxSizing = "border-box";
+        clonedElement.querySelectorAll(".price-list-category-card").forEach(categoryCard => {
+            categoryCard.style.width = "100%";
+            categoryCard.style.maxWidth = "none";
+            categoryCard.style.margin = "0";
+            categoryCard.style.boxSizing = "border-box";
+        });
+
+        clonedElement.querySelectorAll(".price-list-preview-product-image").forEach(img => {
+            const wrapper = document.createElement("div");
+            wrapper.style.cssText = "width:140px; height:120px; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid #cbd5e1; border-radius:6px; background:#ffffff; flex-shrink:0;";
+            img.style.cssText = "max-width:138px; max-height:118px; width:auto; height:auto; display:block; object-fit:unset; border:none; border-radius:0; background:none;";
+            img.parentNode.insertBefore(wrapper, img);
+            wrapper.appendChild(img);
+        });
+    }
+    tempContainer.appendChild(clonedElement);
+    document.body.appendChild(tempContainer);
+
+    try {
+        await Promise.all(
+            Array.from(clonedElement.querySelectorAll("img")).map(img =>
+                img.complete ? Promise.resolve() : new Promise(res => { img.onload = res; img.onerror = res; })
+            )
+        );
+        await new Promise(r => setTimeout(r, 120));
+
+        const printPages = tempContainer.querySelectorAll(".print-page");
+        const pagesToRender = printPages.length > 0 ? Array.from(printPages) : [clonedElement];
+
+        let pdf = null;
+        if (window.jspdf && window.jspdf.jsPDF) {
+            pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+        } else if (typeof window.jsPDF === 'function') {
+            pdf = new window.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+        } else if (window.html2pdf) {
+            const worker = window.html2pdf().set({
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
+            });
+            await worker.from(document.createElement('div')).toPdf();
+            pdf = await worker.get('pdf');
+        }
+
+        if (!pdf) throw new Error("PDF motoru başlatılamadı.");
+
+        async function getCanvasForPage(targetEl) {
+            if (typeof window.html2canvas === 'function') {
+                return await window.html2canvas(targetEl, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff',
+                    letterRendering: true,
+                    scrollX: 0,
+                    scrollY: 0
+                });
+            }
+            if (window.html2pdf) {
+                const worker = window.html2pdf().set({
+                    html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff', letterRendering: true, scrollX: 0, scrollY: 0 }
+                });
+                return await worker.from(targetEl).toCanvas().get('canvas');
+            }
+            throw new Error("Canvas motoru bulunamadı.");
+        }
+
+        let renderedPageCount = 0;
+        const isPriceList = isPriceListElement;
+        for (let i = 0; i < pagesToRender.length; i++) {
+            const pageEl = pagesToRender[i];
+            if (pageEl.style.display === "none") continue;
+
+            const canvas = await getCanvasForPage(pageEl);
+
+            if (isPriceList) {
+                const PX_TO_MM = USABLE_W_MM / canvas.width;
+                const MARGIN_MM = PDF_MARGIN_MM;
+
+                const categoryCards = pageEl.querySelectorAll(".price-list-category-card");
+                const cardList = categoryCards.length > 0 ? Array.from(categoryCards) : [pageEl];
+
+                const containerRect = pageEl.getBoundingClientRect();
+                let currentPageUsedMm = renderedPageCount === 0 ? 0 : MARGIN_MM;
+
+                for (let ci = 0; ci < cardList.length; ci++) {
+                    const cardRect = cardList[ci].getBoundingClientRect();
+                    const cropY = Math.round((cardRect.top - containerRect.top) * 2);
+                    const cropH = Math.round(cardRect.height * 2);
+                    const clampedCropH = Math.min(cropH, canvas.height - Math.max(0, cropY));
+                    if (clampedCropH <= 0) continue;
+
+                    const cardHeightMm = clampedCropH * PX_TO_MM;
+
+                    if (cardHeightMm > USABLE_H_MM) {
+                        const chunkHeightPx = Math.floor(USABLE_H_MM / PX_TO_MM);
+                        for (let offsetY = 0; offsetY < clampedCropH; offsetY += chunkHeightPx) {
+                            const currentChunkH = Math.min(chunkHeightPx, clampedCropH - offsetY);
+                            const chunkCanvas = document.createElement("canvas");
+                            chunkCanvas.width = canvas.width;
+                            chunkCanvas.height = currentChunkH;
+                            const chunkCtx = chunkCanvas.getContext("2d");
+                            chunkCtx.fillStyle = "#ffffff";
+                            chunkCtx.fillRect(0, 0, chunkCanvas.width, chunkCanvas.height);
+                            chunkCtx.drawImage(canvas, 0, Math.max(0, cropY) + offsetY, canvas.width, currentChunkH, 0, 0, canvas.width, currentChunkH);
+
+                            if (renderedPageCount > 0 || currentPageUsedMm > 0) { pdf.addPage('a4', 'portrait'); }
+                            const chunkHeightMm = currentChunkH * PX_TO_MM;
+                            pdf.addImage(chunkCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', MARGIN_MM, MARGIN_MM, USABLE_W_MM, chunkHeightMm, undefined, 'FAST');
+                            renderedPageCount++;
+                            currentPageUsedMm = (currentChunkH < chunkHeightPx) ? MARGIN_MM + chunkHeightMm : USABLE_H_MM;
+                        }
+                    } else {
+                        if (currentPageUsedMm + cardHeightMm > USABLE_H_MM) {
+                            pdf.addPage('a4', 'portrait');
+                            currentPageUsedMm = MARGIN_MM;
+                            renderedPageCount++;
+                        }
+                        const chunkCanvas = document.createElement("canvas");
+                        chunkCanvas.width = canvas.width;
+                        chunkCanvas.height = clampedCropH;
+                        const chunkCtx = chunkCanvas.getContext("2d");
+                        chunkCtx.fillStyle = "#ffffff";
+                        chunkCtx.fillRect(0, 0, chunkCanvas.width, chunkCanvas.height);
+                        chunkCtx.drawImage(canvas, 0, Math.max(0, cropY), canvas.width, clampedCropH, 0, 0, canvas.width, clampedCropH);
+
+                        pdf.addImage(chunkCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', MARGIN_MM, currentPageUsedMm, USABLE_W_MM, cardHeightMm, undefined, 'FAST');
+                        currentPageUsedMm += cardHeightMm;
+                    }
+                }
+                continue;
+            }
+
+            const PX_TO_MM_STD = USABLE_W_MM / canvas.width;
+            const rawContentHeightMm = canvas.height * PX_TO_MM_STD;
+
+            if (renderedPageCount > 0) {
+                pdf.addPage('a4', 'portrait');
+            }
+
+            if (rawContentHeightMm > USABLE_H_MM) {
+                const chunkHeightPx = Math.floor(USABLE_H_MM / PX_TO_MM_STD);
+                let isFirstChunk = true;
+                for (let offsetY = 0; offsetY < canvas.height; offsetY += chunkHeightPx) {
+                    const chunkH = Math.min(chunkHeightPx, canvas.height - offsetY);
+                    const chunkCanvas = document.createElement("canvas");
+                    chunkCanvas.width = canvas.width;
+                    chunkCanvas.height = chunkH;
+                    const chunkCtx = chunkCanvas.getContext("2d");
+                    chunkCtx.fillStyle = "#ffffff";
+                    chunkCtx.fillRect(0, 0, chunkCanvas.width, chunkCanvas.height);
+                    chunkCtx.drawImage(canvas, 0, offsetY, canvas.width, chunkH, 0, 0, canvas.width, chunkH);
+                    if (!isFirstChunk) { pdf.addPage('a4', 'portrait'); }
+                    const chunkMm = chunkH * PX_TO_MM_STD;
+                    pdf.addImage(chunkCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', PDF_MARGIN_MM, PDF_MARGIN_MM, USABLE_W_MM, chunkMm, undefined, 'FAST');
+                    renderedPageCount++;
+                    isFirstChunk = false;
+                }
+            } else {
+                pdf.addImage(canvas.toDataURL('image/jpeg', 0.98), 'JPEG', PDF_MARGIN_MM, PDF_MARGIN_MM, USABLE_W_MM, rawContentHeightMm, undefined, 'FAST');
+                renderedPageCount++;
+            }
+        }
+
+        return pdf.output('blob');
+    } finally {
+        if (tempContainer.parentNode) tempContainer.remove();
+    }
+};
+
+window.preloadPdfPreview = async function(element, filename, titleText) {
+    if (isBackgroundPdfPreloading || isPdfProcessing) return;
+    isBackgroundPdfPreloading = true;
+    try {
+        const cleanFileName = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+        const blob = await window.renderPdfBlobTask(element);
+        if (blob) {
+            const file = new File([blob], cleanFileName, { type: 'application/pdf' });
+            currentCachedPdf = {
+                blob: blob,
+                file: file,
+                filename: cleanFileName,
+                title: titleText || "BFT Belge Raporu"
+            };
+            console.log("[BFT PDF Ön Yükleme] PDF arka planda hazırlandı:", cleanFileName);
+        }
+    } catch (e) {
+        console.warn("[BFT PDF Ön Yükleme Hatası]:", e);
+    } finally {
+        isBackgroundPdfPreloading = false;
+    }
+};
+
 window.generateAndSharePDFFromElement = async function(element, filename, titleText, actionType = 'share') {
+    const cleanFileName = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+
+    // 1. ÖN YÜKLEME KONTROLÜ: Eğer önizleme açıldığında arka planda PDF hazırlandıysa bekleme süresi 0ms'dir!
+    // Bu sayede mobil tarayıcının kullanıcı dokunma jetonu (transient activation) kesinlikle zaman aşımına uğramaz.
+    if (currentCachedPdf && currentCachedPdf.filename === cleanFileName && currentCachedPdf.blob && currentCachedPdf.file) {
+        if (actionType === 'download') {
+            downloadBlobDirectly(currentCachedPdf.blob, cleanFileName);
+            window.showToast("PDF başarıyla indirildi.", "success");
+            return;
+        }
+
+        if (actionType === 'share') {
+            const hasShareApi = !!(navigator && navigator.share);
+            const hasCanShare = !!(navigator && navigator.canShare);
+            let canShareFiles = false;
+            try {
+                if (hasCanShare) {
+                    canShareFiles = navigator.canShare({ files: [currentCachedPdf.file] });
+                }
+            } catch (e) {
+                canShareFiles = false;
+            }
+
+            if (hasShareApi && hasCanShare && canShareFiles) {
+                try {
+                    await navigator.share({
+                        files: [currentCachedPdf.file],
+                        title: titleText || currentCachedPdf.title || "BFT Proje Raporu",
+                        text: `${titleText || currentCachedPdf.title || "BFT Proje Raporu"} ekte yer almaktadır.`
+                    });
+                    window.showToast("PDF başarıyla paylaşıldı.", "success");
+                    return;
+                } catch (shareErr) {
+                    if (shareErr && shareErr.name === 'AbortError') {
+                        return; // Kullanıcı menüyü kendisi kapattı
+                    }
+                    if (shareErr && shareErr.name === 'NotAllowedError') {
+                        // Ender de olsa dokunma zaman aşımına uğrarsa tek dokunuşluk onay ekranı aç
+                        showShareReadyOverlay(currentCachedPdf.file, currentCachedPdf.blob, cleanFileName, titleText);
+                        return;
+                    }
+                }
+            }
+            
+            // Eğer dosya paylaşımı desteklenmiyorsa doğrudan indir
+            downloadBlobDirectly(currentCachedPdf.blob, cleanFileName);
+            window.showToast("Tarayıcınız dosya paylaşımını desteklemediği için PDF indirildi.", "info");
+            return;
+        }
+    }
+
+    // 2. ÖN YÜKLEME HENÜZ BİTMEDİYSE VEYA İLK KEZ OLUŞTURULUYORSA:
     if (isPdfProcessing) {
-        window.showToast("İşlem devam ediyor, lütfen bekleyin...", "info");
+        window.showToast("PDF oluşturuluyor, lütfen bekleyin...", "info");
         return;
     }
     isPdfProcessing = true;
-
-    if (!window.html2pdf) {
-        isPdfProcessing = false;
-        window.showToast("PDF kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edin.", "error");
-        return;
-    }
 
     const loader = document.createElement("div");
     loader.id = "bftPdfLoader";
@@ -502,238 +866,30 @@ window.generateAndSharePDFFromElement = async function(element, filename, titleT
     `;
     document.body.appendChild(loader);
 
-    const cleanFileName = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
-
-    const isPriceListElement = element.classList.contains("price-list-preview-document");
-
-    // Use the full A4 page for PDF output; print-specific margins remain in the print stylesheet.
-    const PDF_CONTAINER_W = isPriceListElement ? "210mm" : "710px";
-    const PDF_MARGIN_MM   = 6;
-    const A4_W_MM         = 210;
-    const A4_H_MM         = 297;
-    const USABLE_W_MM     = A4_W_MM - (2 * PDF_MARGIN_MM);
-    const USABLE_H_MM     = A4_H_MM - (2 * PDF_MARGIN_MM);
-
-    const tempContainer = document.createElement("div");
-    tempContainer.style.cssText = `position: fixed; left: -9999px; top: 0; width: ${PDF_CONTAINER_W}; box-sizing: border-box; background: #ffffff; color: #000000; z-index: -99999; pointer-events: none; overflow: visible;`;
-    const clonedElement = element.cloneNode(true);
-    if (clonedElement.classList.contains("price-list-preview-document")) {
-        clonedElement.classList.add("price-list-pdf-export");
-        clonedElement.style.width = "100%";
-        clonedElement.style.maxWidth = "none";
-        clonedElement.style.minWidth = "0";
-        clonedElement.style.margin = "0";
-        clonedElement.style.boxSizing = "border-box";
-        clonedElement.querySelectorAll(".price-list-category-card").forEach(categoryCard => {
-            categoryCard.style.width = "100%";
-            categoryCard.style.maxWidth = "none";
-            categoryCard.style.margin = "0";
-            categoryCard.style.boxSizing = "border-box";
-        });
-
-        // html2canvas object-fit desteklemez — resimleri sarmalayıcı div ile düzelt.
-        clonedElement.querySelectorAll(".price-list-preview-product-image").forEach(img => {
-            const wrapper = document.createElement("div");
-            // Border wrapper'da — img inline style border'ı ezmesin diye
-            wrapper.style.cssText = "width:140px; height:120px; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid #cbd5e1; border-radius:6px; background:#ffffff; flex-shrink:0;";
-            img.style.cssText = "max-width:138px; max-height:118px; width:auto; height:auto; display:block; object-fit:unset; border:none; border-radius:0; background:none;";
-            img.parentNode.insertBefore(wrapper, img);
-            wrapper.appendChild(img);
-        });
-    }
-    tempContainer.appendChild(clonedElement);
-    document.body.appendChild(tempContainer);
-
-    // Resimlerin tam yüklenmesini ve fontların oturmasını bekle
-    await Promise.all(
-        Array.from(clonedElement.querySelectorAll("img")).map(img =>
-            img.complete ? Promise.resolve() : new Promise(res => { img.onload = res; img.onerror = res; })
-        )
-    );
-    await new Promise(r => setTimeout(r, 150));
-
     try {
-        const renderTask = async () => {
-            // 1. Identify distinct pages (e.g. Teklif has .print-page for main offer and annexes)
-            const printPages = tempContainer.querySelectorAll(".print-page");
-            const pagesToRender = printPages.length > 0 ? Array.from(printPages) : [clonedElement];
-
-            // 2. Initialize jsPDF
-            let pdf = null;
-            if (window.jspdf && window.jspdf.jsPDF) {
-                pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
-            } else if (typeof window.jsPDF === 'function') {
-                pdf = new window.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
-            } else if (window.html2pdf) {
-                const worker = window.html2pdf().set({
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
-                });
-                await worker.from(document.createElement('div')).toPdf();
-                pdf = await worker.get('pdf');
-            }
-
-            if (!pdf) throw new Error("PDF oluşturucu başlatılamadı.");
-
-            async function getCanvasForPage(targetEl) {
-                if (typeof window.html2canvas === 'function') {
-                    return await window.html2canvas(targetEl, {
-                        scale: 2,
-                        useCORS: true,
-                        logging: false,
-                        backgroundColor: '#ffffff',
-                        letterRendering: true,
-                        scrollX: 0,
-                        scrollY: 0
-                    });
-                }
-                if (window.html2pdf) {
-                    const worker = window.html2pdf().set({
-                        html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff', letterRendering: true, scrollX: 0, scrollY: 0 }
-                    });
-                    return await worker.from(targetEl).toCanvas().get('canvas');
-                }
-                throw new Error("Canvas motoru yüklenemedi.");
-            }
-
-            // 3. Render each page accurately to its own A4 PDF sheet
-            let renderedPageCount = 0;
-                    const isPriceList = isPriceListElement;
-            for (let i = 0; i < pagesToRender.length; i++) {
-                const pageEl = pagesToRender[i];
-                if (pageEl.style.display === "none") continue;
-
-                const canvas = await getCanvasForPage(pageEl);
-                const rawHeightMm = (canvas.height * USABLE_W_MM) / canvas.width;
-
-                if (isPriceList) {
-                    // Tablo bütünlüğü + oran koruması:
-                    // Tüm sayfa tek canvas'a çekildi (satır 590), her kartın
-                    // DOM pozisyonundan crop alınarak PDF'e yazılır.
-                    const PX_TO_MM = USABLE_W_MM / canvas.width;
-                    const PAGE_GAP_MM = 3;
-                    const MARGIN_MM = PDF_MARGIN_MM;
-
-                    const categoryCards = pageEl.querySelectorAll(".price-list-category-card");
-                    const cardList = categoryCards.length > 0 ? Array.from(categoryCards) : [pageEl];
-
-                    const containerRect = pageEl.getBoundingClientRect();
-                    let currentPageUsedMm = renderedPageCount === 0 ? 0 : MARGIN_MM;
-
-                    for (let ci = 0; ci < cardList.length; ci++) {
-                        const cardRect = cardList[ci].getBoundingClientRect();
-
-                        // Kartın ana canvas içindeki piksel koordinatları (scale:2 ile)
-                        const cropY = Math.round((cardRect.top - containerRect.top) * 2);
-                        const cropH = Math.round(cardRect.height * 2);
-                        const clampedCropH = Math.min(cropH, canvas.height - Math.max(0, cropY));
-                        if (clampedCropH <= 0) continue;
-
-                        const cardHeightMm = clampedCropH * PX_TO_MM;
-
-                        // Kart A4'ten yüksekse satır satır böl (zorunlu kırılma)
-                        if (cardHeightMm > USABLE_H_MM) {
-                            const chunkHeightPx = Math.floor(USABLE_H_MM / PX_TO_MM);
-                            for (let offsetY = 0; offsetY < clampedCropH; offsetY += chunkHeightPx) {
-                                const currentChunkH = Math.min(chunkHeightPx, clampedCropH - offsetY);
-                                const chunkCanvas = document.createElement("canvas");
-                                chunkCanvas.width = canvas.width;
-                                chunkCanvas.height = currentChunkH;
-                                const chunkCtx = chunkCanvas.getContext("2d");
-                                chunkCtx.fillStyle = "#ffffff";
-                                chunkCtx.fillRect(0, 0, chunkCanvas.width, chunkCanvas.height);
-                                chunkCtx.drawImage(canvas, 0, Math.max(0, cropY) + offsetY, canvas.width, currentChunkH, 0, 0, canvas.width, currentChunkH);
-
-                                if (renderedPageCount > 0 || currentPageUsedMm > 0) { pdf.addPage('a4', 'portrait'); }
-                                const chunkHeightMm = currentChunkH * PX_TO_MM;
-                                pdf.addImage(chunkCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', MARGIN_MM, MARGIN_MM, USABLE_W_MM, chunkHeightMm, undefined, 'FAST');
-                                renderedPageCount++;
-                                currentPageUsedMm = (currentChunkH < chunkHeightPx) ? MARGIN_MM + chunkHeightMm : USABLE_H_MM;
-                            }
-                            continue;
-                        }
-
-                        // Mevcut sayfada yeterli alan yoksa yeni sayfa aç
-                        const neededMm = currentPageUsedMm > 0 ? cardHeightMm + PAGE_GAP_MM : cardHeightMm;
-                        if (currentPageUsedMm + neededMm > USABLE_H_MM + MARGIN_MM) {
-                            pdf.addPage('a4', 'portrait');
-                            renderedPageCount++;
-                            currentPageUsedMm = MARGIN_MM;
-                        }
-
-                        const posY = currentPageUsedMm > 0 ? currentPageUsedMm : MARGIN_MM;
-
-                        // Ana canvas'tan bu kartın slice'ını crop et
-                        const cropCanvas = document.createElement("canvas");
-                        cropCanvas.width = canvas.width;
-                        cropCanvas.height = clampedCropH;
-                        const cropCtx = cropCanvas.getContext("2d");
-                        cropCtx.fillStyle = "#ffffff";
-                        cropCtx.fillRect(0, 0, cropCanvas.width, cropCanvas.height);
-                        cropCtx.drawImage(canvas, 0, Math.max(0, cropY), canvas.width, clampedCropH, 0, 0, canvas.width, clampedCropH);
-
-                        pdf.addImage(cropCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', MARGIN_MM, posY, USABLE_W_MM, cardHeightMm, undefined, 'FAST');
-                        if (renderedPageCount === 0) renderedPageCount = 1;
-                        currentPageUsedMm = posY + cardHeightMm + PAGE_GAP_MM;
-                    }
-
-                    continue;
-                }
-
-                // Fiyat listesi dışı modüller: içerik A4'ten yüksekse sayfa sayfa böl
-                const PX_TO_MM_STD = USABLE_W_MM / canvas.width;
-                const rawContentHeightMm = canvas.height * PX_TO_MM_STD;
-
-                if (renderedPageCount > 0) {
-                    pdf.addPage('a4', 'portrait');
-                }
-
-                if (rawContentHeightMm > USABLE_H_MM) {
-                    // İçerik A4'ten yüksek — fiyat listesiyle aynı kırılma mantığı
-                    const chunkHeightPx = Math.floor(USABLE_H_MM / PX_TO_MM_STD);
-                    let isFirstChunk = true;
-                    for (let offsetY = 0; offsetY < canvas.height; offsetY += chunkHeightPx) {
-                        const chunkH = Math.min(chunkHeightPx, canvas.height - offsetY);
-                        const chunkCanvas = document.createElement("canvas");
-                        chunkCanvas.width = canvas.width;
-                        chunkCanvas.height = chunkH;
-                        const chunkCtx = chunkCanvas.getContext("2d");
-                        chunkCtx.fillStyle = "#ffffff";
-                        chunkCtx.fillRect(0, 0, chunkCanvas.width, chunkCanvas.height);
-                        chunkCtx.drawImage(canvas, 0, offsetY, canvas.width, chunkH, 0, 0, canvas.width, chunkH);
-                        if (!isFirstChunk) { pdf.addPage('a4', 'portrait'); }
-                        const chunkMm = chunkH * PX_TO_MM_STD;
-                        pdf.addImage(chunkCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', PDF_MARGIN_MM, PDF_MARGIN_MM, USABLE_W_MM, chunkMm, undefined, 'FAST');
-                        renderedPageCount++;
-                        isFirstChunk = false;
-                    }
-                } else {
-                    // İçerik A4'e sığıyor — direkt yaz
-                    pdf.addImage(canvas.toDataURL('image/jpeg', 0.98), 'JPEG', PDF_MARGIN_MM, PDF_MARGIN_MM, USABLE_W_MM, rawContentHeightMm, undefined, 'FAST');
-                    renderedPageCount++;
-                }
-            }
-
-            return pdf.output('blob');
-        };
-
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Zaman aşımı oluştu.")), 25000));
-        const pdfBlob = await Promise.race([renderTask(), timeoutPromise]);
-
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("PDF oluşturma zaman aşımı.")), 30000));
+        const pdfBlob = await Promise.race([window.renderPdfBlobTask(element), timeoutPromise]);
         const pdfFile = new File([pdfBlob], cleanFileName, { type: 'application/pdf' });
 
-        if (loader.parentNode) loader.remove();
-        if (tempContainer.parentNode) tempContainer.remove();
+        currentCachedPdf = {
+            blob: pdfBlob,
+            file: pdfFile,
+            filename: cleanFileName,
+            title: titleText || "BFT Proje Raporu"
+        };
 
-        let shareHandled = false;
-        let shareDiagnosticReason = "";
+        if (loader.parentNode) loader.remove();
+
+        if (actionType === 'download') {
+            downloadBlobDirectly(pdfBlob, cleanFileName);
+            window.showToast("PDF başarıyla indirildi.", "success");
+            return;
+        }
 
         if (actionType === 'share') {
-            // Teşhis Kontrolleri
-            const isSecure = !!window.isSecureContext;
             const hasShareApi = !!(navigator && navigator.share);
             const hasCanShare = !!(navigator && navigator.canShare);
             let canShareFiles = false;
-
             try {
                 if (hasCanShare) {
                     canShareFiles = navigator.canShare({ files: [pdfFile] });
@@ -742,77 +898,40 @@ window.generateAndSharePDFFromElement = async function(element, filename, titleT
                 canShareFiles = false;
             }
 
-            if (!isSecure) {
-                shareDiagnosticReason = `Güvensiz Bağlantı (${location.protocol}//): Mobil tarayıcılar dosya paylaşımını sadece HTTPS altında destekler.`;
-            } else if (!hasShareApi) {
-                shareDiagnosticReason = "Tarayıcınız veya WebView ortamı Web Share API'sini desteklemiyor.";
-            } else if (!hasCanShare) {
-                shareDiagnosticReason = "Tarayıcınız navigator.canShare dosya paylaşım kontrolünü desteklemiyor.";
-            } else if (!canShareFiles) {
-                shareDiagnosticReason = "Tarayıcınız doğrudan PDF dosyası paylaşımına izin vermiyor (canShare: false).";
-            }
-
-            // Paylaşımı dene
-            if (hasCanShare && canShareFiles) {
+            if (hasShareApi && hasCanShare && canShareFiles) {
                 try {
                     await navigator.share({
                         files: [pdfFile],
                         title: titleText || "BFT Proje Raporu",
                         text: `${titleText || "BFT Proje Raporu"} ekte yer almaktadır.`
                     });
-                    shareHandled = true;
                     window.showToast("PDF başarıyla paylaşıldı.", "success");
+                    return;
                 } catch (shareErr) {
                     if (shareErr && shareErr.name === 'AbortError') {
-                        shareHandled = true; // Kullanıcı menüyü kendisi kapattı
-                    } else {
-                        console.warn("Mobil paylaşım hatası:", shareErr);
-                        const errName = shareErr ? shareErr.name : "Hata";
-                        const errMsg = shareErr ? (shareErr.message || "") : "";
-                        if (errName === 'NotAllowedError') {
-                            shareDiagnosticReason = `Zaman Aşımı (NotAllowedError): PDF hazırlanırken geçen süre nedeniyle mobil tarayıcı dokunma iznini sıfırladı.`;
-                        } else {
-                            shareDiagnosticReason = `Paylaşım Hatası (${errName}): ${errMsg}`;
-                        }
+                        return; // Kullanıcı iptal etti
+                    }
+                    if (shareErr && shareErr.name === 'NotAllowedError') {
+                        // Tarayıcı rendering gecikmesinden ötürü kullanıcı etkileşimini geçersiz saydı.
+                        // Kullanıcıya taze bir dokunma sağlayarak paylaşım menüsünü açması için onay penceresini göster:
+                        showShareReadyOverlay(pdfFile, pdfBlob, cleanFileName, titleText);
+                        return;
                     }
                 }
             }
-        }
 
-        if (!shareHandled) {
-            const url = URL.createObjectURL(pdfBlob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = cleanFileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 2000);
-
-            if (actionType === 'download') {
-                window.showToast("PDF başarıyla indirildi.", "success");
-            } else {
-                if (shareDiagnosticReason) {
-                    console.info("[BFT Paylaşım Teşhisi]", shareDiagnosticReason);
-                    window.showToast(`Paylaşım Açılamadı: ${shareDiagnosticReason}`, "error");
-                    setTimeout(() => {
-                        window.showToast("PDF cihazınıza indirildi.", "info");
-                    }, 1500);
-                } else {
-                    window.showToast("PDF hazırlandı ve indirildi. WhatsApp'tan gönderebilirsiniz.", "success");
-                }
-            }
+            // Paylaşım yapılamadıysa indir
+            downloadBlobDirectly(pdfBlob, cleanFileName);
+            window.showToast("PDF hazırlandı ve cihazınıza indirildi.", "info");
         }
     } catch (err) {
         if (loader.parentNode) loader.remove();
-        if (tempContainer.parentNode) tempContainer.remove();
         if (err && err.name !== 'AbortError') {
             console.error("PDF oluşturma hatası:", err);
             window.showToast("PDF oluşturulurken hata: " + (err.message || err), "error");
         }
     } finally {
         if (loader.parentNode) loader.remove();
-        if (tempContainer.parentNode) tempContainer.remove();
         isPdfProcessing = false;
     }
 };
