@@ -640,11 +640,11 @@
         }, delay);
     }
 
-    // Safety timeout: If cloud check takes more than 1.2 seconds (offline/slow), dismiss splash safely
+    // Safety timeout: If cloud check takes more than 3 seconds (offline/slow), dismiss splash safely
     setTimeout(() => {
         isInitialCloudCheckDone = true;
         hideInitialSplashScreen(0);
-    }, 1200);
+    }, 3000);
 
     // Helper: Real-time Cloud updates listener
     function setupRealtimeSync(companyCode) {
@@ -677,14 +677,6 @@
                 // Initial cloud check completed
                 isInitialCloudCheckDone = true;
 
-                // Check if this window was just reloaded from a cloud sync to prevent any reload loops
-                const wasJustReloaded = sessionStorage.getItem("bft_sync_reloaded");
-                if (wasJustReloaded) {
-                    sessionStorage.removeItem("bft_sync_reloaded");
-                    hideInitialSplashScreen(100);
-                    return;
-                }
-
                 if (isSyncing) return; // Prevent loops while upload/download is active
 
                 // Ignore updates that were written by this client
@@ -700,12 +692,13 @@
                     const remoteVal = remotePayload.data[key];
                     
                     // If a key doesn't exist or is null in cloud data yet, don't trigger sync pull.
+                    // This prevents infinite reload loops when new keys like t_customers are added.
                     if (remoteVal === undefined || remoteVal === null) {
                         continue;
                     }
 
-                    const normLocal = (localVal === null || localVal === undefined) ? "" : String(localVal).trim();
-                    const normRemote = (typeof remoteVal === "string" ? remoteVal : JSON.stringify(remoteVal)).trim();
+                    const normLocal = (localVal === null || localVal === undefined) ? "" : localVal;
+                    const normRemote = remoteVal;
 
                     if (normLocal !== normRemote) {
                         hasChanges = true;
@@ -721,12 +714,11 @@
                     if (splashText) splashText.textContent = "Güncel veriler eşitlendi! Başlatılıyor...";
 
                     try {
-                        // Copy remote data into localStorage properly stringified
+                        // Copy remote data into localStorage
                         storageKeys.forEach(key => {
                             const remoteVal = remotePayload.data[key];
                             if (remoteVal !== null && remoteVal !== undefined) {
-                                const valToStore = typeof remoteVal === "string" ? remoteVal : JSON.stringify(remoteVal);
-                                localStorage.setItem(key, valToStore);
+                                localStorage.setItem(key, remoteVal);
                             } else {
                                 // Only remove from local storage if explicitly set to null/empty in remote
                                 if (remoteVal !== undefined) {
@@ -747,21 +739,15 @@
                     if (statusEl) statusEl.textContent = successMsg;
                     if (modalStatusEl) modalStatusEl.textContent = successMsg;
 
-                    // UI bileşenlerini pürüzsüzce güncelle (Sonsuz sayfa yenileme döngüsünü engellemek için location.reload yerine ekranı doğrudan yenile)
-                    try {
-                        if (typeof window.initTeklifVer === 'function') window.initTeklifVer();
-                        if (typeof window.loadSavedProjectsList === 'function') window.loadSavedProjectsList();
-                        if (typeof window.updateDashboardStats === 'function') window.updateDashboardStats();
-                        if (typeof window.renderCatalogViewer === 'function') window.renderCatalogViewer();
-                    } catch (uiErr) {
-                        console.warn("UI güncelleme hatası:", uiErr);
+                    if (window.showToast) {
+                        window.showToast("☁️ Buluttaki güncel veriler eşitlendi! Ekran yenileniyor...", "info");
                     }
-
-                    // Açılış ekranını hemen kapat
-                    hideInitialSplashScreen(200);
+                    setTimeout(() => {
+                        location.reload(true);
+                    }, 1200);
                 } else {
                     // No changes: smoothly dismiss splash screen
-                    hideInitialSplashScreen(250);
+                    hideInitialSplashScreen(350);
                 }
             }, err => {
                 console.error("Firestore onSnapshot error:", err);
@@ -773,7 +759,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.43";
+    const CURRENT_APP_VERSION = "1.0.44";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;
