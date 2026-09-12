@@ -186,6 +186,7 @@
                 const currentCode = localStorage.getItem("t_sync_company_code") || "bft_portal";
                 const currentStatus = localStorage.getItem("t_sync_last_status") || "Son Eşleşme: Yapılmadı";
                 updateSyncUI(currentCode, currentStatus);
+                updateLocalDataSummary();
                 populateLocalArchiveOptions();
                 modalEl.classList.add("open");
             });
@@ -253,12 +254,26 @@
             }
         };
 
+        const updateLocalDataSummary = () => {
+            const summaryEl = document.getElementById("modalLocalDataSummary");
+            if (!summaryEl) return;
+            try {
+                const pList = JSON.parse(localStorage.getItem("m_projects") || "[]");
+                const tList = JSON.parse(localStorage.getItem("t_proposals") || "[]");
+                const pCount = Array.isArray(pList) ? pList.length : 0;
+                const tCount = Array.isArray(tList) ? tList.length : 0;
+                summaryEl.innerHTML = `<i class="fa-solid fa-mobile-screen"></i> <span><strong>Cihazdaki Kayıtlar:</strong> ${pCount} Proje, ${tCount} Teklif hazır</span>`;
+            } catch (e) {
+                summaryEl.innerHTML = `<i class="fa-solid fa-mobile-screen"></i> <span>Cihaz verileri hazır</span>`;
+            }
+        };
+
         const populateLocalArchiveOptions = () => {
             if (!cloudArchiveSelect) return;
             const archive = getLocalCloudArchive();
             cloudArchiveSelect.innerHTML = "";
             if (!archive.length) {
-                cloudArchiveSelect.add(new Option("Henüz yerel bulut kaydı yok", ""));
+                cloudArchiveSelect.add(new Option("Bu cihazda geçmiş yükleme yedeği yok", ""));
                 return;
             }
             archive.forEach((snapshot, index) => {
