@@ -725,10 +725,35 @@ window.generateAndSharePDFFromElement = async function(element, filename, titleT
         if (tempContainer.parentNode) tempContainer.remove();
 
         let shareHandled = false;
+        let shareDiagnosticReason = "";
 
         if (actionType === 'share') {
-            // Try Mobile Web Share API
-            if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+            // Teşhis Kontrolleri
+            const isSecure = !!window.isSecureContext;
+            const hasShareApi = !!(navigator && navigator.share);
+            const hasCanShare = !!(navigator && navigator.canShare);
+            let canShareFiles = false;
+
+            try {
+                if (hasCanShare) {
+                    canShareFiles = navigator.canShare({ files: [pdfFile] });
+                }
+            } catch (e) {
+                canShareFiles = false;
+            }
+
+            if (!isSecure) {
+                shareDiagnosticReason = `Güvensiz Bağlantı (${location.protocol}//): Mobil tarayıcılar dosya paylaşımını sadece HTTPS altında destekler.`;
+            } else if (!hasShareApi) {
+                shareDiagnosticReason = "Tarayıcınız veya WebView ortamı Web Share API'sini desteklemiyor.";
+            } else if (!hasCanShare) {
+                shareDiagnosticReason = "Tarayıcınız navigator.canShare dosya paylaşım kontrolünü desteklemiyor.";
+            } else if (!canShareFiles) {
+                shareDiagnosticReason = "Tarayıcınız doğrudan PDF dosyası paylaşımına izin vermiyor (canShare: false).";
+            }
+
+            // Paylaşımı dene
+            if (hasCanShare && canShareFiles) {
                 try {
                     await navigator.share({
                         files: [pdfFile],
@@ -739,9 +764,16 @@ window.generateAndSharePDFFromElement = async function(element, filename, titleT
                     window.showToast("PDF başarıyla paylaşıldı.", "success");
                 } catch (shareErr) {
                     if (shareErr && shareErr.name === 'AbortError') {
-                        shareHandled = true;
+                        shareHandled = true; // Kullanıcı menüyü kendisi kapattı
                     } else {
                         console.warn("Mobil paylaşım hatası:", shareErr);
+                        const errName = shareErr ? shareErr.name : "Hata";
+                        const errMsg = shareErr ? (shareErr.message || "") : "";
+                        if (errName === 'NotAllowedError') {
+                            shareDiagnosticReason = `Zaman Aşımı (NotAllowedError): PDF hazırlanırken geçen süre nedeniyle mobil tarayıcı dokunma iznini sıfırladı.`;
+                        } else {
+                            shareDiagnosticReason = `Paylaşım Hatası (${errName}): ${errMsg}`;
+                        }
                     }
                 }
             }
@@ -756,10 +788,19 @@ window.generateAndSharePDFFromElement = async function(element, filename, titleT
             a.click();
             document.body.removeChild(a);
             setTimeout(() => URL.revokeObjectURL(url), 2000);
+
             if (actionType === 'download') {
                 window.showToast("PDF başarıyla indirildi.", "success");
             } else {
-                window.showToast("PDF hazırlandı ve indirildi. WhatsApp'tan gönderebilirsiniz.", "success");
+                if (shareDiagnosticReason) {
+                    console.info("[BFT Paylaşım Teşhisi]", shareDiagnosticReason);
+                    window.showToast(`Paylaşım Açılamadı: ${shareDiagnosticReason}`, "error");
+                    setTimeout(() => {
+                        window.showToast("PDF cihazınıza indirildi.", "info");
+                    }, 1500);
+                } else {
+                    window.showToast("PDF hazırlandı ve indirildi. WhatsApp'tan gönderebilirsiniz.", "success");
+                }
             }
         }
     } catch (err) {
