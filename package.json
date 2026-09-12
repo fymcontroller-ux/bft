@@ -1,6 +1,6 @@
 {
   "name": "bft-yonetim-portali",
-  "version": "1.0.41",
+  "version": "1.0.42",
   "description": "BFT İşletme Yönetimi, Merkezi Sistem ve Pnömatik Hesaplama Portalı",
   "main": "electron_main.js",
   "scripts": {

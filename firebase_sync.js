@@ -677,6 +677,14 @@
                 // Initial cloud check completed
                 isInitialCloudCheckDone = true;
 
+                // Check if this window was just reloaded from a cloud sync to prevent any reload loops
+                const wasJustReloaded = sessionStorage.getItem("bft_sync_reloaded");
+                if (wasJustReloaded) {
+                    sessionStorage.removeItem("bft_sync_reloaded");
+                    hideInitialSplashScreen(100);
+                    return;
+                }
+
                 if (isSyncing) return; // Prevent loops while upload/download is active
 
                 // Ignore updates that were written by this client
@@ -692,13 +700,12 @@
                     const remoteVal = remotePayload.data[key];
                     
                     // If a key doesn't exist or is null in cloud data yet, don't trigger sync pull.
-                    // This prevents infinite reload loops when new keys like t_customers are added.
                     if (remoteVal === undefined || remoteVal === null) {
                         continue;
                     }
 
-                    const normLocal = (localVal === null || localVal === undefined) ? "" : localVal;
-                    const normRemote = remoteVal;
+                    const normLocal = (localVal === null || localVal === undefined) ? "" : String(localVal).trim();
+                    const normRemote = (typeof remoteVal === "string" ? remoteVal : JSON.stringify(remoteVal)).trim();
 
                     if (normLocal !== normRemote) {
                         hasChanges = true;
@@ -714,11 +721,12 @@
                     if (splashText) splashText.textContent = "Güncel veriler eşitlendi! Başlatılıyor...";
 
                     try {
-                        // Copy remote data into localStorage
+                        // Copy remote data into localStorage properly stringified
                         storageKeys.forEach(key => {
                             const remoteVal = remotePayload.data[key];
                             if (remoteVal !== null && remoteVal !== undefined) {
-                                localStorage.setItem(key, remoteVal);
+                                const valToStore = typeof remoteVal === "string" ? remoteVal : JSON.stringify(remoteVal);
+                                localStorage.setItem(key, valToStore);
                             } else {
                                 // Only remove from local storage if explicitly set to null/empty in remote
                                 if (remoteVal !== undefined) {
@@ -742,9 +750,20 @@
                     if (window.showToast) {
                         window.showToast("☁️ Buluttaki güncel veriler eşitlendi! Ekran yenileniyor...", "info");
                     }
+
+                    sessionStorage.setItem("bft_sync_reloaded", "true");
                     setTimeout(() => {
-                        location.reload(true);
-                    }, 1200);
+                        try {
+                            location.reload();
+                        } catch (e) {
+                            hideInitialSplashScreen(0);
+                        }
+                    }, 800);
+
+                    // Fallback: If reload is blocked by browser on file:// protocol, ensure splash screen dissolves
+                    setTimeout(() => {
+                        hideInitialSplashScreen(0);
+                    }, 1800);
                 } else {
                     // No changes: smoothly dismiss splash screen
                     hideInitialSplashScreen(350);
@@ -759,7 +778,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.41";
+    const CURRENT_APP_VERSION = "1.0.42";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;
