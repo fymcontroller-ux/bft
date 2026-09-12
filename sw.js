@@ -1,9 +1,10 @@
-const CACHE_NAME = "fy-portal-v5";
+const CACHE_NAME = "fy-portal-v7";
 const ASSETS = [
     "index.html",
     "styles.css",
     "starter_data.js",
     "main.js",
+    "fiyatlistesi.js",
     "yukleyici.js",
     "merkezi.js",
     "pnomatik.js",

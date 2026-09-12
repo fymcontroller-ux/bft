@@ -13,6 +13,13 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    try {
+        db.settings({
+            experimentalAutoDetectLongPolling: true
+        });
+    } catch (e) {
+        console.warn("Firestore settings notice:", e);
+    }
 
     const storageKeys = [
         "m_projects",
@@ -32,6 +39,8 @@
         "t_proposals",
         "t_proposal_desc_library",
         "t_customers",
+        "t_default_trade_name",
+        "t_default_iban",
         "l_personnel",
         "l_shopExpenses",
         "l_materials",
@@ -60,11 +69,66 @@
                 savedAt: new Date().toISOString(),
                 data: { ...data }
             });
-            originalSetItem.call(localStorage, localArchiveKey, JSON.stringify(archive.slice(0, 20)));
+            // Mobilde 5MB hafıza kotasını korumak için en fazla son 2 yedeği sakla
+            originalSetItem.call(localStorage, localArchiveKey, JSON.stringify(archive.slice(0, 2)));
         } catch (err) {
             console.warn("Local cloud archive save failed:", err);
+            try {
+                originalRemoveItem.call(localStorage, localArchiveKey);
+            } catch (ign) {}
         }
     };
+
+    function formatRestValue(val) {
+        if (val === null || val === undefined) return { nullValue: null };
+        if (typeof val === 'string') return { stringValue: val };
+        if (typeof val === 'boolean') return { booleanValue: val };
+        if (typeof val === 'number') return Number.isInteger(val) ? { integerValue: String(val) } : { doubleValue: val };
+        if (Array.isArray(val)) return { arrayValue: { values: val.map(formatRestValue) } };
+        if (typeof val === 'object') {
+            const fields = {};
+            for (let k in val) fields[k] = formatRestValue(val[k]);
+            return { mapValue: { fields } };
+        }
+        return { stringValue: String(val) };
+    }
+
+    // Mobil ağlarda (WiFi veya 4G/5G) WebSocket kilitlenmelerini aşmak için çift katmanlı yükleme
+    async function performCloudUpload(companyCode, payload) {
+        let sdkSucceeded = false;
+
+        // 1. Aşama: Firestore SDK ile 7 saniye zaman aşımlı deneme
+        try {
+            const sdkPromise = db.collection("portal_data").doc(companyCode).set(payload);
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("SDK_TIMEOUT")), 7000));
+            await Promise.race([sdkPromise, timeoutPromise]);
+            sdkSucceeded = true;
+        } catch (sdkErr) {
+            console.warn("[Cloud Sync] SDK yüklemesi zaman aşımına uğradı veya hata verdi, REST API yedek hattına geçiliyor...", sdkErr);
+        }
+
+        if (sdkSucceeded) return;
+
+        // 2. Aşama: Doğrudan Google Firestore REST API (WebSocket gerektirmez, mobilde asla takılmaz)
+        const restFields = {
+            lastWriterClientId: formatRestValue(payload.lastWriterClientId),
+            updatedAt: { timestampValue: new Date().toISOString() },
+            data: formatRestValue(payload.data)
+        };
+
+        const restUrl = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/portal_data/${companyCode}`;
+        const resp = await fetch(restUrl, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fields: restFields })
+        });
+
+        if (!resp.ok) {
+            const errText = await resp.text();
+            throw new Error(`Bulut Sunucu Hatası (${resp.status}): ${errText}`);
+        }
+        console.log("[Cloud Sync] REST API yedek hattı ile buluta başarıyla yüklendi!");
+    }
 
     localStorage.setItem = function(key, value) {
         originalSetItem.apply(this, arguments);
@@ -267,7 +331,7 @@
             });
 
             try {
-                await db.collection("portal_data").doc(companyCode).set(payload);
+                await performCloudUpload(companyCode, payload);
                 saveLocalCloudSnapshot(companyCode, payload.data);
                 
                 const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
@@ -444,7 +508,7 @@
             });
 
             try {
-                await db.collection("portal_data").doc(companyCode).set(payload);
+                await performCloudUpload(companyCode, payload);
                 
                 const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
                 const successMsg = `Projeler Temizlendi: ${nowStr}`;
@@ -598,7 +662,7 @@
         });
 
         try {
-            await db.collection("portal_data").doc(companyCode).set(payload);
+            await performCloudUpload(companyCode, payload);
             saveLocalCloudSnapshot(companyCode, payload.data);
             
             const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
@@ -759,7 +823,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.44";
+    const CURRENT_APP_VERSION = "1.0.45";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;
