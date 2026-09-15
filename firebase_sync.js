@@ -173,8 +173,8 @@
         const lastSyncMsg = localStorage.getItem("t_sync_last_status") || "Son Eşleşme: Yapılmadı";
         updateSyncUI(savedCode, lastSyncMsg);
 
-        // Setup real-time listener on start
-        setupRealtimeSync(savedCode);
+        // Startup: fetch fresh cloud data first, then begin real-time listener
+        initialFetchAndStart(savedCode);
 
         // Setup Modal Opening/Closing
         const btnOpenModal = document.getElementById("btnOpenSyncModal");
@@ -719,126 +719,160 @@
         }, delay);
     }
 
-    // Safety timeout: If cloud check takes more than 3 seconds (offline/slow), dismiss splash safely
-    setTimeout(() => {
+    // Safety timeout: If cloud fetch takes more than 6 seconds (offline/slow), dismiss splash safely
+    const safetyTimer = setTimeout(() => {
         isInitialCloudCheckDone = true;
         hideInitialSplashScreen(0);
-    }, 3000);
+    }, 6000);
 
-    // Helper: Real-time Cloud updates listener
+    // ─────────────────────────────────────────────────────────────────────────
+    // STARTUP: Clear local storageKeys → fetch fresh data from cloud → start app
+    // This eliminates the compare-and-reload loop entirely.
+    // ─────────────────────────────────────────────────────────────────────────
+    async function initialFetchAndStart(companyCode) {
+        // Korumalı anahtarlar: bunlar temizlenmez
+        const PROTECTED_KEYS = [
+            "t_sync_company_code",
+            "t_sync_last_status",
+            "bft_cloud_upload_archive_v1"
+        ];
+
+        if (!companyCode) {
+            // No company code: nothing to fetch, just start
+            isInitialCloudCheckDone = true;
+            clearTimeout(safetyTimer);
+            hideInitialSplashScreen(0);
+            return;
+        }
+
+        try {
+            const splashText = document.getElementById("initialSplashText");
+            if (splashText) splashText.textContent = "Buluttan güncel veriler çekiliyor...";
+
+            const doc = await db.collection("portal_data").doc(companyCode).get();
+
+            if (!doc.exists) {
+                // No cloud record yet — start with whatever is local
+                isInitialCloudCheckDone = true;
+                clearTimeout(safetyTimer);
+                hideInitialSplashScreen(300);
+                setupRealtimeSync(companyCode);
+                return;
+            }
+
+            const remotePayload = doc.data();
+            if (!remotePayload || !remotePayload.data) {
+                isInitialCloudCheckDone = true;
+                clearTimeout(safetyTimer);
+                hideInitialSplashScreen(300);
+                setupRealtimeSync(companyCode);
+                return;
+            }
+
+            // Temizle: korumalı olmayan storageKeys'leri sil
+            isPullingFromCloud = true;
+            try {
+                storageKeys.forEach(key => {
+                    if (!PROTECTED_KEYS.includes(key)) {
+                        originalRemoveItem.call(localStorage, key);
+                    }
+                });
+
+                // Bulut verisini yaz
+                storageKeys.forEach(key => {
+                    const remoteVal = remotePayload.data[key];
+                    if (remoteVal !== null && remoteVal !== undefined) {
+                        originalSetItem.call(localStorage, key, remoteVal);
+                    }
+                });
+            } finally {
+                isPullingFromCloud = false;
+            }
+
+            const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
+            const successMsg = `Buluttan yüklendi: ${nowStr}`;
+            originalSetItem.call(localStorage, "t_sync_last_status", successMsg);
+
+            const statusEl = document.getElementById("syncStatus");
+            const modalStatusEl = document.getElementById("modalSyncStatus");
+            if (statusEl) statusEl.textContent = successMsg;
+            if (modalStatusEl) modalStatusEl.textContent = successMsg;
+
+            if (splashText) splashText.textContent = "Güncel veriler yüklendi! Başlatılıyor...";
+
+        } catch (err) {
+            console.error("[BFT Startup Fetch] Hata:", err);
+            // Hata olursa yerel veriyle devam et
+        }
+
+        isInitialCloudCheckDone = true;
+        clearTimeout(safetyTimer);
+        hideInitialSplashScreen(350);
+        setupRealtimeSync(companyCode);
+    }
+
+    // Helper: Real-time Cloud updates listener (post-startup, NO reload)
     function setupRealtimeSync(companyCode) {
         if (unsubscribeSnapshot) {
             unsubscribeSnapshot();
             unsubscribeSnapshot = null;
         }
 
-        if (!companyCode) {
-            isInitialCloudCheckDone = true;
-            hideInitialSplashScreen(0);
-            return;
-        }
+        if (!companyCode) return;
 
         unsubscribeSnapshot = db.collection("portal_data").doc(companyCode)
             .onSnapshot(doc => {
-                if (!doc.exists) {
-                    isInitialCloudCheckDone = true;
-                    hideInitialSplashScreen(300);
-                    return;
-                }
+                if (!doc.exists || isSyncing) return;
 
                 const remotePayload = doc.data();
-                if (!remotePayload || !remotePayload.data) {
-                    isInitialCloudCheckDone = true;
-                    hideInitialSplashScreen(300);
-                    return;
+                if (!remotePayload || !remotePayload.data) return;
+
+                // Bu client'ın kendi yazdığı değişikliği yoksay
+                if (remotePayload.lastWriterClientId === myClientId) return;
+
+                // Başlangıç kontrolü tamamlanmadan tetiklenirse yoksay
+                if (!isInitialCloudCheckDone) return;
+
+                // Farkları localStorage'a yaz — reload YOK
+                let appliedCount = 0;
+                isPullingFromCloud = true;
+                try {
+                    storageKeys.forEach(key => {
+                        const remoteVal = remotePayload.data[key];
+                        if (remoteVal === undefined || remoteVal === null) return;
+                        const localVal = localStorage.getItem(key);
+                        if (localVal !== remoteVal) {
+                            originalSetItem.call(localStorage, key, remoteVal);
+                            appliedCount++;
+                        }
+                    });
+                } finally {
+                    isPullingFromCloud = false;
                 }
 
-                // Initial cloud check completed
-                isInitialCloudCheckDone = true;
+                if (appliedCount === 0) return;
 
-                if (isSyncing) return; // Prevent loops while upload/download is active
+                const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
+                const successMsg = `Buluttan yeni veri çekildi: ${nowStr}`;
+                originalSetItem.call(localStorage, "t_sync_last_status", successMsg);
 
-                // Ignore updates that were written by this client
-                if (remotePayload.lastWriterClientId === myClientId) {
-                    hideInitialSplashScreen(200);
-                    return;
-                }
+                const statusEl = document.getElementById("syncStatus");
+                const modalStatusEl = document.getElementById("modalSyncStatus");
+                if (statusEl) statusEl.textContent = successMsg;
+                if (modalStatusEl) modalStatusEl.textContent = successMsg;
 
-                // Compare remote data keys with local localStorage
-                let hasChanges = false;
-                for (let key of storageKeys) {
-                    const localVal = localStorage.getItem(key);
-                    const remoteVal = remotePayload.data[key];
-                    
-                    // If a key doesn't exist or is null in cloud data yet, don't trigger sync pull.
-                    // This prevents infinite reload loops when new keys like t_customers are added.
-                    if (remoteVal === undefined || remoteVal === null) {
-                        continue;
-                    }
-
-                    const normLocal = (localVal === null || localVal === undefined) ? "" : localVal;
-                    const normRemote = remoteVal;
-
-                    if (normLocal !== normRemote) {
-                        hasChanges = true;
-                        break;
-                    }
-                }
-
-                if (hasChanges) {
-                    isSyncing = true;
-                    isPullingFromCloud = true;
-                    
-                    const splashText = document.getElementById("initialSplashText");
-                    if (splashText) splashText.textContent = "Güncel veriler eşitlendi! Başlatılıyor...";
-
-                    try {
-                        // Copy remote data into localStorage
-                        storageKeys.forEach(key => {
-                            const remoteVal = remotePayload.data[key];
-                            if (remoteVal !== null && remoteVal !== undefined) {
-                                localStorage.setItem(key, remoteVal);
-                            } else {
-                                // Only remove from local storage if explicitly set to null/empty in remote
-                                if (remoteVal !== undefined) {
-                                    localStorage.removeItem(key);
-                                }
-                            }
-                        });
-                    } finally {
-                        isPullingFromCloud = false;
-                    }
-
-                    const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
-                    const successMsg = `Buluttan yeni veri çekildi: ${nowStr}`;
-                    localStorage.setItem("t_sync_last_status", successMsg);
-
-                    const statusEl = document.getElementById("syncStatus");
-                    const modalStatusEl = document.getElementById("modalSyncStatus");
-                    if (statusEl) statusEl.textContent = successMsg;
-                    if (modalStatusEl) modalStatusEl.textContent = successMsg;
-
-                    if (window.showToast) {
-                        window.showToast("☁️ Buluttaki güncel veriler eşitlendi! Ekran yenileniyor...", "info");
-                    }
-                    setTimeout(() => {
-                        location.reload(true);
-                    }, 1200);
-                } else {
-                    // No changes: smoothly dismiss splash screen
-                    hideInitialSplashScreen(350);
+                if (window.showToast) {
+                    window.showToast("☁️ Başka bir cihazdan güncel veri geldi. Değişiklikleri görmek için sayfayı yenileyebilirsiniz.", "info");
                 }
             }, err => {
                 console.error("Firestore onSnapshot error:", err);
-                isInitialCloudCheckDone = true;
-                hideInitialSplashScreen(0);
             });
     }
 
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.46";
+    const CURRENT_APP_VERSION = "1.0.47";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;
