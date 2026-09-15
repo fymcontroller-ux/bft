@@ -1281,7 +1281,7 @@ function initWhatsAppShareButtons() {
             const projName = document.getElementById("projectName")?.value.trim() || "Merkezi_Sistem";
 
             const element = generateCleanMerkeziPrintElement();
-            const filename = `${dateStr}_${projName.replace(/[^a-zA-Z0-9çğıöşüÇĞİÖŞÜ_-]/g, '_')}_Rapor`;
+            const filename = projName.replace(/[^a-zA-Z0-9çğıöşüÇĞİÖŞÜ\s_-]/g, '').trim();
 
             window.openDocumentPreviewModal(element, filename, `${projName} Raporu`, () => {
                 const exportBtn = document.getElementById("exportBtnMerkeziRapor");
@@ -1301,7 +1301,7 @@ function initWhatsAppShareButtons() {
 
             const element = generateCleanPnomatikPrintElement();
             if (!element) return;
-            const filename = `${dateStr}_${projName.replace(/[^a-zA-Z0-9çğıöşüÇĞİÖŞÜ_-]/g, '_')}_Pnomatik_Rapor`;
+            const filename = projName.replace(/[^a-zA-Z0-9çğıöşüÇĞİÖŞÜ\s_-]/g, '').trim();
 
             window.openDocumentPreviewModal(element, filename, `${projName} Pnömatik Raporu`, () => {
                 const exportBtn = document.getElementById("exportBtnPnomatik");
@@ -1321,11 +1321,11 @@ function initWhatsAppShareButtons() {
                 : (typeof buildProposalPrintElement === "function" ? buildProposalPrintElement() : null);
             if (!innerElement) return;
 
-            const dateStr = new Date().toLocaleDateString('tr-TR').replace(/\//g, '.');
-            const company = document.getElementById("clientCompany")?.value.trim() || "Musteri";
-            const filename = `${dateStr}_Teklif_${company.replace(/[^a-zA-Z0-9çğıöşüÇĞİÖŞÜ_-]/g, '_')}`;
+            const proposalNameInp = document.getElementById("proposalSaveName");
+            const proposalName = (proposalNameInp && proposalNameInp.value.trim() !== "") ? proposalNameInp.value.trim() : "Teklif";
+            const filename = proposalName.replace(/[^a-zA-Z0-9çğıöşüÇĞİÖŞÜ\s_-]/g, '').trim();
 
-            window.openDocumentPreviewModal(innerElement, filename, `${company} Fiyat Teklifi`, () => {
+            window.openDocumentPreviewModal(innerElement, filename, proposalName, () => {
                 const exportBtn = document.getElementById("btnPrintCustomProposal");
                 if (exportBtn) exportBtn.click();
                 else if (typeof printProposal === "function") printProposal();
