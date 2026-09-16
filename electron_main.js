@@ -130,7 +130,7 @@ async function downloadFileWithProgress(url, dest) {
                         progressPercent = Math.min(50 + (currentSize / 12000) * 50, 98);
                     }
 
-                    if (mainWindow && mainWindow.webContents.isReady()) {
+                    if (mainWindow && !mainWindow.isDestroyed()) {
                         mainWindow.webContents.send('update-download-progress', {
                             percent: Math.round(progressPercent),
                             currentSize,
@@ -150,7 +150,7 @@ async function downloadFileWithProgress(url, dest) {
                 clearInterval(progressInterval);
                 const finalStats = fs.statSync(dest);
 
-                if (mainWindow && mainWindow.webContents.isReady()) {
+                if (mainWindow && !mainWindow.isDestroyed()) {
                     mainWindow.webContents.send('update-download-progress', {
                         percent: 100,
                         currentSize: finalStats.size,
