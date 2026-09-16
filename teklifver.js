@@ -55,6 +55,8 @@ function initTeklifVer() {
     // Populate showTLPrice checkbox from localStorage
     const showTL = localStorage.getItem("t_show_tl") !== "false";
     document.getElementById("showTLPrice").checked = showTL;
+    const hideUSD = localStorage.getItem("t_hide_usd") === "true";
+    if (document.getElementById("hideUsdPrice")) document.getElementById("hideUsdPrice").checked = hideUSD;
 
     // Populate VAT details from localStorage
     const showVAT = localStorage.getItem("t_show_vat") !== "false";
@@ -1061,6 +1063,7 @@ function updateGrandTotalsCardOnly() {
 
     const rate = parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate;
     const showTL = document.getElementById("showTLPrice").checked;
+    const hideUSD = document.getElementById("hideUsdPrice") ? document.getElementById("hideUsdPrice").checked : false;
     const showVAT = document.getElementById("showVATPrice").checked;
     const vatPercent = parseFloat(document.getElementById("vatRate").value) || 0;
 
@@ -1075,49 +1078,57 @@ function updateGrandTotalsCardOnly() {
     if (!container) return;
     
     let totalsHTML = "";
+    const shouldShowTL = showTL || hideUSD;
     
     if (showVAT) {
-        // Subtotal row
-        totalsHTML += `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
-                <span style="font-size: 0.85rem; color: var(--text-secondary);">Ara Toplam:</span>
-                <span style="font-weight: 600; color: var(--text-primary);">$${subtotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-        `;
-        if (showTL) {
+        if (!hideUSD) {
             totalsHTML += `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.6rem; opacity: 0.85;">
-                    <span style="font-size: 0.8rem; color: var(--text-muted); padding-left: 10px;">Ara Toplam (TL):</span>
-                    <span style="font-size: 0.85rem; color: var(--text-muted);">${subtotalTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Ara Toplam:</span>
+                    <span style="font-weight: 600; color: var(--text-primary);">$${subtotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+            `;
+        }
+        if (shouldShowTL) {
+            const labelStyle = hideUSD ? "font-size: 0.85rem; color: var(--text-secondary);" : "font-size: 0.8rem; color: var(--text-muted); padding-left: 10px;";
+            const valueStyle = hideUSD ? "font-weight: 600; color: var(--text-primary);" : "font-size: 0.85rem; color: var(--text-muted);";
+            totalsHTML += `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.6rem; ${hideUSD ? '' : 'opacity: 0.85;'}">
+                    <span style="${labelStyle}">Ara Toplam (TL):</span>
+                    <span style="${valueStyle}">${subtotalTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
                 </div>
             `;
         }
         
-        // VAT row
-        totalsHTML += `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
-                <span style="font-size: 0.85rem; color: var(--text-secondary);">KDV (%${vatPercent}):</span>
-                <span style="font-weight: 600; color: var(--text-primary);">$${vatUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-        `;
-        if (showTL) {
+        if (!hideUSD) {
             totalsHTML += `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.6rem; opacity: 0.85;">
-                    <span style="font-size: 0.8rem; color: var(--text-muted); padding-left: 10px;">KDV (TL):</span>
-                    <span style="font-size: 0.85rem; color: var(--text-muted);">${vatTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">KDV (%${vatPercent}):</span>
+                    <span style="font-weight: 600; color: var(--text-primary);">$${vatUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+            `;
+        }
+        if (shouldShowTL) {
+            const labelStyle = hideUSD ? "font-size: 0.85rem; color: var(--text-secondary);" : "font-size: 0.8rem; color: var(--text-muted); padding-left: 10px;";
+            const valueStyle = hideUSD ? "font-weight: 600; color: var(--text-primary);" : "font-size: 0.85rem; color: var(--text-muted);";
+            totalsHTML += `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.6rem; ${hideUSD ? '' : 'opacity: 0.85;'}">
+                    <span style="${labelStyle}">KDV (TL):</span>
+                    <span style="${valueStyle}">${vatTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
                 </div>
             `;
         }
     }
     
-    // Grand Total row
-    totalsHTML += `
-        <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 0.5rem; margin-top: 0.25rem;">
-            <span style="font-weight: 700; color: var(--text-secondary);">${showVAT ? 'GENEL TOPLAM' : 'TOPLAM'} (USD):</span>
-            <span style="font-weight: 700; color: var(--accent-teal); font-size: 1.25rem;">$${grandTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-        </div>
-    `;
-    if (showTL) {
+    if (!hideUSD) {
+        totalsHTML += `
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 0.5rem; margin-top: 0.25rem;">
+                <span style="font-weight: 700; color: var(--text-secondary);">${showVAT ? 'GENEL TOPLAM' : 'TOPLAM'} (USD):</span>
+                <span style="font-weight: 700; color: var(--accent-teal); font-size: 1.25rem;">$${grandTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+        `;
+    }
+    if (shouldShowTL) {
         totalsHTML += `
             <div style="display: flex; justify-content: space-between; border-top: 1px dashed var(--border-color); padding-top: 0.4rem; margin-top: 0.4rem;">
                 <span style="font-weight: 700; color: var(--text-secondary);">${showVAT ? 'GENEL TOPLAM' : 'TOPLAM'} (TL):</span>
@@ -1685,6 +1696,7 @@ function buildProposalPrintElement() {
     const dateStr = document.getElementById("proposalDate").value || new Date().toLocaleDateString('tr-TR');
     const rate = parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate;
     const showTL = document.getElementById("showTLPrice").checked;
+    const hideUSD = document.getElementById("hideUsdPrice") ? document.getElementById("hideUsdPrice").checked : false;
     const showVAT = document.getElementById("showVATPrice").checked;
     const vatPercent = parseFloat(document.getElementById("vatRate").value) || 0;
     
@@ -1721,13 +1733,20 @@ function buildProposalPrintElement() {
         const total = item.qty * item.unitPrice;
         subtotalUSD += total;
         
+        let unitCol = `$${item.unitPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        let totalCol = `$${total.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        if (hideUSD) {
+            unitCol = `${(item.unitPrice * rate).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL`;
+            totalCol = `${(total * rate).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL`;
+        }
+
         itemsHTML += `
             <tr>
                 <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">${idx + 1}</td>
                 <td style="border: 1px solid #cbd5e1; padding: 8px;">${item.desc}</td>
                 <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">${item.qty} ${item.unit}</td>
-                <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: right;">$${item.unitPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: right;">$${total.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: right;">${unitCol}</td>
+                <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: right;">${totalCol}</td>
             </tr>
         `;
     });
@@ -1751,50 +1770,67 @@ function buildProposalPrintElement() {
     
     const kurHTML = showTL ? `<p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #64748b;">Kur: 1 $ = ${rate.toFixed(4)} TL</p>` : '';
     
+    const shouldShowTL = showTL || hideUSD;
     let finalSummaryHTML = "";
+    
     if (showVAT) {
-        finalSummaryHTML += `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                <span style="font-size: 0.8rem; font-weight: 600; color: #475569;">Ara Toplam ($):</span>
-                <span style="font-size: 0.9rem; font-weight: 600; color: #0f172a;">$${subtotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-        `;
-        if (showTL) {
+        if (!hideUSD) {
             finalSummaryHTML += `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; opacity: 0.85; padding-left: 10px;">
-                    <span style="font-size: 0.75rem; color: #64748b;">Ara Toplam (TL):</span>
-                    <span style="font-size: 0.8rem; color: #64748b;">${subtotalTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: #475569;">Ara Toplam ($):</span>
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #0f172a;">$${subtotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
             `;
         }
-        finalSummaryHTML += `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                <span style="font-size: 0.8rem; font-weight: 600; color: #475569;">KDV (%${vatPercent}) ($):</span>
-                <span style="font-size: 0.9rem; font-weight: 600; color: #0f172a;">$${vatUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-        `;
-        if (showTL) {
+        if (shouldShowTL) {
+            const labelStyle = hideUSD ? "font-size: 0.8rem; font-weight: 600; color: #475569;" : "font-size: 0.75rem; color: #64748b;";
+            const valStyle = hideUSD ? "font-size: 0.9rem; font-weight: 600; color: #0f172a;" : "font-size: 0.8rem; color: #64748b;";
+            const pl = hideUSD ? "" : " padding-left: 10px;";
+            const op = hideUSD ? "" : " opacity: 0.85;";
             finalSummaryHTML += `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; opacity: 0.85; padding-left: 10px;">
-                    <span style="font-size: 0.75rem; color: #64748b;">KDV (TL):</span>
-                    <span style="font-size: 0.8rem; color: #64748b;">${vatTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;${op}${pl}">
+                    <span style="${labelStyle}">Ara Toplam (TL):</span>
+                    <span style="${valStyle}">${subtotalTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
+                </div>
+            `;
+        }
+        if (!hideUSD) {
+            finalSummaryHTML += `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: #475569;">KDV (%${vatPercent}) ($):</span>
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #0f172a;">$${vatUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+            `;
+        }
+        if (shouldShowTL) {
+            const labelStyle = hideUSD ? "font-size: 0.8rem; font-weight: 600; color: #475569;" : "font-size: 0.75rem; color: #64748b;";
+            const valStyle = hideUSD ? "font-size: 0.9rem; font-weight: 600; color: #0f172a;" : "font-size: 0.8rem; color: #64748b;";
+            const pl = hideUSD ? "" : " padding-left: 10px;";
+            const op = hideUSD ? "" : " opacity: 0.85;";
+            finalSummaryHTML += `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;${op}${pl}">
+                    <span style="${labelStyle}">KDV (TL):</span>
+                    <span style="${valStyle}">${vatTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
                 </div>
             `;
         }
     }
     
-    finalSummaryHTML += `
-        <div style="display: flex; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 6px; margin-top: 4px;">
-            <span style="font-size: 0.8rem; font-weight: 700; color: #475569;">GENEL TOPLAM ($):</span>
-            <span style="font-size: 1rem; font-weight: 700; color: #0f172a;">$${grandTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-        </div>
-    `;
+    if (!hideUSD) {
+        finalSummaryHTML += `
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 6px; margin-top: 4px;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: #475569;">GENEL TOPLAM ($):</span>
+                <span style="font-size: 1rem; font-weight: 700; color: #0f172a;">$${grandTotalUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+        `;
+    }
     
-    if (showTL) {
+    if (shouldShowTL) {
+        const valStyle = hideUSD ? "font-size: 1rem; font-weight: 700; color: #0f172a;" : "font-size: 1rem; font-weight: 700; color: #4f46e5;";
         finalSummaryHTML += `
             <div style="display: flex; justify-content: space-between; border-top: 1px dashed #cbd5e1; padding-top: 6px; margin-top: 6px;">
                 <span style="font-size: 0.8rem; font-weight: 700; color: #475569;">GENEL TOPLAM (TL):</span>
-                <span style="font-size: 1rem; font-weight: 700; color: #4f46e5;">${grandTotalTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
+                <span style="${valStyle}">${grandTotalTL.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</span>
             </div>
         `;
     }
@@ -1840,8 +1876,8 @@ function buildProposalPrintElement() {
                             <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center; width: 40px;">No</th>
                             <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: left;">Malzeme / Açıklama</th>
                             <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center; width: 100px;">Miktar / Birim</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: right; width: 120px;">Birim Fiyat ($)</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: right; width: 120px;">Toplam Fiyat ($)</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: right; width: 120px;">${hideUSD ? 'Birim Fiyat (TL)' : 'Birim Fiyat ($)'}</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: right; width: 120px;">${hideUSD ? 'Toplam Fiyat (TL)' : 'Toplam Fiyat ($)'}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1996,6 +2032,7 @@ function saveCurrentProposalTemplate() {
         items: proposalItems,
         exchangeRate: parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate,
         showTL: document.getElementById("showTLPrice").checked,
+        hideUSD: document.getElementById("hideUsdPrice") ? document.getElementById("hideUsdPrice").checked : false,
         showVAT: document.getElementById("showVATPrice").checked,
         vatRate: parseFloat(document.getElementById("vatRate").value) || 20,
         annexCentral: document.getElementById("annexCentralProject").value,
@@ -2048,6 +2085,7 @@ function saveCurrentProposalTemplateSilent() {
         items: proposalItems,
         exchangeRate: parseFloat(document.getElementById("usdExchangeRate").value) || defaultExchangeRate,
         showTL: document.getElementById("showTLPrice").checked,
+        hideUSD: document.getElementById("hideUsdPrice") ? document.getElementById("hideUsdPrice").checked : false,
         showVAT: document.getElementById("showVATPrice").checked,
         vatRate: parseFloat(document.getElementById("vatRate").value) || 20,
         annexCentral: document.getElementById("annexCentralProject").value,
@@ -2127,6 +2165,10 @@ function loadSelectedProposalTemplate() {
         
         document.getElementById("showTLPrice").checked = prop.showTL !== false;
         localStorage.setItem("t_show_tl", prop.showTL !== false);
+        if (document.getElementById("hideUsdPrice")) {
+            document.getElementById("hideUsdPrice").checked = prop.hideUSD === true;
+            localStorage.setItem("t_hide_usd", prop.hideUSD === true);
+        }
 
         document.getElementById("showVATPrice").checked = prop.showVAT !== false;
         localStorage.setItem("t_show_vat", prop.showVAT !== false);
