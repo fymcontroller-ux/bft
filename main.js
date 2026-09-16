@@ -1426,23 +1426,13 @@ function initPortalNavigation() {
             btnTextEl.textContent = 'Güncelleniyor...';
 
             try {
-                const mainWindow = require('electron').BrowserWindow.getFocusedWindow();
-                
-                // Prevent DevTools from opening during update
-                if (mainWindow && !mainWindow.webContents.isDevToolsOpened()) {
-                    mainWindow.webContents.once('devtools-opened', () => {
-                        mainWindow.webContents.closeDevTools();
-                    });
-                }
-
                 // Get current version
                 const currentVersion = localStorage.getItem("bft_app_version") || "v1.0.0";
                 
                 // Trigger IPC call to download-and-install-update
                 const downloadUrl = await window.require('electron').ipcRenderer.invoke('download-and-install-update', null);
                 
-                // Close app after successful update
-                mainWindow.close();
+                // If IPC completes, the main process will handle closing the app.
                 
             } catch (err) {
                 console.error("Update button click error:", err);
