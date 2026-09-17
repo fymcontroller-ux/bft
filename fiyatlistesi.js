@@ -25,6 +25,9 @@
                 this.previewButton.dataset.bound = "true";
                 this.previewButton.addEventListener('click', () => this.openPreview());
             }
+            window.addEventListener('catalog-updated', () => {
+                this.render();
+            });
         },
 
         createPreviewElement() {

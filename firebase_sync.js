@@ -31,7 +31,6 @@
         "p_projects",
         "t_company_info",
         "t_proposal_items",
-        "t_product_catalog",
         "t_exchange_rate",
         "t_show_tl",
         "t_show_vat",
@@ -44,7 +43,8 @@
         "l_personnel",
         "l_shopExpenses",
         "l_materials",
-        "l_models"
+        "l_models",
+        "t_product_catalog"
     ];
 
     let isSyncing = false; // Flag to prevent circular sync loop
@@ -59,6 +59,109 @@
     const originalSetItem = localStorage.setItem;
     const originalRemoveItem = localStorage.removeItem;
     const localArchiveKey = "bft_cloud_upload_archive_v1";
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // DIRECT CLOUD CATALOG SERVICE (ATOMIC REAL-TIME CLOUD INTEGRATION)
+    // ─────────────────────────────────────────────────────────────────────────
+    const bftCloudCatalog = {
+        companyCode: "bft_portal",
+        debouncedUpdates: {},
+        isInitialized: false,
+
+        init(code) {
+            this.companyCode = (code || localStorage.getItem("t_sync_company_code") || "bft_portal").trim().toLowerCase();
+            this.isInitialized = true;
+            // Broadcast initial state
+            const current = this.getCatalogMap();
+            if (Object.keys(current).length > 0) {
+                this.broadcast(current);
+            }
+        },
+
+        getCatalogMap() {
+            try {
+                return JSON.parse(localStorage.getItem("t_product_catalog") || "{}");
+            } catch (e) {
+                return {};
+            }
+        },
+
+        broadcast(catalogMap) {
+            const map = catalogMap || this.getCatalogMap();
+            window.productCatalog = map;
+            window.dispatchEvent(new CustomEvent("catalog-updated", { detail: { catalog: map } }));
+        },
+
+        async addCategory(name) {
+            if (!name) return;
+            const trimmed = name.trim();
+            const map = this.getCatalogMap();
+            if (!map[trimmed]) {
+                map[trimmed] = [];
+                localStorage.setItem("t_product_catalog", JSON.stringify(map));
+                this.broadcast(map);
+            }
+        },
+
+        async deleteCategory(name) {
+            if (!name) return;
+            const map = this.getCatalogMap();
+            if (map[name]) {
+                delete map[name];
+                localStorage.setItem("t_product_catalog", JSON.stringify(map));
+                this.broadcast(map);
+            }
+        },
+
+        async saveProduct(prod) {
+            if (!prod) return;
+            const map = this.getCatalogMap();
+            const cat = prod.category || "Genel";
+            map[cat] = map[cat] || [];
+            const idx = map[cat].findIndex(p => (prod.id && p.id === prod.id) || (p.name === prod.name));
+            if (idx >= 0) {
+                map[cat][idx] = { ...map[cat][idx], ...prod };
+            } else {
+                map[cat].push(prod);
+            }
+            localStorage.setItem("t_product_catalog", JSON.stringify(map));
+            this.broadcast(map);
+            return prod.id;
+        },
+
+        scheduleUpdateProduct(prod) {
+            if (!prod) return;
+            const key = prod.id || prod.name;
+            clearTimeout(this.debouncedUpdates[key]);
+            this.debouncedUpdates[key] = setTimeout(() => {
+                this.saveProduct(prod).catch(err => console.error("[bftCloudCatalog] Save:", err));
+            }, 500);
+        },
+
+        async deleteProduct(productId) {
+            if (!productId) return;
+            const map = this.getCatalogMap();
+            let changed = false;
+            Object.keys(map).forEach(cat => {
+                const initialLen = map[cat].length;
+                map[cat] = map[cat].filter(p => p.id !== productId && p.name !== productId);
+                if (map[cat].length !== initialLen) changed = true;
+            });
+            if (changed) {
+                localStorage.setItem("t_product_catalog", JSON.stringify(map));
+                this.broadcast(map);
+            }
+        },
+
+        async reorderProducts(category, orderedProducts) {
+            if (!category || !Array.isArray(orderedProducts)) return;
+            const map = this.getCatalogMap();
+            map[category] = orderedProducts;
+            localStorage.setItem("t_product_catalog", JSON.stringify(map));
+            this.broadcast(map);
+        }
+    };
+    window.bftCloudCatalog = bftCloudCatalog;
 
     const saveLocalCloudSnapshot = (companyCode, data) => {
         try {
@@ -175,6 +278,7 @@
 
         // Startup: fetch fresh cloud data first, then begin real-time listener
         initialFetchAndStart(savedCode);
+        bftCloudCatalog.init(savedCode);
 
         // Setup Modal Opening/Closing
         const btnOpenModal = document.getElementById("btnOpenSyncModal");
@@ -734,7 +838,9 @@
         const PROTECTED_KEYS = [
             "t_sync_company_code",
             "t_sync_last_status",
-            "bft_cloud_upload_archive_v1"
+            "bft_cloud_upload_archive_v1",
+            "t_product_catalog",
+            "bft_catalog_migration_backup_v1"
         ];
 
         if (!companyCode) {
@@ -789,6 +895,13 @@
                 isPullingFromCloud = false;
             }
 
+            // Katalog güncellendi bildirimini yayınla
+            try {
+                const catData = JSON.parse(localStorage.getItem("t_product_catalog") || "{}");
+                window.productCatalog = catData;
+                window.dispatchEvent(new CustomEvent("catalog-updated", { detail: { catalog: catData } }));
+            } catch(e) {}
+
             const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
             const successMsg = `Buluttan yüklendi: ${nowStr}`;
             originalSetItem.call(localStorage, "t_sync_last_status", successMsg);
@@ -835,6 +948,7 @@
 
                 // Farkları localStorage'a yaz — reload YOK
                 let appliedCount = 0;
+                let catalogChanged = false;
                 isPullingFromCloud = true;
                 try {
                     storageKeys.forEach(key => {
@@ -844,6 +958,7 @@
                         if (localVal !== remoteVal) {
                             originalSetItem.call(localStorage, key, remoteVal);
                             appliedCount++;
+                            if (key === "t_product_catalog") catalogChanged = true;
                         }
                     });
                 } finally {
@@ -851,6 +966,14 @@
                 }
 
                 if (appliedCount === 0) return;
+
+                if (catalogChanged) {
+                    try {
+                        const catData = JSON.parse(localStorage.getItem("t_product_catalog") || "{}");
+                        window.productCatalog = catData;
+                        window.dispatchEvent(new CustomEvent("catalog-updated", { detail: { catalog: catData } }));
+                    } catch(e) {}
+                }
 
                 const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: '2-digit', minute: '2-digit' }) + " " + new Date().toLocaleDateString("tr-TR");
                 const successMsg = `Buluttan yeni veri çekildi: ${nowStr}`;
@@ -862,7 +985,7 @@
                 if (modalStatusEl) modalStatusEl.textContent = successMsg;
 
                 if (window.showToast) {
-                    window.showToast("☁️ Başka bir cihazdan güncel veri geldi. Değişiklikleri görmek için sayfayı yenileyebilirsiniz.", "info");
+                    window.showToast("☁️ Başka bir cihazdan güncel veri geldi.", "info");
                 }
             }, err => {
                 console.error("Firestore onSnapshot error:", err);
@@ -872,7 +995,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.55";
+    const CURRENT_APP_VERSION = "1.0.56";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;

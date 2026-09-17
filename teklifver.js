@@ -29,7 +29,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initTeklifVer() {
     // Load custom catalog (fallback to empty object if not in localStorage)
-    productCatalog = JSON.parse(localStorage.getItem("t_product_catalog")) || {};
+    productCatalog = (window.bftCloudCatalog && window.bftCloudCatalog.isInitialized && Object.keys(window.bftCloudCatalog.getCatalogMap()).length > 0)
+        ? window.bftCloudCatalog.getCatalogMap()
+        : (JSON.parse(localStorage.getItem("t_product_catalog")) || {});
+    window.productCatalog = productCatalog;
+
+    // Listen for real-time cloud catalog updates
+    window.addEventListener("catalog-updated", (e) => {
+        if (e.detail && e.detail.catalog) {
+            productCatalog = e.detail.catalog;
+        } else {
+            productCatalog = JSON.parse(localStorage.getItem("t_product_catalog")) || {};
+        }
+        window.productCatalog = productCatalog;
+        updateCatalogDropdowns();
+        handleCategoryChange();
+        
+        // Only re-render if active element is not an input inside catalogViewerContainer
+        const activeEl = document.activeElement;
+        const container = document.getElementById("catalogViewerContainer");
+        if (!container || !activeEl || !container.contains(activeEl)) {
+            renderCatalogViewer();
+        }
+    });
 
     // Populate exchange rate from default or localStorage
     const storedRate = parseFloat(localStorage.getItem("t_exchange_rate")) || defaultExchangeRate;
@@ -585,7 +607,7 @@ function handleProductItemChange() {
 }
 
 // Catalog CRUD Operations
-function addCatalogCategory() {
+async function addCatalogCategory() {
     const nameInput = document.getElementById("newCatalogCategoryName");
     const name = nameInput.value.trim();
     if (!name) {
@@ -602,6 +624,10 @@ function addCatalogCategory() {
     nameInput.value = "";
     updateCatalogDropdowns();
     renderCatalogViewer();
+
+    if (window.bftCloudCatalog) {
+        await window.bftCloudCatalog.addCategory(name);
+    }
 }
 
 async function deleteCatalogCategory(categoryName) {
@@ -611,10 +637,14 @@ async function deleteCatalogCategory(categoryName) {
         updateCatalogDropdowns();
         renderCatalogViewer();
         handleCategoryChange(); // reset selects if active
+
+        if (window.bftCloudCatalog) {
+            await window.bftCloudCatalog.deleteCategory(categoryName);
+        }
     }
 }
 
-function addCatalogProduct() {
+async function addCatalogProduct() {
     const category = document.getElementById("catalogProductCategorySelect").value;
     const nameInput = document.getElementById("newCatalogProductName");
     const priceInput = document.getElementById("newCatalogProductPrice");
@@ -633,25 +663,34 @@ function addCatalogProduct() {
         return;
     }
 
-    // Check if product exists in this category
+    if (!productCatalog[category]) productCatalog[category] = [];
     const exists = productCatalog[category].some(p => p.name.toLowerCase() === name.toLowerCase());
     if (exists) {
         alert("Bu kategoride bu isimde bir ürün zaten mevcut.");
         return;
     }
 
-    productCatalog[category].push({ 
+    const newProd = { 
+        id: `prod_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        category: category,
         name: name, 
         price: price, 
         description: description, 
+        order: productCatalog[category].length,
         showInPriceList: false 
-    });
+    };
+
+    productCatalog[category].push(newProd);
     localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
 
     nameInput.value = "";
     priceInput.value = "";
     if (descInput) descInput.value = "";
     renderCatalogViewer();
+
+    if (window.bftCloudCatalog) {
+        await window.bftCloudCatalog.saveProduct(newProd);
+    }
 }
 
 function saveCatalogProductImage(category, index, file) {
@@ -664,16 +703,22 @@ function saveCatalogProductImage(category, index, file) {
     reader.onload = () => {
         const image = new Image();
         image.onload = () => {
-            const maxSize = 900;
+            const maxSize = 600;
             const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
             const canvas = document.createElement("canvas");
             canvas.width = Math.max(1, Math.round(image.width * scale));
             canvas.height = Math.max(1, Math.round(image.height * scale));
             canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
 
-            productCatalog[category][index].image = canvas.toDataURL("image/png");
+            const base64 = canvas.toDataURL("image/jpeg", 0.75);
+            const prod = productCatalog[category][index];
+            prod.image = base64;
             localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
             renderCatalogViewer();
+
+            if (window.bftCloudCatalog) {
+                window.bftCloudCatalog.saveProduct(prod);
+            }
         };
         image.src = reader.result;
     };
@@ -681,17 +726,27 @@ function saveCatalogProductImage(category, index, file) {
 }
 
 function removeCatalogProductImage(category, index) {
-    delete productCatalog[category][index].image;
+    const prod = productCatalog[category][index];
+    delete prod.image;
     localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
     renderCatalogViewer();
+
+    if (window.bftCloudCatalog) {
+        window.bftCloudCatalog.saveProduct(prod);
+    }
 }
 
 async function deleteCatalogProduct(categoryName, productName) {
     if (await window.showCustomConfirm(`"${productName}" ürününü silmek istediğinize emin misiniz?`)) {
-        productCatalog[categoryName] = productCatalog[categoryName].filter(p => p.name !== productName);
+        const prod = (productCatalog[categoryName] || []).find(p => p.name === productName);
+        productCatalog[categoryName] = (productCatalog[categoryName] || []).filter(p => p.name !== productName);
         localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
         renderCatalogViewer();
         handleCategoryChange(); // refresh options in proposal
+
+        if (window.bftCloudCatalog && prod && prod.id) {
+            await window.bftCloudCatalog.deleteProduct(prod.id);
+        }
     }
 }
 
@@ -759,10 +814,16 @@ function renderCatalogViewer() {
                 nameInp.style.fontWeight = "bold";
                 nameInp.style.width = "100%";
                 nameInp.addEventListener("input", (e) => {
-                    productCatalog[cat][index].name = e.target.value;
+                    const currentProd = productCatalog[cat][index];
+                    currentProd.name = e.target.value;
+                    if (!currentProd.id) currentProd.id = `prod_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+                    currentProd.category = cat;
                     localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
                     updateCatalogDropdowns();
                     handleCategoryChange();
+                    if (window.bftCloudCatalog) {
+                        window.bftCloudCatalog.scheduleUpdateProduct(currentProd);
+                    }
                 });
 
                 const descInp = document.createElement("textarea");
@@ -777,10 +838,16 @@ function renderCatalogViewer() {
                 descInp.style.fontFamily = "inherit";
                 descInp.style.lineHeight = "1.35";
                 descInp.addEventListener("input", (e) => {
-                    productCatalog[cat][index].description = e.target.value;
+                    const currentProd = productCatalog[cat][index];
+                    currentProd.description = e.target.value;
+                    if (!currentProd.id) currentProd.id = `prod_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+                    currentProd.category = cat;
                     localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
                     updateCatalogDropdowns();
                     handleCategoryChange();
+                    if (window.bftCloudCatalog) {
+                        window.bftCloudCatalog.scheduleUpdateProduct(currentProd);
+                    }
                 });
 
                 tdName.appendChild(nameInp);
@@ -820,17 +887,23 @@ function renderCatalogViewer() {
                 priceInp.style.textAlign = "right";
                 priceInp.style.fontWeight = "600";
                 priceInp.addEventListener("input", (e) => {
-                    productCatalog[cat][index].price = parseFloat(e.target.value) || 0;
+                    const currentProd = productCatalog[cat][index];
+                    currentProd.price = parseFloat(e.target.value) || 0;
+                    if (!currentProd.id) currentProd.id = `prod_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+                    currentProd.category = cat;
                     localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
                     updateCatalogDropdowns();
                     handleCategoryChange();
+                    if (window.bftCloudCatalog) {
+                        window.bftCloudCatalog.scheduleUpdateProduct(currentProd);
+                    }
                 });
 
                 priceContainer.appendChild(priceInp);
                 tdPrice.appendChild(priceContainer);
                 tr.appendChild(tdPrice);
 
-                // 3. Actions (Up, Down, Delete)
+                // 3. Actions (Up, Down, Delete, Image, ShowInPriceList)
                 const tdActions = document.createElement("td");
                 tdActions.style.textAlign = "center";
                 tdActions.style.verticalAlign = "middle";
@@ -854,6 +927,9 @@ function renderCatalogViewer() {
                         [productCatalog[cat][index - 1], productCatalog[cat][index]] = [productCatalog[cat][index], productCatalog[cat][index - 1]];
                         localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
                         renderCatalogViewer();
+                        if (window.bftCloudCatalog) {
+                            window.bftCloudCatalog.reorderProducts(cat, productCatalog[cat]);
+                        }
                     }
                 });
 
@@ -875,6 +951,9 @@ function renderCatalogViewer() {
                         [productCatalog[cat][index], productCatalog[cat][index + 1]] = [productCatalog[cat][index + 1], productCatalog[cat][index]];
                         localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
                         renderCatalogViewer();
+                        if (window.bftCloudCatalog) {
+                            window.bftCloudCatalog.reorderProducts(cat, productCatalog[cat]);
+                        }
                     }
                 });
 
@@ -931,9 +1010,15 @@ function renderCatalogViewer() {
                 showPriceBtn.innerHTML = `<i class="fa-solid ${prod.showInPriceList ? 'fa-check-circle' : 'fa-circle'}"></i>`;
                 showPriceBtn.title = "Fiyat Listesinde Göster";
                 showPriceBtn.addEventListener("click", () => {
-                    productCatalog[cat][index].showInPriceList = !productCatalog[cat][index].showInPriceList;
+                    const currentProd = productCatalog[cat][index];
+                    currentProd.showInPriceList = !currentProd.showInPriceList;
+                    if (!currentProd.id) currentProd.id = `prod_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+                    currentProd.category = cat;
                     localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
                     renderCatalogViewer();
+                    if (window.bftCloudCatalog) {
+                        window.bftCloudCatalog.saveProduct(currentProd);
+                    }
                 });
 
                 tdActions.appendChild(showPriceBtn);
