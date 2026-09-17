@@ -708,11 +708,22 @@ function saveCatalogProductImage(category, index, file) {
             const canvas = document.createElement("canvas");
             canvas.width = Math.max(1, Math.round(image.width * scale));
             canvas.height = Math.max(1, Math.round(image.height * scale));
-            canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+            const ctx = canvas.getContext("2d");
 
-            const base64 = canvas.toDataURL("image/jpeg", 0.75);
+            // Orijinal şeffaflığı (alpha transparency) koruyarak çiz
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+            // WebP ve PNG formatları gerçek şeffaflığı (transparency) tam korur
+            let base64 = canvas.toDataURL("image/webp", 0.90);
+            if (!base64 || !base64.startsWith("data:image/webp")) {
+                base64 = canvas.toDataURL("image/png");
+            }
+
             const prod = productCatalog[category][index];
             prod.image = base64;
+            if (!prod.id) prod.id = `prod_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+            prod.category = category;
             localStorage.setItem("t_product_catalog", JSON.stringify(productCatalog));
             renderCatalogViewer();
 

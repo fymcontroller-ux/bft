@@ -428,6 +428,52 @@
             return true;
         };
 
+        const exportJsonBackup = () => {
+            const companyCode = (document.getElementById("modalSyncCompanyCode")?.value || localStorage.getItem("t_sync_company_code") || "bft_portal").trim().toLowerCase();
+            const now = new Date();
+            const backupObj = {
+                app: "BFT Yönetim Portalı",
+                version: "1.0.55",
+                companyCode: companyCode,
+                backupTimestamp: now.toISOString(),
+                backupDateFormatted: now.toLocaleString("tr-TR"),
+                data: {}
+            };
+
+            storageKeys.forEach(key => {
+                const val = localStorage.getItem(key);
+                if (val !== null && val !== undefined) {
+                    try {
+                        backupObj.data[key] = JSON.parse(val);
+                    } catch (e) {
+                        backupObj.data[key] = val;
+                    }
+                }
+            });
+
+            const jsonStr = JSON.stringify(backupObj, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            const dateStamp = now.getFullYear() + "-" +
+                String(now.getMonth() + 1).padStart(2, '0') + "-" +
+                String(now.getDate()).padStart(2, '0') + "_" +
+                String(now.getHours()).padStart(2, '0') + "-" +
+                String(now.getMinutes()).padStart(2, '0');
+            a.href = url;
+            a.download = `BFT_Portal_Yedek_${companyCode}_${dateStamp}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            if (window.showToast) {
+                window.showToast("💾 Yedek dosyası bilgisayarınıza başarıyla indirildi.", "success");
+            } else {
+                alert("Yedek dosyası bilgisayarınıza başarıyla indirildi.");
+            }
+        };
+
         const uploadAction = async (getCodeFn, disableBtnsFn, enableBtnsFn, updateStatusFn) => {
             const companyCode = getCodeFn().trim().toLowerCase();
             if (!companyCode) {
@@ -590,6 +636,39 @@
 
                 await uploadAction(() => modalInputCode.value, disableAllButtons, enableAllButtons, updateAllStatus);
                 location.reload(true);
+            });
+        }
+
+        // Event listeners for Manual PC Backup Export & Import (.json)
+        const btnExportBackup = document.getElementById("btnExportBackupToFile");
+        const btnImportBackup = document.getElementById("btnImportBackupFromFile");
+        const inputImportFile = document.getElementById("inputImportBackupFile");
+
+        if (btnExportBackup) {
+            btnExportBackup.addEventListener("click", exportJsonBackup);
+        }
+
+        if (btnImportBackup && inputImportFile) {
+            btnImportBackup.addEventListener("click", () => {
+                inputImportFile.value = "";
+                inputImportFile.click();
+            });
+
+            inputImportFile.addEventListener("change", async (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+
+                try {
+                    const success = await importJsonBackup(file);
+                    if (success) {
+                        await uploadAction(() => modalInputCode ? modalInputCode.value : "bft_portal", disableAllButtons, enableAllButtons, updateAllStatus);
+                        alert("Yedek dosyası başarıyla geri yüklendi ve bulut güncellendi!");
+                        location.reload(true);
+                    }
+                } catch (err) {
+                    console.error("Yedek içe aktarma hatası:", err);
+                    alert("Yedek dosyası yüklenirken bir hata oluştu: " + err.message);
+                }
             });
         }
 
@@ -995,7 +1074,7 @@
     // ==========================================
     // AUTOMATIC APP VERSION UPDATER MODULE
     // ==========================================
-    const CURRENT_APP_VERSION = "1.0.56";
+    const CURRENT_APP_VERSION = "1.0.57";
 
     function isNewerVersion(current, remote) {
         if (!current || !remote) return false;

@@ -1564,6 +1564,29 @@
                 <div id="modalLocalDataSummary" style="font-size: 0.8rem; color: #a5b4fc; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 8px; padding: 0.5rem 0.75rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                     <i class="fa-solid fa-mobile-screen"></i> <span>Cihaz Verileri Kontrol Ediliyor...</span>
                 </div>
+
+                <!-- Bilgisayara Manuel Yedek Alma ve Dosyadan Geri Yükleme -->
+                <div style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div style="font-size: 0.82rem; font-weight: 600; color: #6ee7b7; display: flex; align-items: center; justify-content: space-between;">
+                        <span style="display: flex; align-items: center; gap: 0.45rem;">
+                            <i class="fa-solid fa-floppy-disk"></i> Bilgisayara Yedekleme & Geri Yükleme
+                        </span>
+                        <span style="font-size: 0.7rem; color: #a7f3d0; background: rgba(16, 185, 129, 0.2); padding: 0.15rem 0.4rem; border-radius: 4px;">Tam Snapshot</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;">
+                        Tüm projeleri, teklifleri ve ürün kataloğunu tek tıkla bilgisayarınıza <b>.json</b> dosyası olarak indirebilir, dilediğinizde bu dosyayı yükleyerek sistemi o güne döndürebilirsiniz.
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.2rem;">
+                        <button id="btnExportBackupToFile" class="project-btn-main" style="flex: 1; padding: 0.55rem; font-size: 0.78rem; margin: 0; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #a7f3d0;" title="Tüm portal verilerini JSON dosyası olarak indir">
+                            <i class="fa-solid fa-file-arrow-down"></i> Bilgisayara Yedek İndir
+                        </button>
+                        <button id="btnImportBackupFromFile" class="project-btn-main" style="flex: 1; padding: 0.55rem; font-size: 0.78rem; margin: 0; background: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.35); color: #c7d2fe;" title="Daha önce indirilen JSON yedeğini yükle">
+                            <i class="fa-solid fa-file-arrow-up"></i> Yedekten Geri Yükle
+                        </button>
+                    </div>
+                    <input type="file" id="inputImportBackupFile" accept=".json,application/json" style="display: none;">
+                </div>
+
                 <details style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 0.5rem 0.75rem;">
                     <summary style="font-size: 0.78rem; color: var(--text-muted); cursor: pointer; user-select: none; display: flex; align-items: center; gap: 0.4rem;">
                         <i class="fa-solid fa-clock-rotate-left"></i> <span>Gelişmiş: Önceki Yüklemeler Arşivi</span>
