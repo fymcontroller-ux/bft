@@ -1,89 +1,10 @@
 (() => {
 // Original default prices data
-const defaultScreens = [
-    { name: "GHS-043", price: 141 },
-    { name: "GHS-043E", price: 169 },
-    { name: "GHPro-070E-WIFI", price: 160 },
-    { name: "GHS-070", price: 155 },
-    { name: "GHS-070E", price: 184 },
-    { name: "GHS-101", price: 290 },
-    { name: "GHS-101E", price: 312 },
-    { name: "MSG-156E", price: 1055 }
-];
-
-const defaultDrivers = [
-    { name: "MICNO-00075H", price: 250 },
-    { name: "MICNO-00150H", price: 260 },
-    { name: "MICNO-00220H", price: 306 },
-    { name: "MICNO-00370H", price: 333 },
-    { name: "MICNO-00550H", price: 442 },
-    { name: "MICNO-00750H", price: 505 },
-    { name: "MICNO-01100H", price: 635 },
-    { name: "MICNO-01500H", price: 800 },
-    { name: "MICNO-01850H", price: 926 },
-    { name: "MICNO-02200H", price: 1120 },
-    { name: "MICNO-03000HS", price: 1250 }
-];
-
-const defaultPumps = [
-    { name: "DVP PA 315 CLAW", price: 5160 },
-    { name: "BLOWER 0,70 KW TEK TÜRBİN", price: 160 },
-    { name: "BLOWER 1,60 KW TEK TÜRBİN", price: 285 },
-    { name: "BLOWER 2,2 KW TEK TÜRBİN", price: 300 },
-    { name: "BLOWER 5,5 KW TEK TÜRBİN", price: 740 },
-    { name: "BLOWER 18,5 KW TEK TÜRBİN", price: 1915 },
-    { name: "BLOWER 1,60 KW ÇİFT TÜRBİN", price: 355 },
-    { name: "BLOWER 2,2 KW ÇİFT TÜRBİN", price: 375 },
-    { name: "BLOWER 3,0 KW ÇİFT TÜRBİN", price: 550 },
-    { name: "BLOWER 4,0 KW ÇİFT TÜRBİN", price: 600 },
-    { name: "BLOWER 5,50 KW ÇİFT TÜRBİN", price: 810 },
-    { name: "BLOWER 7,5 KW ÇİFT TÜRBİN", price: 1500 },
-    { name: "BLOWER 11 KW ÇİFT TÜRBİN", price: 1555 }
-];
-
-const defaultPipes = [
-    { name: "Ø38X1,2 KROM BORU", price: 35, hose: "Ø38 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø38 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø48X1,5 KROM BORU", price: 45, hose: "Ø48 SPİRAL HORTUM", hosePrice: 5, clamp: "Ø48 SPİRAL HORTUM KELEPÇESİ", clampPrice: 1 },
-    { name: "Ø60.3X2 KROM BORU", price: 70, hose: "Ø60.3 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø60.3 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø76.1X2 KROM BORU", price: 90, hose: "Ø76.1 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø76.1 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø88.9x2 KROM BORU", price: 105, hose: "Ø88.9 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø88.9 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø38X1,5 SİYAH BORU", price: 0, hose: "Ø38 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø38 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø48X1,5 SİYAH BORU", price: 10, hose: "Ø48 SPİRAL HORTUM", hosePrice: 5, clamp: "Ø48 SPİRAL HORTUM KELEPÇESİ", clampPrice: 1 },
-    { name: "Ø60,3X2 SİYAH BORU", price: 0, hose: "Ø60.3 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø60.3 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø76.1X1,5 SİYAH BORU", price: 0, hose: "Ø76.1 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø76.1 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø88.9x2 SİYAH BORU", price: 0, hose: "Ø88.9 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø88.9 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 }
-];
-
-const defaultGeneralItems = [
-    { id: "plc", name: "GMT-396T (PLC)", price: 222, category: "Pano Ekipmanları" },
-    { id: "input_mod", name: "GXM-16IA (Input Modül)", price: 70, category: "Pano Ekipmanları" },
-    { id: "output_mod", name: "GXM-16TA (Output Modül)", price: 96, category: "Pano Ekipmanları" },
-    { id: "transistor_kart", name: "Transtör Kart", price: 20, category: "Pano Ekipmanları" },
-    { id: "guc_kaynagi", name: "Güç Kaynağı", price: 70, category: "Pano Ekipmanları" },
-    { id: "fren_direnci", name: "Fren Direnci", price: 29, category: "Pano Ekipmanları" },
-    { id: "pano_havalandirma", name: "Pano Havalandırma", price: 90, category: "Pano Ekipmanları" },
-    { id: "lobar_kucuk", name: "Lobar (Küçük)", price: 30, category: "Pano Ekipmanları" },
-    { id: "lobar_buyuk", name: "Lobar (Büyük)", price: 40, category: "Pano Ekipmanları" },
-    { id: "pano", name: "Pano", price: 500, category: "Pano Ekipmanları" },
-    { id: "diger_malzemeler", name: "Diğer Malzemeler", price: 50, category: "Pano Ekipmanları" },
-    { id: "kablo_12x1", name: "12X1 Kumanda Kablosu", price: 2.5, category: "Kablolar" },
-    { id: "kablo_6x05", name: "6X0,5 Kumanda Kablosu", price: 1.0, category: "Kablolar" },
-    { id: "kablo_8x1", name: "8X1 KUMANDA KABLOSU (Duvar-İstasyon Arası)", price: 1.5, category: "Kablolar" },
-    { id: "kablo_4x4", name: "4x4 Bilendajlı Kablo", price: 4.0, category: "Kablolar" },
-    { id: "soket_duvar", name: "24LÜ SOKET (DUVAR TİPİ)", price: 35, category: "Soketler" },
-    { id: "soket_makina", name: "24LÜ SOKET (MAKİNA TİPİ)", price: 35, category: "Soketler" },
-    { id: "soket_duvar_16", name: "16LI SOKET (DUVAR TİPİ)", price: 30, category: "Soketler" },
-    { id: "hazne", name: "HAZNE", price: 275, category: "İstasyon Ekipmanları" },
-    { id: "kumanda_seti", name: "KUMANDA SETİ", price: 30, category: "İstasyon Ekipmanları" },
-    { id: "profil_120", name: "120x120x4 Profil", price: 10.0, category: "Duvardaki Sistem" },
-    { id: "hat_baglanti", name: "HAT BAĞLANTI EKİPMANLARI", price: 12.3, category: "Duvardaki Sistem" },
-    { id: "piston_ma1650", name: "MA1650 PİSTON", price: 15.0, category: "Duvardaki Sistem" },
-    { id: "valf_5_2", name: "VALF (1/4\" 5/2 Tek Bobin)", price: 12.0, category: "Duvardaki Sistem" },
-    { id: "klepe_takimi", name: "KLEPE TAKIMI", price: 12.0, category: "Duvardaki Sistem" },
-    { id: "sase_sistemi", name: "ŞASE SİSTEMİ (SİKLON+JETFİLTRE)", price: 1000.0, category: "Pompa Şase" },
-    { id: "contali_kelepce", name: "CONTALI SAÇ KELEPÇE", price: 10.0, category: "Tesisat ve Borulama" },
-    { id: "tesisat_aparatlari", name: "TESİSAT DÖŞEME APARATLARI", price: 10.0, category: "Tesisat ve Borulama" }
-];
+const defaultScreens = [];
+const defaultDrivers = [];
+const defaultPumps = [];
+const defaultPipes = [];
+const defaultGeneralItems = [];
 
 // Active datasets
 let screens = [];
@@ -113,44 +34,13 @@ function saveMaterialUnit(name, unit) {
     localStorage.setItem("l_material_units", JSON.stringify(units));
 }
 
-// Load prices from LocalStorage or fallback to defaults
+// Load prices from LocalStorage or fallback to empty lists
 function loadPrices() {
-    screens = JSON.parse(localStorage.getItem("m_screens")) || JSON.parse(JSON.stringify(defaultScreens));
-    drivers = JSON.parse(localStorage.getItem("m_drivers")) || JSON.parse(JSON.stringify(defaultDrivers));
-    pumps = JSON.parse(localStorage.getItem("m_pumps")) || JSON.parse(JSON.stringify(defaultPumps));
-    pipes = JSON.parse(localStorage.getItem("m_pipes")) || JSON.parse(JSON.stringify(defaultPipes));
-    
-    let storedGeneral = JSON.parse(localStorage.getItem("m_generalItems"));
-    if (storedGeneral) {
-        // Auto-remove duplicate cable from older storage states if present
-        storedGeneral = storedGeneral.filter(item => item.name !== "6x0,5 Kumanda Kablosu (Pano-Şase Arası)");
-        
-        // Migrate old name to the new unified name
-        storedGeneral.forEach(item => {
-            if (item.name === "6X0,5 Kumanda Kablosu") {
-                item.name = "6X0,5 Kumanda Kablosu";
-            }
-        });
-
-        // Ensure missing default general items are added if not present in localStorage
-        defaultGeneralItems.forEach(defaultItem => {
-            if (!storedGeneral.some(item => item.name === defaultItem.name || item.id === defaultItem.id)) {
-                storedGeneral.push(JSON.parse(JSON.stringify(defaultItem)));
-            }
-        });
-
-        // Ensure every item has an id if it matches one of the defaults by name or id
-        storedGeneral.forEach(item => {
-            if (!item.id) {
-                const match = defaultGeneralItems.find(d => d.name === item.name);
-                if (match) item.id = match.id;
-            }
-        });
-
-        generalItems = storedGeneral;
-    } else {
-        generalItems = JSON.parse(JSON.stringify(defaultGeneralItems));
-    }
+    screens = JSON.parse(localStorage.getItem("m_screens")) || [];
+    drivers = JSON.parse(localStorage.getItem("m_drivers")) || [];
+    pumps = JSON.parse(localStorage.getItem("m_pumps")) || [];
+    pipes = JSON.parse(localStorage.getItem("m_pipes")) || [];
+    generalItems = JSON.parse(localStorage.getItem("m_generalItems")) || [];
 }
 
 // Save active prices to LocalStorage
@@ -162,67 +52,103 @@ function savePrices() {
     localStorage.setItem("m_generalItems", JSON.stringify(generalItems));
 }
 
-// Reset prices back to original Excel defaults
-function resetPrices() {
-    localStorage.removeItem("m_screens");
-    localStorage.removeItem("m_drivers");
-    localStorage.removeItem("m_pumps");
-    localStorage.removeItem("m_pipes");
-    localStorage.removeItem("m_generalItems");
-    loadPrices();
-    
-    // Refresh UI Selectors and Inputs
-    initSelectors();
-    initPriceEditor();
-    calculate();
+// Reset prices to empty lists
+async function resetPrices() {
+    if (await window.showCustomConfirm("Tüm merkezi sistem fiyat listelerini sıfırlamak istediğinize emin misiniz?", "Fiyatları Sıfırla")) {
+        localStorage.removeItem("m_screens");
+        localStorage.removeItem("m_drivers");
+        localStorage.removeItem("m_pumps");
+        localStorage.removeItem("m_pipes");
+        localStorage.removeItem("m_generalItems");
+        screens = [];
+        drivers = [];
+        pumps = [];
+        pipes = [];
+        generalItems = [];
+        savePrices();
+        
+        // Refresh UI Selectors and Inputs
+        initSelectors();
+        initPriceEditor();
+        calculate();
+    }
 }
 
 function initSelectors() {
     // Save selected values to preserve selections if updating lists
-    const savedScreen = document.getElementById("screenSelect").value || "GHS-070E";
-    const savedDriver = document.getElementById("driverSelect").value || "MICNO-01100H";
-    const savedPump = document.getElementById("pumpSelect").value || "BLOWER 7,5 KW ÇİFT TÜRBİN";
-    const savedPipe = document.getElementById("pipeSelect").value || "Ø48X1,5 SİYAH BORU";
+    const savedScreen = document.getElementById("screenSelect").value || "";
+    const savedDriver = document.getElementById("driverSelect").value || "";
+    const savedPump = document.getElementById("pumpSelect").value || "";
+    const savedPipe = document.getElementById("pipeSelect").value || "";
 
     const screenSelect = document.getElementById("screenSelect");
     screenSelect.innerHTML = "";
-    screens.forEach(s => {
+    if (screens.length === 0) {
         const opt = document.createElement("option");
-        opt.value = s.name;
-        opt.textContent = s.name;
-        if (s.name === savedScreen) opt.selected = true;
+        opt.value = "";
+        opt.textContent = "Ekran tanımlanmadı";
         screenSelect.appendChild(opt);
-    });
+    } else {
+        screens.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s.name;
+            opt.textContent = s.name;
+            if (s.name === savedScreen) opt.selected = true;
+            screenSelect.appendChild(opt);
+        });
+    }
 
     const driverSelect = document.getElementById("driverSelect");
     driverSelect.innerHTML = "";
-    drivers.forEach(d => {
+    if (drivers.length === 0) {
         const opt = document.createElement("option");
-        opt.value = d.name;
-        opt.textContent = d.name;
-        if (d.name === savedDriver) opt.selected = true;
+        opt.value = "";
+        opt.textContent = "Sürücü tanımlanmadı";
         driverSelect.appendChild(opt);
-    });
+    } else {
+        drivers.forEach(d => {
+            const opt = document.createElement("option");
+            opt.value = d.name;
+            opt.textContent = d.name;
+            if (d.name === savedDriver) opt.selected = true;
+            driverSelect.appendChild(opt);
+        });
+    }
 
     const pumpSelect = document.getElementById("pumpSelect");
     pumpSelect.innerHTML = "";
-    pumps.forEach(p => {
+    if (pumps.length === 0) {
         const opt = document.createElement("option");
-        opt.value = p.name;
-        opt.textContent = p.name;
-        if (p.name === savedPump) opt.selected = true;
+        opt.value = "";
+        opt.textContent = "Pompa tanımlanmadı";
         pumpSelect.appendChild(opt);
-    });
+    } else {
+        pumps.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.name;
+            opt.textContent = p.name;
+            if (p.name === savedPump) opt.selected = true;
+            pumpSelect.appendChild(opt);
+        });
+    }
 
     const pipeSelect = document.getElementById("pipeSelect");
     pipeSelect.innerHTML = "";
-    pipes.filter(p => !p.name.startsWith("[")).forEach(p => {
+    const validPipes = pipes.filter(p => !p.name.startsWith("["));
+    if (validPipes.length === 0) {
         const opt = document.createElement("option");
-        opt.value = p.name;
-        opt.textContent = p.name;
-        if (p.name === savedPipe) opt.selected = true;
+        opt.value = "";
+        opt.textContent = "Boru tanımlanmadı";
         pipeSelect.appendChild(opt);
-    });
+    } else {
+        validPipes.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.name;
+            opt.textContent = p.name;
+            if (p.name === savedPipe) opt.selected = true;
+            pipeSelect.appendChild(opt);
+        });
+    }
 }
 
 function initTabs() {

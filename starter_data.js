@@ -1,79 +1,9 @@
 // Yükleyici Maliyetleri - Default Data
 const defaultExchangeRate = 33.5;
 
-const defaultPersonnel = [
-    {
-        "name": "Samet",
-        "netSalary": 298.51,
-        "ssk": 37.31,
-        "bagkur": 0.0,
-        "yemek": 22.39,
-        "yol": 52.24
-    },
-    {
-        "name": "Bekir",
-        "netSalary": 447.76,
-        "ssk": 37.31,
-        "bagkur": 0.0,
-        "yemek": 22.39,
-        "yol": 52.24
-    },
-    {
-        "name": "Fatih",
-        "netSalary": 447.76,
-        "ssk": 37.31,
-        "bagkur": 0.0,
-        "yemek": 22.39,
-        "yol": 52.24
-    },
-    {
-        "name": "Kamil YAVUZ",
-        "netSalary": 208.96,
-        "ssk": 37.32,
-        "bagkur": 0.0,
-        "yemek": 22.38,
-        "yol": 52.24
-    },
-    {
-        "name": "Bağkur / Ortaklar",
-        "netSalary": 0.0,
-        "ssk": 0.0,
-        "bagkur": 74.63,
-        "yemek": 0.0,
-        "yol": 0.0
-    }
-];
+const defaultPersonnel = [];
 
-const defaultShopExpenses = [
-    {
-        "name": "Kira",
-        "price": 328.36
-    },
-    {
-        "name": "Güvenlik",
-        "price": 6.27
-    },
-    {
-        "name": "Elektrik",
-        "price": 104.48
-    },
-    {
-        "name": "Su",
-        "price": 10.45
-    },
-    {
-        "name": "Telefon",
-        "price": 2.09
-    },
-    {
-        "name": "İnternet",
-        "price": 3.88
-    },
-    {
-        "name": "Muhasebe Ücreti",
-        "price": 37.31
-    }
-];
+const defaultShopExpenses = [];
 
 const defaultMaterials = [
     {
@@ -1265,88 +1195,9 @@ const defaultModels = {
 };
 
 // Merkezi Sistem - Default Data
-const defaultScreens = [
-    { name: "GHS-043", price: 141 },
-    { name: "GHS-043E", price: 169 },
-    { name: "GHPro-070E-WIFI", price: 160 },
-    { name: "GHS-070", price: 155 },
-    { name: "GHS-070E", price: 184 },
-    { name: "GHS-101", price: 290 },
-    { name: "GHS-101E", price: 312 },
-    { name: "MSG-156E", price: 1055 }
-];
-
-const defaultDrivers = [
-    { name: "MICNO-00075H", price: 250 },
-    { name: "MICNO-00150H", price: 260 },
-    { name: "MICNO-00220H", price: 306 },
-    { name: "MICNO-00370H", price: 333 },
-    { name: "MICNO-00550H", price: 442 },
-    { name: "MICNO-00750H", price: 505 },
-    { name: "MICNO-01100H", price: 635 },
-    { name: "MICNO-01500H", price: 800 },
-    { name: "MICNO-01850H", price: 926 },
-    { name: "MICNO-02200H", price: 1120 },
-    { name: "MICNO-03000HS", price: 1250 }
-];
-
-const defaultPumps = [
-    { name: "DVP PA 315 CLAW", price: 5160 },
-    { name: "BLOWER 0,70 KW TEK TÜRBİN", price: 160 },
-    { name: "BLOWER 1,60 KW TEK TÜRBİN", price: 285 },
-    { name: "BLOWER 2,2 KW TEK TÜRBİN", price: 300 },
-    { name: "BLOWER 5,5 KW TEK TÜRBİN", price: 740 },
-    { name: "BLOWER 18,5 KW TEK TÜRBİN", price: 1915 },
-    { name: "BLOWER 1,60 KW ÇİFT TÜRBİN", price: 355 },
-    { name: "BLOWER 2,2 KW ÇİFT TÜRBİN", price: 375 },
-    { name: "BLOWER 3,0 KW ÇİFT TÜRBİN", price: 550 },
-    { name: "BLOWER 4,0 KW ÇİFT TÜRBİN", price: 600 },
-    { name: "BLOWER 5,50 KW ÇİFT TÜRBİN", price: 810 },
-    { name: "BLOWER 7,5 KW ÇİFT TÜRBİN", price: 1500 },
-    { name: "BLOWER 11 KW ÇİFT TÜRBİN", price: 1555 }
-];
-
-const defaultPipes = [
-    { name: "Ø38X1,2 KROM BORU", price: 35, hose: "Ø38 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø38 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø48X1,5 KROM BORU", price: 45, hose: "Ø48 SPİRAL HORTUM", hosePrice: 5, clamp: "Ø48 SPİRAL HORTUM KELEPÇESİ", clampPrice: 1 },
-    { name: "Ø60.3X2 KROM BORU", price: 70, hose: "Ø60.3 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø60.3 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø76.1X2 KROM BORU", price: 90, hose: "Ø76.1 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø76.1 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø88.9x2 KROM BORU", price: 105, hose: "Ø88.9 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø88.9 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø38X1,5 SİYAH BORU", price: 0, hose: "Ø38 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø38 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø48X1,5 SİYAH BORU", price: 10, hose: "Ø48 SPİRAL HORTUM", hosePrice: 5, clamp: "Ø48 SPİRAL HORTUM KELEPÇESİ", clampPrice: 1 },
-    { name: "Ø60,3X2 SİYAH BORU", price: 0, hose: "Ø60.3 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø60.3 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø76.1X1,5 SİYAH BORU", price: 0, hose: "Ø76.1 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø76.1 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 },
-    { name: "Ø88.9x2 SİYAH BORU", price: 0, hose: "Ø88.9 SPİRAL HORTUM", hosePrice: 0, clamp: "Ø88.9 SPİRAL HORTUM KELEPÇESİ", clampPrice: 0 }
-];
-
-const defaultGeneralItems = [
-    { name: "GMT-396T (PLC)", price: 222, category: "Pano Ekipmanları" },
-    { name: "GXM-16IA (Input Modül)", price: 70, category: "Pano Ekipmanları" },
-    { name: "GXM-16TA (Output Modül)", price: 96, category: "Pano Ekipmanları" },
-    { name: "Transtör Kart", price: 20, category: "Pano Ekipmanları" },
-    { name: "Güç Kaynağı", price: 70, category: "Pano Ekipmanları" },
-    { name: "Fren Direnci", price: 29, category: "Pano Ekipmanları" },
-    { name: "Pano Havalandırma", price: 90, category: "Pano Ekipmanları" },
-    { name: "Lobar (Küçük)", price: 30, category: "Pano Ekipmanları" },
-    { name: "Lobar (Büyük)", price: 40, category: "Pano Ekipmanları" },
-    { name: "Pano", price: 500, category: "Pano Ekipmanları" },
-    { name: "Diğer Malzemeler", price: 50, category: "Pano Ekipmanları" },
-    { name: "12X1 Kumanda Kablosu", price: 2.5, category: "Kablolar" },
-    { name: "6X0,5 Kumanda Kablosu", price: 1.0, category: "Kablolar" },
-    { name: "8X1 KUMANDA KABLOSU (Duvar-İstasyon Arası)", price: 1.5, category: "Kablolar" },
-    { name: "4x4 Bilendajlı Kablo", price: 4.0, category: "Kablolar" },
-    { name: "24LÜ SOKET (DUVAR TİPİ)", price: 35, category: "Soketler" },
-    { name: "24LÜ SOKET (MAKİNA TİPİ)", price: 35, category: "Soketler" },
-    { name: "16LI SOKET (DUVAR TİPİ)", price: 30, category: "Soketler" },
-    { name: "HAZNE", price: 275, category: "İstasyon Ekipmanları" },
-    { name: "KUMANDA SETİ", price: 30, category: "İstasyon Ekipmanları" },
-    { name: "120x120x4 Profil", price: 10.0, category: "Duvardaki Sistem" },
-    { name: "HAT BAĞLANTI EKİPMANLARI", price: 12.3, category: "Duvardaki Sistem" },
-    { name: "MA1650 PİSTON", price: 15.0, category: "Duvardaki Sistem" },
-    { name: "VALF (1/4\" 5/2 Tek Bobin)", price: 12.0, category: "Duvardaki Sistem" },
-    { name: "KLEPE TAKIMI", price: 12.0, category: "Duvardaki Sistem" },
-    { name: "ŞASE SİSTEMİ (SİKLON+JETFİLTRE)", price: 1000.0, category: "Pompa Şase" },
-    { name: "CONTALI SAÇ KELEPÇE", price: 10.0, category: "Tesisat ve Borulama" },
-    { name: "TESİSAT DÖŞEME APARATLARI", price: 10.0, category: "Tesisat ve Borulama" }
-];
+const defaultScreens = [];
+const defaultDrivers = [];
+const defaultPumps = [];
+const defaultPipes = [];
+const defaultGeneralItems = [];
 

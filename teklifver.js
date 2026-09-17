@@ -12,24 +12,7 @@ let proposalItems = [];
 let productCatalog = {};
 let isLoadingProposal = false;
 
-const defaultCatalog = {
-    "Pano & Kontrol": [
-        { name: "FY Smart Pano Sistem 12''", price: 1250.00 },
-        { name: "PLC Genişleme Modülü (16 Input)", price: 180.00 },
-        { name: "PLC Genişleme Modülü (16 Output)", price: 195.00 },
-        { name: "Güç Kaynağı 24V 10A", price: 85.00 }
-    ],
-    "Mekanik Bileşenler": [
-        { name: "HY500 Gövde Sacı (Lazer Kesim)", price: 125.00 },
-        { name: "Paslanmaz Hazne Grubu", price: 450.00 },
-        { name: "Klepe Takımı Pnömatik", price: 210.00 }
-    ],
-    "Hortum & Boru": [
-        { name: "2'' Spiral Emiş Hortumu (mt)", price: 12.50 },
-        { name: "Çelik Tesisat Borusu Ø60 (mt)", price: 18.00 },
-        { name: "Contalı Boru Kelepçesi", price: 8.50 }
-    ]
-};
+const defaultCatalog = {};
 function getMaterialUnit(name) {
     const units = JSON.parse(localStorage.getItem("l_material_units")) || {};
     return units[name] || "Adet";
@@ -45,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initTeklifVer() {
-    // Load custom catalog (fallback to default in memory if not in localStorage)
-    productCatalog = JSON.parse(localStorage.getItem("t_product_catalog")) || defaultCatalog;
+    // Load custom catalog (fallback to empty object if not in localStorage)
+    productCatalog = JSON.parse(localStorage.getItem("t_product_catalog")) || {};
 
     // Populate exchange rate from default or localStorage
     const storedRate = parseFloat(localStorage.getItem("t_exchange_rate")) || defaultExchangeRate;
@@ -1353,11 +1336,11 @@ function getCentralAnnexHTML(projectName) {
     const proj = projects[projectName];
     if (!proj) return "";
     
-    const screens = JSON.parse(localStorage.getItem("m_screens")) || defaultScreens;
-    const drivers = JSON.parse(localStorage.getItem("m_drivers")) || defaultDrivers;
-    const pumps = JSON.parse(localStorage.getItem("m_pumps")) || defaultPumps;
-    const pipes = JSON.parse(localStorage.getItem("m_pipes")) || defaultPipes;
-    const generalItems = JSON.parse(localStorage.getItem("m_generalItems")) || defaultGeneralItems;
+    const screens = JSON.parse(localStorage.getItem("m_screens")) || [];
+    const drivers = JSON.parse(localStorage.getItem("m_drivers")) || [];
+    const pumps = JSON.parse(localStorage.getItem("m_pumps")) || [];
+    const pipes = JSON.parse(localStorage.getItem("m_pipes")) || [];
+    const generalItems = JSON.parse(localStorage.getItem("m_generalItems")) || [];
     
     const getGeneralItem = (id) => generalItems.find(item => item.id === id) || { name: id, price: 0 };
     

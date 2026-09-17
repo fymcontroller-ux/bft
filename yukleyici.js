@@ -27,8 +27,8 @@ function saveMaterialUnit(name, unit) {
 
 // Load values from LocalStorage or fall back to defaults
 function loadPricesAndExpenses() {
-    personnel = JSON.parse(localStorage.getItem("l_personnel")) || JSON.parse(JSON.stringify(defaultPersonnel));
-    shopExpenses = JSON.parse(localStorage.getItem("l_shopExpenses")) || JSON.parse(JSON.stringify(defaultShopExpenses));
+    personnel = JSON.parse(localStorage.getItem("l_personnel")) || [];
+    shopExpenses = JSON.parse(localStorage.getItem("l_shopExpenses")) || [];
     materials = JSON.parse(localStorage.getItem("l_materials")) || JSON.parse(JSON.stringify(defaultMaterials));
     models = JSON.parse(localStorage.getItem("l_models")) || JSON.parse(JSON.stringify(defaultModels));
     
@@ -75,11 +75,11 @@ async function resetPrices() {
 
 // Reset expenses to starter defaults
 async function resetExpenses() {
-    if (await window.showCustomConfirm("Tüm personel ve dükkan giderlerini fabrika ayarlarına sıfırlamak istediğinize emin misiniz?", "Fabrika Ayarlarına Sıfırla")) {
+    if (await window.showCustomConfirm("Tüm personel ve dükkan giderlerini sıfırlamak istediğinize emin misiniz?", "Giderleri Sıfırla")) {
         localStorage.removeItem("l_personnel");
         localStorage.removeItem("l_shopExpenses");
-        personnel = JSON.parse(JSON.stringify(defaultPersonnel));
-        shopExpenses = JSON.parse(JSON.stringify(defaultShopExpenses));
+        personnel = [];
+        shopExpenses = [];
         savePricesAndExpenses();
         initExpenseEditor();
         calculate();
